@@ -1,7 +1,7 @@
 import { HomeIcon, ClipboardListIcon, UserGroupIcon, ChatIcon, DocumentTextIcon } from "@heroicons/react/solid";
 import { Link } from "react-router-dom";
 
-const Sidebar = () => {
+const SidebarLandlord = () => {
   return (
     <div className="w-64 h-screen bg-white shadow-lg p-4 flex flex-col">
 
@@ -11,7 +11,7 @@ const Sidebar = () => {
           {/* Dashboard */}
           <li>
             <Link
-              to="admin/dashboard"
+              to="landlord/dashboard"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <HomeIcon className="w-6 h-6 mr-3" />
@@ -21,37 +21,47 @@ const Sidebar = () => {
           {/* Manage */}
           <li>
             <Link
-              to="admin/manage"
+              to="landlord/manage"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <UserGroupIcon className="w-6 h-6 mr-3" />
               Manage
             </Link>
           </li>
-          {/* Contract */}
+          {/* Room */}
           <li>
             <Link
-              to="admin/contract"
+              to="landlord/room"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <ClipboardListIcon className="w-6 h-6 mr-3" />
-              Contract
+              Room
             </Link>
           </li>
           {/* Feedback */}
           <li>
             <Link
-              to="admin/feedback"
+              to="landlord/feedback"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <ChatIcon className="w-6 h-6 mr-3" />
               Feedback
             </Link>
           </li>
+          {/* Service */}
+          <li>
+            <Link
+              to="landlord/service"
+              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
+            >
+              <DocumentTextIcon className="w-6 h-6 mr-3" />
+              Service
+            </Link>
+          </li>
           {/* Request */}
           <li>
             <Link
-              to="admin/request"
+              to="landlord/request"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <DocumentTextIcon className="w-6 h-6 mr-3" />
@@ -64,4 +74,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SidebarLandlord;
