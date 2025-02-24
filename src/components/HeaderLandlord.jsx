@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import logo from "../assets/logoEasyRommie.png"; 
 import profilePic from "../assets/avatar.jpg"; 
 
-const Header = () => {
-  const [userName] = useState("Nguyen Xuan Tien");
-  const [userRole] = useState("Super123 Admin");
+const HeaderLandlord = () => {
+  const [userName] = useState("Nguyen Vi Lord");
+  const [userRole] = useState("Landlord");
 
   return (
     <header className="flex justify-between items-center bg-white shadow-md">
@@ -24,4 +24,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderLandlord;
