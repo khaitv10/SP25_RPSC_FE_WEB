@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.scss";
-import { FaFacebook, FaGoogle } from "react-icons/fa";
+import { FaFacebook, FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { login } from "../../Services/userAPI";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,10 +9,16 @@ import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!phone.trim() || !password.trim()) {
+      toast.error("Phone and password are required!");
+      return;
+    }
 
     try {
       const response = await login(phone, password);
@@ -20,16 +26,15 @@ const Login = () => {
       if (response?.data?.token) {
         const { role, token } = response.data;
 
-
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
         localStorage.setItem("loggedIn", "true");
 
+        toast.success("Login successful!");
 
         if (role === "Admin") {
           navigate("/admin/dashboard");
         } else if (role === "Landlord") {
-          console.log("Navigating to /landlord/dashboard");
           navigate("/landlord/dashboard");
         } else {
           toast.error("You do not have permission to access.");
@@ -40,7 +45,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      toast.error(err.message || "Login failed. Please try again.");
+      toast.error(err.response?.data?.message || "Login failed. Please try again.");
     }
   };
 
@@ -54,6 +59,7 @@ const Login = () => {
           <p>Welcome back to your website</p>
 
           <form onSubmit={handleSubmit}>
+            {/* Phone Number Input */}
             <label>Phone</label>
             <input
               type="text"
@@ -63,18 +69,25 @@ const Login = () => {
               required
             />
 
+            {/* Password Input */}
             <label>Password</label>
             <div className="password-input">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
               />
-              <span className="eye-icon">👁</span>
+              <span
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
 
+            {/* Remember Me & Forgot Password */}
             <div className="options">
               <label>
                 <input type="checkbox" /> Remember me
@@ -84,13 +97,16 @@ const Login = () => {
               </Link>
             </div>
 
+            {/* Login Button */}
             <button type="submit" className="login-btn">Login</button>
           </form>
 
+          {/* Sign Up Link */}
           <p className="signup-text">
-            Don't have an account? <Link to="/signup">Sign up</Link>
+            Don't have an account? <Link to="/register">Sign up</Link>
           </p>
 
+          {/* Social Login */}
           <div className="social-login">
             <p>Or login with</p>
             <div className="social-icons">
@@ -104,6 +120,7 @@ const Login = () => {
           </div>
         </div>
 
+        {/* Illustration Image */}
         <div className="login-right">
           <img src="/assets/login-illustration.png" alt="Illustration" />
         </div>

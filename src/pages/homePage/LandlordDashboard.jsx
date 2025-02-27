@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import Card from "../components/Card";
-import Chart from "../components/Chart";
-import Table from "../components/Table";
+import Card from "../../components/Card";
+import Chart from "../../components/Chart";
+import Table from "../../components/Table";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

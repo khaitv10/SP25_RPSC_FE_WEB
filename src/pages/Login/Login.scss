@@ -51,23 +51,38 @@
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            text-align: left; /* Đảm bảo chữ nhập vào không bị căn giữa */
+            
           }
   
           .password-input {
+            position: relative;
             display: flex;
             align-items: center;
-            position: relative;
-  
+            
+          
             input {
               flex: 1;
+              width: 100%; // Đảm bảo input chiếm toàn bộ không gian
+              padding-right: 40px; // Chừa khoảng trống cho icon
             }
-  
+          
             .eye-icon {
               position: absolute;
               right: 10px;
+              top: 40%;
+              transform: translateY(-50%);
               cursor: pointer;
+              font-size: 18px;
+              color: #666;
+              background: none; /* Xóa nền */
+              border: none; /* Xóa viền */
+              outline: none; /* Xóa viền khi focus */
+              padding: 5px; /* Giữ khoảng cách bấm */
             }
+            
           }
+          
   
           .options {
             display: flex;
