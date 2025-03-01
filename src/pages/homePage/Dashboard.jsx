@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Sidebar from "../../components/Sidebar";
+//import Sidebar from "../../components/Sidebar";
 import Card from "../../components/Card";
 import Chart from "../../components/Chart";
 import Table from "../../components/Table";

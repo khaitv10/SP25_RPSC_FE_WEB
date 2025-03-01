@@ -16,17 +16,25 @@ const Layout = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* Header */}
-      {!isAuthPage && (role === "Admin" ? <Header /> : <HeaderLandlord />)}
+    <div className="h-screen flex flex-col">
+      {/* Header Cố Định */}
+      {!isAuthPage && (
+        <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
+          {role === "Admin" ? <Header /> : <HeaderLandlord />}
+        </div>
+      )}
 
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        {!isAuthPage && (role === "Admin" ? <Sidebar /> : <SidebarLandlord />)}
+      <div className="flex flex-1 pt-16"> {/* pt-16 để tránh bị Header che mất */}
+        {/* Sidebar Cố Định */}
+        {!isAuthPage && (
+          <div className="fixed left-0 top-16 w-64 h-[calc(100vh-4rem)] bg-white shadow-lg z-40 pt-[100px]">
+            {role === "Admin" ? <Sidebar /> : <SidebarLandlord />}
+          </div>
+        )}
 
-        {/* Nội dung trang */}
-        <div className="flex-1 p-4 bg-gray-100 min-h-screen">
-          <AppRoutes /> {/* Render Routes */}
+        {/* Nội dung trang cuộn riêng */}
+        <div className="flex-1 overflow-y-auto p-4 bg-gray-100 ml-64 mt-16">
+          <AppRoutes />
         </div>
       </div>
     </div>
