@@ -1,0 +1,12 @@
+/* Reset toàn bộ mặc định */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Thiết lập chiều cao toàn màn hình */
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f8f9fa;
+}

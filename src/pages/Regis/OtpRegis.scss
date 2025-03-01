@@ -1,0 +1,149 @@
+.otp-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #fff;
+}
+
+/* Header - Logo */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 90%;
+    max-width: 1200px;
+    padding: 20px;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+h1 {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Nội dung chính */
+.otp-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1000px;
+}
+
+/* Form OTP */
+.otp-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 40%;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Ô nhập OTP */
+.otp-input-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    text-align: center;
+}
+
+.eye-icon {
+    padding: 10px;
+    background: #f1f1f1;
+    border: none;
+    cursor: pointer;
+}
+
+/* Nút gửi OTP */
+.send-otp {
+    background-color: #4c9aff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.send-otp:hover {
+    background-color: #4285f4;
+}
+
+/* Nút Verify */
+.verify-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #A7DFBF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.verify-btn:hover {
+    background-color: #8fd8a9;
+}
+
+/* Lỗi */
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Back to login */
+.back-to-login {
+    color: #007bff;
+    cursor: pointer;
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.back-to-login:hover {
+    text-decoration: underline;
+}
+
+/* Hình minh họa */
+.otp-image img {
+    width: 400px;
+    max-width: 100%;
+}

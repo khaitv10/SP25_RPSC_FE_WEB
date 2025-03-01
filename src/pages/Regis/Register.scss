@@ -1,0 +1,81 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #fff;
+}
+
+.register-box {
+    display: flex;
+    width: 900px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start; /* Đưa hình về sát bên trái */
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.left img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.right {
+    flex: 1;
+    padding: 40px;
+}
+
+.right h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.right p {
+    font-size: 14px;
+    color: #555;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.create-account {
+    background-color: #6FCF97 !important;
+    color: #fff;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.login-text {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.social-signup {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.icons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.social-icon {
+    font-size: 30px;
+    cursor: pointer;
+    color: #1877F2;
+}
