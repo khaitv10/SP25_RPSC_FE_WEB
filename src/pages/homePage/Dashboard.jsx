@@ -46,7 +46,7 @@ const Dashboard = () => {
     <div className="flex">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="flex-1 p-4">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
         <div className="grid grid-cols-4 gap-4 mt-4">
           <Card title="Total Landlord" value="23" />
           <Card title="Total Requests" value="5" />
