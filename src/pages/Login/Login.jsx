@@ -5,6 +5,8 @@ import { FaFacebook, FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { login } from "../../Services/userAPI";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import imageLogin from "../../assets/image-login.png";
+
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -56,7 +58,7 @@ const Login = () => {
         <div className="login-left">
           <h1 className="logo">EasyRoomie</h1>
           <h2>Login</h2>
-          <p>Welcome back to your website</p>
+          <p>Welcome back to website</p>
 
           <form onSubmit={handleSubmit}>
             {/* Phone Number Input */}
@@ -103,7 +105,7 @@ const Login = () => {
 
           {/* Sign Up Link */}
           <p className="signup-text">
-            Don't have an account? <Link to="/register">Sign up</Link>
+            Do not have an account? <Link to="/register">Sign up</Link>
           </p>
 
           {/* Social Login */}
@@ -122,7 +124,7 @@ const Login = () => {
 
         {/* Illustration Image */}
         <div className="login-right">
-          <img src="/assets/login-illustration.png" alt="Illustration" />
+          <img src={imageLogin} alt="Login" />
         </div>
       </div>
     </div>
