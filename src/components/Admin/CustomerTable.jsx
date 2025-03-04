@@ -1,146 +1,165 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEye, FaSearch } from "react-icons/fa";
-import PropTypes from 'prop-types';  // Import PropTypes
+import PropTypes from "prop-types";
+import CustomerModal from "./CustomerModal";
 
-const CustomerTable = ({ customers }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRole, setSelectedRole] = useState("All");
-  const [selectedStatus, setSelectedStatus] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
-  const customersPerPage = 2; // Number of customers per page
+const CustomerTable = ({ 
+  customers, 
+  totalCustomers, 
+  currentPage, 
+  setCurrentPage, 
+  customersPerPage, 
+  selectedStatus, 
+  setSelectedStatus,
+  searchTerm,
+  setSearchTerm
+}) => {
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredCustomers = customers.filter(customer =>
-    (selectedRole === "All" || customer.role === selectedRole) &&
-    (selectedStatus === "All" || customer.status === selectedStatus) &&
-    customer.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    console.log("Customers received in CustomerTable:", customers);
+  }, [customers]);
 
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(filteredCustomers.length / customersPerPage);
-
-  // Slice the customers for the current page
-  const displayedCustomers = filteredCustomers.slice(
-    (currentPage - 1) * customersPerPage,
-    currentPage * customersPerPage
-  );
-
-  // Handle page change
-  const handlePageChange = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+  const handleViewDetails = (customer) => {
+    setSelectedCustomer(customer);
+    setIsModalOpen(true);
   };
 
+  const totalPages = Math.max(1, Math.ceil(totalCustomers / customersPerPage));
+
   return (
-    <div className="p-4 bg-white shadow-md rounded-md">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex gap-4">
-          <select
-            className="p-2 border rounded-md"
-            value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value)}
-          >
-            <option value="All">Role</option>
-            <option value="Customer">Customer</option>
-            <option value="Landlord">Landlord</option>
-          </select>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="p-4 bg-white shadow-md rounded-md">
+        {/* Filters */}
+        <div className="flex justify-between items-center mb-4">
+          {/* Filter Status */}
           <select
             className="p-2 border rounded-md"
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="All">Status</option>
+            <option value="Status">Status</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
+
+          {/* Search Phone Number with Icon */}
+          <div className="relative flex items-center w-64 border rounded-md overflow-hidden">
+            <input
+              type="text"
+              placeholder="Search Phone Number"
+              className="p-2 pl-10 w-full border-none focus:outline-none"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <FaSearch className="absolute left-3 text-gray-500" />
+          </div>
         </div>
 
-        {/* Search Bar and Icon Button */}
-        <div className="ml-auto flex items-center">
-          <input
-            type="text"
-            placeholder="Search Full Name"
-            className="p-2 w-40 border rounded-l-md focus:outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button
-            className="p-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-900"
-            onClick={() => { /* You can add a handler for search action here if needed */ }}
-          >
-            <FaSearch size={18} />
-          </button>
-        </div>
-      </div>
-
-      <table className="min-w-full bg-white border rounded-md">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2 text-left">Full Name</th>
-            <th className="p-2 text-left">Address</th>
-            <th className="p-2 text-left">Phone Number</th>
-            <th className="p-2 text-left">Email</th>
-            <th className="p-2 text-left">Role</th>
-            <th className="p-2 text-left">Status</th>
-            <th className="p-2 text-left"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {displayedCustomers.map((customer) => (
-            <tr key={customer.id} className="border-t">
-              <td className="p-2">{customer.name}</td>
-              <td className="p-2">{customer.address}</td>
-              <td className="p-2">{customer.phone}</td>
-              <td className="p-2">{customer.email}</td>
-              <td className="p-2">{customer.role}</td>
-              <td className="p-2">
-                <span className={`px-3 py-1 rounded-full ${customer.status === "Active" ? "bg-green-300 text-green-800" : "bg-red-200 text-red-800"}`}>
-                  {customer.status}
-                </span>
-              </td>
-              <td className="p-2 text-center">
-                <button className="flex items-center gap-2 text-blue-300 hover:text-blue-500 transition">
-                  <span>Details</span>
-                  <FaEye size={20} />
-                </button>
-              </td>
+        {/* Customer Table */}
+        <table className="min-w-full bg-white border rounded-md">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="p-2 text-left">Full Name</th>
+              <th className="p-2 text-left">Address</th>
+              <th className="p-2 text-left">Phone Number</th>
+              <th className="p-2 text-left">Email</th>
+              <th className="p-2 text-left">Status</th>
+              <th className="p-2 text-left"></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {customers.length > 0 ? (
+              customers.map((customer, index) => (
+                <tr key={customer.userId || index} className="border-t">
+                  <td className="p-2">{customer.fullName}</td>
+                  <td className="p-2">{customer.address}</td>
+                  <td className="p-2">{customer.phoneNumber}</td>
+                  <td className="p-2">{customer.email}</td>
+                  <td className="p-2">
+                    <span
+                      className={`px-3 py-1 rounded-full ${
+                        customer.userStatus === "Active"
+                          ? "bg-green-300 text-green-800"
+                          : "bg-red-200 text-red-800"
+                      }`}
+                    >
+                      {customer.userStatus}
+                    </span>
+                  </td>
+                  <td className="p-2 text-center">
+                    <button
+                      className="flex items-center gap-2 text-blue-300 hover:text-blue-500 transition"
+                      onClick={() => handleViewDetails(customer)}
+                    >
+                      <span>Details</span>
+                      <FaEye size={20} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="p-4 text-center text-gray-500">No customers found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-end mt-4">
-        {/* Page Number Buttons */}
-        <div className="flex gap-2">
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map(pageNumber => (
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-4">
             <button
-              key={pageNumber}
-              className={`p-2 rounded-md text-sm ${currentPage === pageNumber ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-700'} hover:bg-blue-500 hover:text-white`}
-              onClick={() => handlePageChange(pageNumber)}
+              className="px-3 py-2 rounded-md bg-gray-200 disabled:opacity-50"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
             >
-              {pageNumber}
+              {"<"}
             </button>
-          ))}
-        </div>
+
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+              <button
+                key={page}
+                className={`px-3 py-2 rounded-md ${currentPage === page ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              className="px-3 py-2 rounded-md bg-gray-200 disabled:opacity-50"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              {">"}
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Modal Component */}
+      <CustomerModal 
+        isOpen={isModalOpen} 
+        customer={selectedCustomer} 
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
 
-// Add PropTypes for validation
+// Props Validation
 CustomerTable.propTypes = {
-  customers: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      address: PropTypes.string.isRequired,
-      phone: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      role: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired,
-    })
-  ).isRequired,
+  customers: PropTypes.array.isRequired,
+  totalCustomers: PropTypes.number.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  setCurrentPage: PropTypes.func.isRequired,
+  customersPerPage: PropTypes.number.isRequired,
+  selectedStatus: PropTypes.string.isRequired,
+  setSelectedStatus: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  setSearchTerm: PropTypes.func.isRequired,
 };
 
 export default CustomerTable;
