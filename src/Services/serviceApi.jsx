@@ -23,3 +23,14 @@ export const getServiceDetailByPackageId = async (packageId) => {
         throw error.response?.data || new Error('An error occurred');
     }
 };
+
+export const getServicePackageByLandlord = async () => {
+  try {
+      const response = await axiosClient.get(`/api/packageservice/get-service-package-by-landlord`);
+      return response.data;
+  } catch (error) {
+      throw error.response?.data || new Error('An error occurred');
+  }
+};
+
+
