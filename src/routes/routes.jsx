@@ -5,6 +5,7 @@ import Register from "../pages/Regis/Register";
 import OtpRegis from "../pages/Regis/OtpRegis";
 import ServiceLandlord from "../pages/packageLandlord/packageLandlord";
 import Dashboard from "../pages/homePage/Dashboard";
+import AccountManagement from "../pages/Admin/AccountManagement/AccountManagement";
 import LandlordDashboard from "../pages/homePage/LandlordDashboard";
 import AdminPackage from "../pages/packageAdmin/adminPackage";
 const AppRoutes = () => {
@@ -15,6 +16,7 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/otpRegister" element={<OtpRegis />} />
       <Route path="/landlord/service" element={<ServiceLandlord />} />
+      <Route path="/admin/account" element={<AccountManagement />} />
       <Route path="/admin/service" element={<AdminPackage />} />
 
 
