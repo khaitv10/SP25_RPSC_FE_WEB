@@ -28,6 +28,16 @@ const Sidebar = () => {
               Manage
             </Link>
           </li>
+          {/* Service */}
+          <li>
+            <Link
+              to="admin/service"
+              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
+            >
+              <UserGroupIcon className="w-6 h-6 mr-3" />
+              Service
+            </Link>
+          </li>
           {/* Contract */}
           <li>
             <Link
