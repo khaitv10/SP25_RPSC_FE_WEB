@@ -26,16 +26,29 @@ const OtpRegis = () => {
             setError("Please enter the OTP");
             return;
         }
+    
         try {
             await verifyOTP(email, otp);
             toast.success("OTP verified successfully!");
-            setTimeout(() => navigate("/login"), 1500);
+    
+            // Kiểm tra xem email có hợp lệ không trước khi điều hướng
+            if (email) {
+                console.log("Navigating with email:", email);
+                setTimeout(() => {
+                    navigate("/register-landlord", { state: { email } });
+                }, 1500);
+            } else {
+                toast.error("Email is missing, please try again.");
+            }
+            
         } catch (err) {
             const errorMessage = err.response?.data?.message || "Invalid OTP";
             setError(errorMessage);
             toast.error(errorMessage);
         }
     };
+    
+    
 
     return (
         <div className="otp-container">
