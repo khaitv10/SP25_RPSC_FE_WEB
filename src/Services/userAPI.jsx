@@ -43,3 +43,17 @@ export const verifyOTP = async (email, otp) => {
         throw error.response ? error.response.data : new Error('An error occurred during OTP verification');
     }
 };
+
+export const registerLandlord = async (formData, email) => {
+    try {
+        const response = await axiosClient.post(`/api/authentication/Register-Landlord?email=${email}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error("An error occurred during landlord registration");
+    }
+};

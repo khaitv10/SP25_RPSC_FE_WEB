@@ -1,0 +1,17 @@
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .file-input {
+        margin-top: 10px;
+    }
+
+    .submit-btn {
+        margin-top: 20px;
+        background-color: #007bff;
+        &:hover {
+            background-color: #0056b3;
+        }
+    }
+}

@@ -6,7 +6,7 @@ import { login } from "../../Services/userAPI";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import imageLogin from "../../assets/image-login.png";
-
+import logo from "../../assets/logoEasyRommie.png";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -53,7 +53,10 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+      <img src={logo} alt="EasyRoomie Logo" className="otp-logo" />
+
       <div className="login-box">
         <div className="login-left">
           <h1 className="logo">EasyRoomie</h1>
@@ -108,18 +111,7 @@ const Login = () => {
             Do not have an account? <Link to="/register">Sign up</Link>
           </p>
 
-          {/* Social Login */}
-          <div className="social-login">
-            <p>Or login with</p>
-            <div className="social-icons">
-              <button className="facebook">
-                <FaFacebook /> Facebook
-              </button>
-              <button className="google">
-                <FaGoogle /> Google
-              </button>
-            </div>
-          </div>
+          
         </div>
 
         {/* Illustration Image */}

@@ -8,16 +8,19 @@ import Dashboard from "../pages/homePage/Dashboard";
 import AccountManagement from "../pages/Admin/AccountManagement/AccountManagement";
 import LandlordDashboard from "../pages/homePage/LandlordDashboard";
 import AdminPackage from "../pages/packageAdmin/adminPackage";
+import RegisterLandlord from "../pages/Regis/RegisterLandlord";
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/register-landlord" element={<RegisterLandlord />} />
       <Route path="/otpRegister" element={<OtpRegis />} />
       <Route path="/landlord/service" element={<ServiceLandlord />} />
       <Route path="/admin/account" element={<AccountManagement />} />
       <Route path="/admin/service" element={<AdminPackage />} />
+
 
 
       <Route
