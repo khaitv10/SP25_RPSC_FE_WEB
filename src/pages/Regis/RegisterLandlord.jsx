@@ -1,83 +1,135 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Container, TextField, Button, Typography, Card, CardContent, Input } from "@mui/material";
-import { styled } from "@mui/system";
-import { registerLandlord } from "../../Services/userAPI";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./RegisterLandlord.scss";
-
-const StyledCard = styled(Card)({
-    maxWidth: 500,
-    margin: "auto",
-    padding: 20,
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    borderRadius: 12,
-});
+import logo from "../../assets/logoEasyRommie.png";
+import imageRegister from "../../assets/image-login.png";
+import { registerLandlord } from "../../Services/userAPI";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterLandlord = () => {
     const location = useLocation();
-    const email = location.state?.email || ""; // Nhận email nhưng không hiển thị
-
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [errors, setErrors] = useState({});
+    const [imagePreview, setImagePreview] = useState([]);
     const [formData, setFormData] = useState({
-        CompanyName: "",
-        NumberRoom: "",
-        LicenseNumber: "",
-        BankName: "",
-        BankNumber: "",
-        WorkshopImages: [],
+        companyName: "",
+        numberRoom: "",
+        licenseNumber: "",
+        bankName: "",
+        bankNumber: "",
+        workshopImages: []
     });
 
+    useEffect(() => {
+        const emailFromState = location.state?.email || localStorage.getItem("landlord_email");
+        if (emailFromState) {
+            setEmail(emailFromState);
+            localStorage.setItem("landlord_email", emailFromState);
+        } else {
+            toast.error("Email is missing. Please start the registration again.");
+            navigate("/register");
+        }
+    }, [location, navigate]);
+
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, WorkshopImages: Array.from(e.target.files) });
+        const files = Array.from(e.target.files);
+        setFormData(prev => ({ ...prev, workshopImages: files }));
+
+        // Hiển thị ảnh xem trước
+        const previews = files.map(file => URL.createObjectURL(file));
+        setImagePreview(previews);
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        ["companyName", "numberRoom", "licenseNumber", "bankName", "bankNumber"].forEach(field => {
+            if (!formData[field].trim()) newErrors[field] = `${field.replace(/([A-Z])/g, " $1")} is required`;
+        });
+        if (formData.workshopImages.length === 0) newErrors.workshopImages = "Workshop images are required";
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = new FormData();
-        data.append("Email", email);
-        data.append("CompanyName", formData.CompanyName);
-        data.append("NumberRoom", formData.NumberRoom);
-        data.append("LicenseNumber", formData.LicenseNumber);
-        data.append("BankName", formData.BankName);
-        data.append("BankNumber", formData.BankNumber);
-        formData.WorkshopImages.forEach((file) => {
-            data.append("WorkshopImages", file);
-        });
-
+        if (!email) {
+            toast.error("Email is missing. Please try again.");
+            return;
+        }
+        if (!validateForm()) return toast.error("Please fill all required fields.");
+    
         try {
-            const response = await registerLandlord(data);
-            console.log("Success:", response);
-            alert("Register successfully!");
+            await registerLandlord(
+                email,
+                formData.companyName,
+                formData.numberRoom,
+                formData.licenseNumber,
+                formData.bankName,
+                formData.bankNumber,
+                formData.workshopImages
+            );
+            toast.success("Registration successful! Redirecting to login page...");
+            setTimeout(() => navigate("/login"), 2000);
         } catch (error) {
-            console.error("Error:", error);
-            alert("Registration failed!");
+            setErrors(error.response?.data?.errors || {});
+            toast.error(`Registration failed: ${error.response?.data?.message || "Unknown error"}`);
         }
     };
-
+    
     return (
-        <Container maxWidth="sm">
-            <StyledCard>
-                <CardContent>
-                    <Typography variant="h5" gutterBottom align="center">
-                        Register Landlord
-                    </Typography>
-                    <form onSubmit={handleSubmit} className="register-form">
-                        <TextField label="Company Name" name="CompanyName" fullWidth required onChange={handleChange} margin="normal" />
-                        <TextField label="Number of Rooms" name="NumberRoom" fullWidth required onChange={handleChange} margin="normal" />
-                        <TextField label="License Number" name="LicenseNumber" fullWidth required onChange={handleChange} margin="normal" />
-                        <TextField label="Bank Name" name="BankName" fullWidth required onChange={handleChange} margin="normal" />
-                        <TextField label="Bank Number" name="BankNumber" fullWidth required onChange={handleChange} margin="normal" />
-                        <Input type="file" multiple fullWidth onChange={handleFileChange} className="file-input" />
-                        <Button type="submit" variant="contained" color="primary" fullWidth className="submit-btn">
-                            Register
-                        </Button>
+        <div className="register-container">
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+            <img src={logo} alt="EasyRoomie Logo" className="otp-logo" />
+            <div className="register-box">
+                <div className="register-left">
+                    <h2>Register as a Landlord</h2>
+                    <p>Fill in the details to register as a landlord</p>
+                    <form onSubmit={handleSubmit}>
+                    {Object.keys(formData).map(key => (
+                                key !== "workshopImages" ? (
+                                    <div key={key} className="input-group">
+                                        <label>{key
+                                            .replace("companyName", "Company Name")
+                                            .replace(/([A-Z])/g, " $1")
+                                            .trim()
+                                            .replace(/\b\w/g, (char) => char.toUpperCase())}
+                                        </label>
+                                        <input 
+                                            type={key === "numberRoom" ? "number" : "text"}
+                                            name={key} 
+                                            value={formData[key]}
+                                            onChange={handleChange} 
+                                            required 
+                                            className="input-field"
+                                        />
+                                        {errors[key] && <p className="error-text">{errors[key]}</p>}
+                                    </div>
+                                ) : null
+                            ))}
+
+                        <label>Upload Workshop Images</label>
+                        <input type="file" multiple onChange={handleFileChange} className="input-file" />
+                        {errors.workshopImages && <p className="error-text">{errors.workshopImages}</p>}
+                        <div className="image-preview">
+                            {imagePreview.map((src, index) => (
+                                <img key={index} src={src} alt={`preview-${index}`} />
+                            ))}
+                        </div>
+                        <button type="submit" className="register-btn">Register</button>
                     </form>
-                </CardContent>
-            </StyledCard>
-        </Container>
+                </div>
+                <div className="register-right">
+                    <img src={imageRegister} alt="Register Illustration" />
+                </div>
+            </div>
+        </div>
     );
 };
 

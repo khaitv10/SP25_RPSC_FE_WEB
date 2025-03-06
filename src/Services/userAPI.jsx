@@ -44,9 +44,21 @@ export const verifyOTP = async (email, otp) => {
     }
 };
 
-export const registerLandlord = async (formData, email) => {
+export const registerLandlord = async (email, companyName, numberRoom, licenseNumber, bankName, bankNumber, workshopImages) => {
     try {
-        const response = await axiosClient.post(`/api/authentication/Register-Landlord?email=${email}`, formData, {
+        const formData = new FormData();
+        formData.append("CompanyName", companyName);
+        formData.append("NumberRoom", numberRoom);
+        formData.append("LicenseNumber", licenseNumber);
+        formData.append("BankName", bankName);
+        formData.append("BankNumber", bankNumber);
+        
+        // Thêm từng ảnh vào FormData
+        workshopImages.forEach((image) => {
+            formData.append("WorkshopImages", image);
+        });
+
+        const response = await axiosClient.post(`/api/user/register-landlord?email=${encodeURIComponent(email)}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
