@@ -6,6 +6,8 @@ import OtpRegis from "../pages/Regis/OtpRegis";
 import ServiceLandlord from "../pages/packageLandlord/packageLandlord";
 import Dashboard from "../pages/homePage/Dashboard";
 import AccountManagement from "../pages/Admin/AccountManagement/AccountManagement";
+import RequestManagement from "../pages/Admin/RequestManagement/RequestManagement";
+import RoomTypeDetail  from "../pages/Admin/RequestManagement/RoomTypeDetail";
 import LandlordDashboard from "../pages/homePage/LandlordDashboard";
 import AdminPackage from "../pages/packageAdmin/adminPackage";
 import RegisterLandlord from "../pages/Regis/RegisterLandlord";
@@ -20,6 +22,9 @@ const AppRoutes = () => {
       <Route path="/otpRegister" element={<OtpRegis />} />
       <Route path="/landlord/service" element={<ServiceLandlord />} />
       <Route path="/admin/account" element={<AccountManagement />} />
+      <Route path="/admin/request" element={<RequestManagement />} />
+      <Route path="/admin/request/room-type/:roomTypeId" element={<RoomTypeDetail />} />
+
       <Route path="/admin/service" element={<AdminPackage />} />
       <Route path="/packagecontract" element={<PackageContract />} />
 

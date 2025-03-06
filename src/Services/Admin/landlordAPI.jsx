@@ -4,7 +4,7 @@ const getAllLandlord = {
   getCustomers: async (pageIndex = 1, pageSize = 10, searchQuery = "", status = "") => {
     try {
       const response = await axiosClient.get(
-        `/api/user/get-customer?pageIndex=${pageIndex}&pageSize=${pageSize}` +
+        `/api/user/get-landlord?pageIndex=${pageIndex}&pageSize=${pageSize}` +
         (searchQuery ? `&searchQuery=${searchQuery}` : "") +
         (status ? `&status=${status}` : "")
       );
