@@ -1,6 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { TextField, Button, MenuItem, Checkbox, FormControlLabel, Box, Typography, Paper } from "@mui/material";
+import {
+  TextField, Button, MenuItem, Checkbox,
+  FormControlLabel, Box, Typography, Paper, IconButton, InputAdornment
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/logoEasyRommie.png";
@@ -18,7 +22,10 @@ const Register = () => {
     phoneNumber: "",
     gender: "",
   });
+
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,43 +47,42 @@ const Register = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [formData]);
-
-  const toTitleCase = (str) => {
-    return str.replace(/\b\w/g, (char) => char.toUpperCase());
-  };
-
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!validateForm()) return;
-
     try {
-      await register(
-        formData.email,
-        formData.password,
-        formData.confirmPassword,
-        formData.fullName,
-        formData.phoneNumber,
-        formData.gender
-      );
-      toast.success("Registration successful!");
-      navigate("/otpRegister", { state: { email: formData.email } });
-    } catch (error) {
-      if (error.response && error.response.data) {
-        const { title, errors } = error.response.data;
-        if (errors) {
-          Object.values(errors).forEach((errorMessages) => {
-            errorMessages.forEach((message) => toast.error(message));
-          });
-        } else {
-          toast.error(title || "An error occurred during registration.");
-        }
-      } else {
-        toast.error("An unexpected error occurred. Please try again.");
-      }
-    }
-  };
+        console.log("Sending request to register API...");
+        await register(
+            formData.email,
+            formData.password,
+            formData.confirmPassword,
+            formData.fullName,
+            formData.phoneNumber,
+            formData.gender
+        );
+        console.log("Registration successful, navigating to OTP Register");
 
+        toast.success("Registration successful!");
+        navigate("/otpRegister", { state: { email: formData.email } });
+    } catch (error) {
+        console.error("Full error object:", error);
+
+        if (error.errors) {
+            const validKeys = Object.keys(error.errors).filter((key) => key !== "$id");
+            if (validKeys.length > 0) {
+                const firstErrorMessage = error.errors[validKeys[0]][0];
+                toast.error(firstErrorMessage);
+            } else {
+                toast.error("Unexpected error format");
+            }
+        } else {
+            toast.error(error.title || "An error occurred during registration.");
+        }
+    }
+};
+
+  
   return (
     <Box className="register-container">
       <img src={logo} alt="EasyRoomie Logo" className="otp-logo" />
@@ -88,12 +94,11 @@ const Register = () => {
           <Typography variant="h4" fontWeight="bold">Sign Up</Typography>
           <Typography variant="body2" color="textSecondary">Let's sign up to manage your own room</Typography>
           <form onSubmit={handleSubmit}>
-            {["fullName", "email", "phoneNumber", "password", "confirmPassword"].map((field, index) => (
+            {["fullName", "email", "phoneNumber"].map((field, index) => (
               <TextField
                 key={index}
                 name={field}
-                label={toTitleCase(field.replace(/([A-Z])/g, " $1").trim())}
-                type={field.includes("password") ? "password" : "text"}
+                label={field.charAt(0).toUpperCase() + field.slice(1)}
                 fullWidth
                 variant="outlined"
                 margin="normal"
@@ -103,6 +108,54 @@ const Register = () => {
                 helperText={errors[field]}
               />
             ))}
+
+            {/* Password Field */}
+            <TextField
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              value={formData.password}
+              onChange={handleChange}
+              error={!!errors.password}
+              helperText={errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {/* Confirm Password Field */}
+            <TextField
+              name="confirmPassword"
+              label="Confirm Password"
+              type={showConfirmPassword ? "text" : "password"}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {/* Gender Field */}
             <TextField
               select
               name="gender"
@@ -119,12 +172,19 @@ const Register = () => {
                 <MenuItem key={option} value={option}>{option}</MenuItem>
               ))}
             </TextField>
-            <FormControlLabel control={<Checkbox color="primary" />} label="I agree to the Terms and Policies" />
+
+            <FormControlLabel
+              control={<Checkbox color="primary" />}
+              label="I agree to the Terms and Policies"
+            />
+
             <Button type="submit" variant="contained" color="success" fullWidth>
               Create account
             </Button>
           </form>
-          <Typography className="login-text">Already have an account? <Link to="/login">Login</Link></Typography>
+          <Typography className="login-text">
+            Already have an account? <Link to="/login">Login</Link>
+          </Typography>
         </Box>
       </Paper>
     </Box>
