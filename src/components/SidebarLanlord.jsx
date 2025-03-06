@@ -11,7 +11,7 @@ const SidebarLandlord = () => {
           {/* Dashboard */}
           <li>
             <Link
-              to="landlord/dashboard"
+              to="/landlord/dashboard"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <HomeIcon className="w-6 h-6 mr-3" />
@@ -21,7 +21,7 @@ const SidebarLandlord = () => {
           {/* Manage */}
           <li>
             <Link
-              to="landlord/manage"
+              to="/landlord/manage"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <UserGroupIcon className="w-6 h-6 mr-3" />
@@ -31,7 +31,7 @@ const SidebarLandlord = () => {
           {/* Room */}
           <li>
             <Link
-              to="landlord/room"
+              to="/landlord/room"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <ClipboardListIcon className="w-6 h-6 mr-3" />
@@ -41,7 +41,7 @@ const SidebarLandlord = () => {
           {/* Feedback */}
           <li>
             <Link
-              to="landlord/feedback"
+              to="/landlord/feedback"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <ChatIcon className="w-6 h-6 mr-3" />
@@ -51,7 +51,7 @@ const SidebarLandlord = () => {
           {/* Service */}
           <li>
             <Link
-              to="landlord/service"
+              to="/landlord/service"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <DocumentTextIcon className="w-6 h-6 mr-3" />
@@ -61,7 +61,7 @@ const SidebarLandlord = () => {
           {/* Request */}
           <li>
             <Link
-              to="landlord/request"
+              to="/landlord/request"
               className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
             >
               <DocumentTextIcon className="w-6 h-6 mr-3" />

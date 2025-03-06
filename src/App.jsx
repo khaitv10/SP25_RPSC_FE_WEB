@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Layout from "./components/Layout.jsx";
 import Login from "./pages/Login/Login"; 
 import Register from "./pages/Regis/Register";
+import RegisterLandlord from "./pages/Regis/RegisterLandlord";
 import OtpRegis from "./pages/Regis/OtpRegis";
 import AppRoutes from "./routes/routes";
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/otpRegister" element={<OtpRegis />} />
+          <Route path="/register-landlord" element={<RegisterLandlord />} />
 
           {/* Các trang cần Layout */}
           <Route path="/*" element={<Layout><AppRoutes /></Layout>} />
