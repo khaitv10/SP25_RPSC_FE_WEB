@@ -4,7 +4,10 @@
     align-items: center;
     height: 100vh;
     background: #f9f9f9;
-  
+    .otp-logo {
+      width: 120px;
+      margin-bottom: 20px;
+    }
     .login-box {
       display: flex;
       background: #fff;
@@ -91,7 +94,7 @@
             margin-bottom: 15px;
   
             .forgot-password {
-              color: red;
+              color: rgb(207, 4, 4);
               text-decoration: none;
             }
           }
@@ -117,7 +120,7 @@
           font-size: 14px;
   
           a {
-            color: red;
+            color: #1769d3;
             text-decoration: none;
             font-weight: bold;
           }

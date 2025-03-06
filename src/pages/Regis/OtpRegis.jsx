@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { verifyOTP } from "../../Services/userAPI";
 import { toast } from "react-toastify";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import imageLogin from "../../assets/otttp.jpg";
+import logo from "../../assets/logoEasyRommie.png";
 import "./OtpRegis.scss";
 
 const OtpRegis = () => {
@@ -14,21 +16,20 @@ const OtpRegis = () => {
     const [showOtp, setShowOtp] = useState(false);
 
     useEffect(() => {
-        if (!location.state?.email) {
+        if (!email) {
             navigate("/register");
         }
-    }, [location, navigate]);
+    }, [email, navigate]);
 
     const handleVerify = async () => {
         if (!otp) {
             setError("Please enter the OTP");
             return;
         }
-
         try {
             await verifyOTP(email, otp);
             toast.success("OTP verified successfully!");
-            setTimeout(() => navigate("/login"), 1500); // Tránh toast bị chặn điều hướng
+            setTimeout(() => navigate("/login"), 1500);
         } catch (err) {
             const errorMessage = err.response?.data?.message || "Invalid OTP";
             setError(errorMessage);
@@ -38,19 +39,14 @@ const OtpRegis = () => {
 
     return (
         <div className="otp-container">
-            {/* Logo & Header */}
-            <div className="header">
-                <img src="/images/logo.png" alt="EasyRoomie" className="logo" />
-                <h1>EasyRoomie</h1>
-            </div>
-
+            {/* Logo góc trái */}
+            <img src={logo} alt="EasyRoomie Logo" className="otp-logo" />
+            
             <div className="otp-content">
-                {/* Form Nhập OTP */}
                 <div className="otp-box">
                     <h2>Verify OTP</h2>
                     <p>Enter your OTP sent in your email</p>
-                    
-                    <div className="otp-input-container">
+                    <div className="otp-input-wrapper">
                         <input
                             type={showOtp ? "text" : "password"}
                             placeholder="Enter Code"
@@ -61,19 +57,12 @@ const OtpRegis = () => {
                             {showOtp ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
                         </button>
                     </div>
-                    <button onClick={handleVerify} className="verify-btn">
-                        Verify
-                    </button>
-                    {error && <p className="error">{error}</p>}
-                    
-                    <p onClick={() => navigate("/login")} className="back-to-login">
-                        Back to login
-                    </p>
+                    {error && <p className="error-text">{error}</p>}
+                    <button onClick={handleVerify} className="verify-btn">Verify</button>
+                    <p onClick={() => navigate("/login")} className="back-to-login">Back to login</p>
                 </div>
-
-                {/* Hình minh họa bên phải */}
                 <div className="otp-image">
-                    <img src="/images/otp-illustration.png" alt="OTP Illustration" />
+                    <img src={imageLogin} alt="Verification Illustration" />
                 </div>
             </div>
         </div>
