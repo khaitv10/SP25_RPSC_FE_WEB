@@ -3,6 +3,7 @@ import CustomerTable from "../../../components/Admin/CustomerTable.jsx";
 import LandlordTable from "../../../components/Admin/LandlordTable.jsx";
 import getAllCustomer from "../../../Services/Admin/customerAPI";
 import getAllLandlords from "../../../Services/Admin/landlordAPI";
+import "./AccountManagement.scss"; 
 
 const AccountManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -32,12 +33,11 @@ const AccountManagement = () => {
         searchTerm,
         statusFilter
       );
-      
-      console.log("API Response (Customers):", response);
+
       if (response && response.data && Array.isArray(response.data.users)) {
         const uniqueCustomers = response.data.users.map((customer, index) => ({
           ...customer,
-          uniqueKey: customer.userId || `index-${index}`
+          uniqueKey: customer.userId || `index-${index}`,
         }));
         setCustomers(uniqueCustomers);
         setTotalCustomers(response.data.totalUser || 0);
@@ -59,12 +59,11 @@ const AccountManagement = () => {
         customersPerPage,
         searchTerm
       );
-      
-      console.log("API Response (Landlords):", response);
+
       if (response && response.data && Array.isArray(response.data.landlords)) {
         const uniqueLandlords = response.data.landlords.map((landlord, index) => ({
           ...landlord,
-          uniqueKey: landlord.userId || `index-${index}`
+          uniqueKey: landlord.userId || `index-${index}`,
         }));
         setLandlords(uniqueLandlords);
         setTotalLandlords(response.data.totalLandlords || 0);
@@ -80,19 +79,19 @@ const AccountManagement = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-5">Account Management</h1>
-      
+    <div className="account-management-container">
+      <h1 className="title">Account Management</h1>
+
       {/* Tab Navigation */}
-      <div className="flex mb-4 border-b">
+      <div className="tab-navigation">
         <button
-          className={`px-4 py-2 text-lg font-bold ${activeTab === "customers" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"}`}
+          className={activeTab === "customers" ? "active" : ""}
           onClick={() => setActiveTab("customers")}
         >
           Customers
         </button>
         <button
-          className={`ml-4 px-4 py-2 text-lg font-bold ${activeTab === "landlords" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"}`}
+          className={activeTab === "landlords" ? "active" : ""}
           onClick={() => setActiveTab("landlords")}
         >
           Landlords
@@ -101,24 +100,24 @@ const AccountManagement = () => {
 
       {/* Conditional Rendering for Tables */}
       {activeTab === "customers" ? (
-        <CustomerTable 
-          customers={customers} 
-          totalCustomers={totalCustomers} 
-          currentPage={currentPage} 
-          setCurrentPage={setCurrentPage} 
-          customersPerPage={customersPerPage} 
+        <CustomerTable
+          customers={customers}
+          totalCustomers={totalCustomers}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          customersPerPage={customersPerPage}
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
       ) : (
-        <LandlordTable 
-          landlords={landlords} 
-          totalLandlords={totalLandlords} 
-          currentPage={currentPage} 
-          setCurrentPage={setCurrentPage} 
-          landlordsPerPage={customersPerPage} 
+        <LandlordTable
+          landlords={landlords}
+          totalLandlords={totalLandlords}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          landlordsPerPage={customersPerPage}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
