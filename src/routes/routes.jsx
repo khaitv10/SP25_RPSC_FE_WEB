@@ -9,6 +9,7 @@ import AccountManagement from "../pages/Admin/AccountManagement/AccountManagemen
 import LandlordDashboard from "../pages/homePage/LandlordDashboard";
 import AdminPackage from "../pages/packageAdmin/adminPackage";
 import RegisterLandlord from "../pages/Regis/RegisterLandlord";
+import PackageContract from "../pages/PackageContract/PackageContract";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -20,7 +21,7 @@ const AppRoutes = () => {
       <Route path="/landlord/service" element={<ServiceLandlord />} />
       <Route path="/admin/account" element={<AccountManagement />} />
       <Route path="/admin/service" element={<AdminPackage />} />
-
+      <Route path="/packagecontract" element={<PackageContract />} />
 
 
       <Route
