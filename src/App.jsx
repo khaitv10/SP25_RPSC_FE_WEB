@@ -10,22 +10,21 @@ import AppRoutes from "./routes/routes";
 
 function App() {
   return (
-    <>
+    <Router>
       <ToastContainer position="top-right" autoClose={3000} />
-      <Router>
-        <Routes>
-          {/* Trang không cần Layout */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/otpRegister" element={<OtpRegis />} />
-          <Route path="/register-landlord" element={<RegisterLandlord />} />
+      <Routes>
+        {/* Trang không cần Layout */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/otpRegister" element={<OtpRegis />} />
+        <Route path="/register-landlord" element={<RegisterLandlord />} />
 
-          {/* Các trang cần Layout */}
-          <Route path="/*" element={<Layout><AppRoutes /></Layout>} />
-        </Routes>
-      </Router>
-    </>
+        {/* Các trang cần Layout */}
+        <Route path="/*" element={<Layout><AppRoutes /></Layout>} />
+      </Routes>
+    </Router>
   );
 }
+
 
 export default App;

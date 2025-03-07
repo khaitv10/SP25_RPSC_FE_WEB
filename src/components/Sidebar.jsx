@@ -14,10 +14,10 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", path: "/admin/dashboard", icon: HomeIcon },
-    { name: "Package", path: "/admin/package", icon: ArchiveIcon },
+    { name: "Package", path: "/admin/service", icon: ArchiveIcon },
     { name: "Manage", path: "/admin/account", icon: UserGroupIcon },
     { name: "Contract", path: "/admin/contract", icon: ClipboardListIcon },
-    { name: "Feedback", path: "/admin/feedback", icon: ChatIcon },
+    { name: "Register", path: "/admin/regis", icon: ChatIcon },
     { name: "Request", path: "/admin/request", icon: DocumentTextIcon },
   ];
 

@@ -69,3 +69,43 @@ export const registerLandlord = async (email, companyName, numberRoom, licenseNu
         throw error.response ? error.response.data : new Error("An error occurred during landlord registration");
     }
 };
+
+export const getLandlordRegistrations = async (pageIndex = 0, pageSize = 0, searchQuery = "") => {
+    try {
+        const response = await axiosClient.get(`/api/user/get-landlord-regis`, {
+            params: {
+                pageIndex,
+                pageSize,
+                searchQuery
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error("An error occurred while fetching landlord registrations");
+    }
+};
+
+
+export const getLandlordById = async (landlordId) => {
+    try {
+      const response = await axiosClient.get(`/api/user/get-landlord-by-id`, {
+        params: { landlordId },
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response ? error.response.data : new Error("Error fetching landlord detail");
+    }
+  };
+  
+  export const updateLandlordStatus = async (landlordId, isApproved) => {
+    try {
+        const response = await axiosClient.put(`/api/user/Update-Landlord-Status`, null, {
+            params: { landlordId, isApproved },
+        });
+
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error("An error occurred while updating landlord status");
+    }
+};

@@ -66,8 +66,8 @@ const AdminPackage = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "1" ? "green" : "red"}>
-          {status === "1" ? "Active" : "Inactive"}
+        <Tag color={status === "Active" ? "green" : "red"}>
+          {status === "Active" ? "Active" : "Inactive"}
         </Tag>
       ),
     },

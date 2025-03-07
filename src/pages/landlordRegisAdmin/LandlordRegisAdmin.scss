@@ -1,0 +1,47 @@
+.landlord-admin {
+    padding: 20px;
+  
+    .landlord-card {
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      width: 100%;
+      background: #fff;
+    }
+  
+    .landlord-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+  
+    .search-input {
+      width: 300px;
+    }
+  
+    .ant-table {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  
+    .status-tag {
+      &.Pending {
+        color: #faad14;
+        background-color: #fffbe6;
+        border-color: #ffe58f;
+      }
+  
+      &.Approved {
+        color: #52c41a;
+        background-color: #f6ffed;
+        border-color: #b7eb8f;
+      }
+  
+      &.Rejected {
+        color: #ff4d4f;
+        background-color: #fff2f0;
+        border-color: #ffccc7;
+      }
+    }
+  }
+  
