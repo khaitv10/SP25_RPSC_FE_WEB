@@ -3,13 +3,13 @@ import { FaEye, FaSearch } from "react-icons/fa";
 import PropTypes from "prop-types";
 import CustomerModal from "./CustomerModal";
 
-const CustomerTable = ({ 
-  customers, 
-  totalCustomers, 
-  currentPage, 
-  setCurrentPage, 
-  customersPerPage, 
-  selectedStatus, 
+const CustomerTable = ({
+  customers,
+  totalCustomers,
+  currentPage,
+  setCurrentPage,
+  customersPerPage,
+  selectedStatus,
   setSelectedStatus,
   searchTerm,
   setSearchTerm
@@ -79,23 +79,40 @@ const CustomerTable = ({
                   <td className="p-2">{customer.email}</td>
                   <td className="p-2">
                     <span
-                      className={`px-3 py-1 rounded-full ${
-                        customer.userStatus === "Active"
+                      className={`px-3 py-1 rounded-full ${customer.userStatus === "Active"
                           ? "bg-green-300 text-green-800"
                           : "bg-red-200 text-red-800"
-                      }`}
+                        }`}
                     >
                       {customer.userStatus}
                     </span>
                   </td>
                   <td className="p-2 text-center">
                     <button
-                      className="flex items-center gap-2 text-blue-300 hover:text-blue-500 transition"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#2563eb',
+                        transition: 'transform 0.2s ease, color 0.2s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.2)';
+                        e.currentTarget.style.color = '#1e40af';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.color = '#2563eb';
+                      }}
                       onClick={() => handleViewDetails(customer)}
                     >
                       <span>Details</span>
                       <FaEye size={20} />
                     </button>
+
                   </td>
                 </tr>
               ))
@@ -140,9 +157,9 @@ const CustomerTable = ({
       </div>
 
       {/* Modal Component */}
-      <CustomerModal 
-        isOpen={isModalOpen} 
-        customer={selectedCustomer} 
+      <CustomerModal
+        isOpen={isModalOpen}
+        customer={selectedCustomer}
         onClose={() => setIsModalOpen(false)}
       />
     </div>
