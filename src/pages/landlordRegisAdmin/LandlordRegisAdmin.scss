@@ -1,47 +1,77 @@
 .landlord-admin {
+  padding: 20px;
+  
+  .landlord-card {
     padding: 20px;
-  
-    .landlord-card {
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      width: 100%;
-      background: #fff;
-    }
-  
-    .landlord-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-  
-    .search-input {
-      width: 300px;
-    }
-  
-    .ant-table {
-      border-radius: 8px;
-      overflow: hidden;
-    }
-  
-    .status-tag {
-      &.Pending {
-        color: #faad14;
-        background-color: #fffbe6;
-        border-color: #ffe58f;
-      }
-  
-      &.Approved {
-        color: #52c41a;
-        background-color: #f6ffed;
-        border-color: #b7eb8f;
-      }
-  
-      &.Rejected {
-        color: #ff4d4f;
-        background-color: #fff2f0;
-        border-color: #ffccc7;
-      }
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    width: 100%;
+    background: #fff;
+  }
+
+  .landlord-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .search-input {
+    width: 300px;
+    border-radius: 8px;
+    border: 1px solid #4a5568;
+    padding: 8px;
+    transition: all 0.3s;
+
+    &:focus {
+      border-color: #2d3748;
+      box-shadow: 0 0 5px rgba(74, 85, 104, 0.5);
     }
   }
-  
+
+  .ant-table {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ant-table-thead > tr > th {
+    background: #4a5568;
+    color: white;
+    font-size: 17px;
+    text-align: center;
+  }
+
+  .ant-table-tbody > tr > td {
+    text-align: center;
+  }
+
+  .status-tag {
+    &.Pending {
+      color: #faad14;
+      background-color: #fffbe6;
+      border-color: #ffe58f;
+    }
+
+    &.Approved {
+      color: #52c41a;
+      background-color: #f6ffed;
+      border-color: #b7eb8f;
+    }
+
+    &.Rejected {
+      color: #ff4d4f;
+      background-color: #fff2f0;
+      border-color: #ffccc7;
+    }
+  }
+
+  .view-button {
+    background: #4a5568;
+    color: white;
+    border: none;
+    transition: 0.3s;
+
+    &:hover {
+      background: #2d3748;
+    }
+  }
+}
