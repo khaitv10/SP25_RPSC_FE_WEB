@@ -1,23 +1,57 @@
 .admin-package {
-  padding: 20px;
-  
+  padding: 24px;
+  background-color: #f9f9f9;
+
   .package-card {
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background: white;
   }
 
   .package-actions {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    align-items: center;
+    margin-bottom: 24px;
   }
 
   .search-input {
-    width: 300px;
+    width: 350px;
+    font-size: 16px;
+    height: 40px;
   }
 
   .ant-table {
-    border-radius: 8px;
-    overflow: hidden;
+    border-radius: 10px;
+    font-size: 16px; // Chữ to hơn
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .ant-table-thead > tr > th {
+    background: #4a5568;
+    color: white;
+    font-size: 17px;
+    text-align: center;
+  }
+
+  .ant-table-tbody > tr > td {
+    font-size: 18px;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .ant-tag {
+    font-size: 14px;
+    padding: 4px 10px;
+    font-weight: bold;
+  }
+
+  .ant-btn {
+    font-size: 16px;
+    height: 40px;
+    display: flex;
+    align-items: center;
   }
 }

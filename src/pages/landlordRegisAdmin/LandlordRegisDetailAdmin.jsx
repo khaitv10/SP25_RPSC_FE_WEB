@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Typography, Descriptions, Image, Button, Spin, message } from "antd";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { LeftOutlined, RightOutlined, CheckCircleOutlined, CloseCircleOutlined, FileTextOutlined } from "@ant-design/icons";
 import "./LandlordRegisDetailAdmin.scss";
 import { getLandlordById, updateLandlordStatus } from "../../Services/userAPI";
 import { toast } from "react-toastify";
+import { BoxPlotOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -58,10 +59,22 @@ const LandlordRegisDetailAdmin = () => {
   return (
     <div className="landlord-detail-container">
       <Card className="landlord-card">
-        <Title level={2} className="title">Request Management</Title>
+      <Button 
+    type="default" 
+    className="back-button"
+    onClick={() => navigate("/admin/regis")}
+  >
+    <LeftOutlined /> Back
+  </Button>
+      <Title level={2} className="title">
+  <span role="img" aria-label="notebook" style={{ marginRight: 10 }}>📝</span> 
+  Service Package Management
+</Title>
+
+
         <div className="content-wrapper">
           <div className="left-section">
-            <Descriptions bordered column={1} className="details">
+          <Descriptions bordered column={1} className="details">
               <Descriptions.Item label="Company Name">{landlord.companyName}</Descriptions.Item>
               <Descriptions.Item label="Number of Rooms">{landlord.numberRoom}</Descriptions.Item>
               <Descriptions.Item label="License Number">{landlord.licenseNumber}</Descriptions.Item>
@@ -69,11 +82,14 @@ const LandlordRegisDetailAdmin = () => {
               <Descriptions.Item label="Phone">{landlord.phoneNumber}</Descriptions.Item>
               <Descriptions.Item label="Email">{landlord.email}</Descriptions.Item>
               <Descriptions.Item label="Gender">{landlord.gender}</Descriptions.Item>
-              <Descriptions.Item label="Status" className={`status ${landlord.status.toLowerCase()}`}>{landlord.status}</Descriptions.Item>
+              <Descriptions.Item label="Status" className={`status ${landlord.status.toLowerCase()}`}>
+                {landlord.status}
+              </Descriptions.Item>
               <Descriptions.Item label="Created Date">
                 {new Date(landlord.createdDate).toLocaleString()}
               </Descriptions.Item>
             </Descriptions>
+
           </div>
           <div className="right-section">
             {landlord?.businessImageUrls?.length > 0 ? (
@@ -89,9 +105,22 @@ const LandlordRegisDetailAdmin = () => {
         </div>
 
         <div className="button-group">
-          <Button type="primary" className="approve" onClick={() => handleUpdateStatus(landlordId, true)}>Approve</Button>
-          <Button danger className="reject" onClick={() => handleUpdateStatus(landlordId, false)}>Reject</Button>
+          <Button 
+            type="primary" 
+            className="approve"
+            onClick={() => handleUpdateStatus(landlordId, true)}
+          >
+            <CheckCircleOutlined /> Approve
+          </Button>
+          <Button 
+            danger 
+            className="reject"
+            onClick={() => handleUpdateStatus(landlordId, false)}
+          >
+            <CloseCircleOutlined /> Reject
+          </Button>
         </div>
+
       </Card>
     </div>
   );

@@ -65,7 +65,7 @@ const Login = () => {
 
           <form onSubmit={handleSubmit}>
             {/* Phone Number Input */}
-            <label>Phone</label>
+            <label>Phone or email</label>
             <input
               type="text"
               value={phone}
