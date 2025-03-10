@@ -1,4 +1,5 @@
     import axiosClient from "./axios/config";
+    import { toast } from "react-toastify";
 
     export const login = async (phoneNumber, password) => {
     try {
@@ -53,7 +54,6 @@ export const registerLandlord = async (email, companyName, numberRoom, licenseNu
         formData.append("BankName", bankName);
         formData.append("BankNumber", bankNumber);
         
-        // Thêm từng ảnh vào FormData
         workshopImages.forEach((image) => {
             formData.append("WorkshopImages", image);
         });
@@ -66,7 +66,9 @@ export const registerLandlord = async (email, companyName, numberRoom, licenseNu
 
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : new Error("An error occurred during landlord registration");
+        const errorMessage = error.response?.data?.message || "An error occurred during landlord registration";
+        toast.error(`Registration failed: ${errorMessage}`); // 🔥 Hiển thị lỗi trên Toast
+        throw error.response ? error.response.data : new Error(errorMessage);
     }
 };
 

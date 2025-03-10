@@ -14,6 +14,7 @@ import RegisterLandlord from "../pages/Regis/RegisterLandlord";
 import PackageContract from "../pages/PackageContract/PackageContract";
 import LandlordRegisAdmin from "../pages/landlordRegisAdmin/LandlordRegisAdmin";
 import LandlordRegisDetailAdmin from "../pages/landlordRegisAdmin/LandlordRegisDetailAdmin";
+import AdminPackageDetail from "../pages/packageAdmin/adminPackageDetail";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -26,6 +27,7 @@ const AppRoutes = () => {
       <Route path="/admin/account" element={<AccountManagement />} />
       <Route path="/admin/request" element={<RequestManagement />} />
       <Route path="/admin/request/room-type/:roomTypeId" element={<RoomTypeDetail />} />
+      <Route path="/admin/package/:packageId" element={<AdminPackageDetail />} />
 
       <Route path="/admin/service" element={<AdminPackage />} />
       <Route path="/packagecontract" element={<PackageContract />} />

@@ -59,11 +59,15 @@ const RegisterLandlord = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
         if (!email) {
             toast.error("Email is missing. Please try again.");
             return;
         }
-        if (!validateForm()) return toast.error("Please fill all required fields.");
+        if (!validateForm()) {
+            toast.error("Please fill all required fields.");
+            return;
+        }
     
         try {
             await registerLandlord(
@@ -79,7 +83,7 @@ const RegisterLandlord = () => {
             setTimeout(() => navigate("/login"), 2000);
         } catch (error) {
             setErrors(error.response?.data?.errors || {});
-            toast.error(`Registration failed: ${error.response?.data?.message || "Unknown error"}`);
+            // Lỗi đã được xử lý trong `registerLandlord`, không cần toast.error nữa
         }
     };
     
@@ -114,7 +118,7 @@ const RegisterLandlord = () => {
                                 ) : null
                             ))}
 
-                        <label>Upload Workshop Images</label>
+                        <label>Upload Businees Images</label>
                         <input type="file" multiple onChange={handleFileChange} className="input-file" />
                         {errors.workshopImages && <p className="error-text">{errors.workshopImages}</p>}
                         <div className="image-preview">
