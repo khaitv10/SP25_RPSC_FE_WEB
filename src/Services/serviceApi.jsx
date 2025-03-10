@@ -34,3 +34,28 @@ export const getServicePackageByLandlord = async () => {
 };
 
 
+export const updatePrice = async (priceId, newPrice) => {
+  try {
+      if (!priceId || typeof newPrice !== "number" || newPrice <= 0) {
+          throw new Error("Invalid priceId or newPrice must be a positive number.");
+      }
+
+      // Gửi request cập nhật giá
+      const response = await axiosClient.put(
+          `/api/packageservice/update-price/${priceId}`,
+          { newPrice }, // Dữ liệu gửi trong body
+          {
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          }
+      );
+
+      return response.data;
+  } catch (error) {
+      // Xử lý lỗi trả về từ API
+      console.error("Error updating price:", error);
+
+      throw error.response?.data?.message || "An error occurred while updating price.";
+  }
+};

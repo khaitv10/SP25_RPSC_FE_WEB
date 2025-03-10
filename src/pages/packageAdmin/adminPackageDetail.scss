@@ -1,0 +1,95 @@
+.admin-package-detail {
+    padding: 40px; // Tăng khoảng cách viền để trang thông thoáng hơn
+    display: flex;
+    justify-content: center;
+    background-color: #f4f6f9; // Nền xám nhẹ để nổi bật nội dung
+  
+    .package-detail-card {
+      width: 100%;
+      max-width: 1600px; // Tăng kích thước tối đa để bảng không bị chật
+      padding: 40px; // Tăng padding cho nội dung thoáng hơn
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      background: white;
+  
+      .package-actions {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+      }
+  
+      .ant-btn {
+        background-color: #1890ff;
+        color: white;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+        &:hover {
+          background-color: #40a9ff;
+          border-color: #40a9ff;
+          transform: scale(1.05);
+        }
+      }
+  
+      .ant-descriptions {
+        margin-bottom: 30px;
+  
+        .ant-descriptions-item-label {
+          font-weight: bold;
+          color: #333;
+          font-size: 18px;
+        }
+  
+        .ant-descriptions-item-content {
+          font-size: 18px;
+          color: #555;
+        }
+      }
+  
+      .ant-table {
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  
+        .ant-table-thead > tr > th {
+          background-color: #4a5568;
+          color: white;
+          font-weight: bold;
+          font-size: 18px;
+          text-align: center;
+          padding: 15px;
+        }
+  
+        .ant-table-tbody > tr > td {
+          font-size: 16px;
+          vertical-align: middle;
+          text-align: center;
+          padding: 14px;
+        }
+  
+        .ant-table-tbody > tr:nth-child(odd) {
+          background-color: #f9f9f9;
+        }
+  
+        .ant-table-tbody > tr:hover {
+          background-color: #e6f7ff;
+          transition: 0.3s;
+        }
+      }
+  
+      .ant-tag {
+        display: inline-block;
+        padding: 5px 12px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 6px;
+      }
+    }
+  }
+  

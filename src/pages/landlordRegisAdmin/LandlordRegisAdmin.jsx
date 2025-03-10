@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getLandlordRegistrations } from "../../Services/userAPI"
+import { getLandlordRegistrations } from "../../Services/userAPI";
 import { useNavigate } from "react-router-dom";
 import { Table, Button, Tag, Input, Card, Space, Typography } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
@@ -28,7 +28,7 @@ const LandlordRegisAdmin = () => {
         setTotalUser(data.data.totalUser);
       }
     } catch (error) {
-      //console.error("Error fetching landlords:", error);
+      console.error("Error fetching landlords:", error);
     }
     setLoading(false);
   };
@@ -72,30 +72,31 @@ const LandlordRegisAdmin = () => {
       render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm"),
     },
     {
-  title: "Action",
-  key: "action",
-  render: (record) => (
-    <Space>
-      <Button
-        icon={<EyeOutlined />}
-        onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
-      >
-        Xem chi tiết
-      </Button>
-    </Space>
-  ),
-},
+      title: "Action",
+      key: "action",
+      render: (record) => (
+        <Space>
+          <Button
+            className="view-button"
+            icon={<EyeOutlined />}
+            onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
+          >
+            Xem chi tiết
+          </Button>
+        </Space>
+      ),
+    },
   ];
 
   return (
     <div className="landlord-admin">
       <Card className="landlord-card">
-        <Title level={2}>Landlord Registrations</Title>
-        <p>Total Users: {totalUser}</p>
+        <Title level={2} style={{ color: "#4a5568" }}>🏠 Landlord Registrations</Title>
+        <p style={{ fontSize: "16px", fontWeight: "bold" }}>Total Users: {totalUser}</p>
         <Space className="landlord-actions">
           <Input
             className="search-input"
-            placeholder="Search by name or email"
+            placeholder="🔍 Search by name or email"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
