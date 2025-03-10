@@ -1,0 +1,104 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    padding: 20px;
+
+    .register-box {
+        display: flex;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 950px; /* Giảm chiều rộng tổng thể */
+        width: 100%;
+        align-items: center;
+
+        .register-left {
+            flex: 1; /* Cho phần nhập form chiếm nhiều diện tích hơn */
+            padding: 40px;
+            display: flex;
+            min-width: 50%;
+            flex-direction: column;
+            justify-content: center;
+
+            h2 {
+                font-size: 30px;
+                color: #2d3748;
+                margin-bottom: 10px;
+            }
+
+            p {
+                color: #718096;
+                margin-bottom: 20px;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+
+                label {
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                    color: #444;
+                }
+
+                input {
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 15px;
+                    border: 2px solid #e2e8f0;
+                    border-radius: 10px;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
+                    height: 45px;
+
+                    &:focus {
+                        border-color: #38b2ac;
+                        box-shadow: 0 0 6px rgba(56, 178, 172, 0.5);
+                    }
+                }
+
+                .register-btn {
+                    padding: 12px;
+                    background: #38b2ac;
+                    color: white;
+                    font-size: 18px;
+                    font-weight: bold;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    transition: 0.3s;
+
+                    &:hover {
+                        background: #2c7a7b;
+                        transform: scale(1.05);
+                    }
+                }
+            }
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%; /* Đảm bảo chiếm đủ không gian */
+            justify-content: center; 
+            align-items: center;
+            padding: 10px;
+        }
+        
+        
+        
+        .image-preview img {
+            width: 100px !important; 
+            height: 100px !important;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        
+    }
+}

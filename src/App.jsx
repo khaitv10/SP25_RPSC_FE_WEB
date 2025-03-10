@@ -1,29 +1,30 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
-import Dashboard from "./pages/Dashboard";
-import Header from "./components/Header";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Layout from "./components/Layout.jsx";
+import Login from "./pages/Login/Login"; 
+import Register from "./pages/Regis/Register";
+import RegisterLandlord from "./pages/Regis/RegisterLandlord";
+import OtpRegis from "./pages/Regis/OtpRegis";
+import AppRoutes from "./routes/routes";
 
 function App() {
   return (
     <Router>
-      <div className="flex flex-col h-screen">
-        {/* Header component */}
-        <Header />
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Routes>
+        {/* Trang không cần Layout */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/otpRegister" element={<OtpRegis />} />
+        <Route path="/register-landlord" element={<RegisterLandlord />} />
 
-        <div className="flex flex-1">
-          {/* Sidebar component */}
-          <Sidebar />
-
-          <div className="flex-1 p-4 bg-gray-100 min-h-screen">
-            {/* Define Routes here */}
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-            </Routes>
-          </div>
-        </div>
-      </div>
+        {/* Các trang cần Layout */}
+        <Route path="/*" element={<Layout><AppRoutes /></Layout>} />
+      </Routes>
     </Router>
   );
 }
+
 
 export default App;

@@ -1,0 +1,61 @@
+.package-landlord {
+  padding: 20px;
+  background: linear-gradient(to right, #f8f9fa, #e3eaf4);
+  min-height: 100vh;
+
+  .title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #333;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+  }
+
+  .package-card {
+    border-radius: 16px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #4a00e0, #8e2de2);
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-weight: bold;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .description {
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #555;
+  }
+
+  .services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .service-chip {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    font-weight: bold;
+    border-radius: 50px;
+    padding: 5px 12px;
+  }
+}

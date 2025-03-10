@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logoEasyRommie.png";
 import profilePic from "../assets/avatar.jpg";
 
-const Header = () => {
+const HeaderLandlord = () => {
   const navigate = useNavigate();
-  const [userName] = useState("Nguyen Xuan Tien");
-  const [userRole] = useState("Super123 Admin");
+  const [userName] = useState("Nguyen Vi Lord");
+  const [userRole] = useState("Landlord");
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
@@ -21,7 +21,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between items-center bg-white shadow-md relative">
+    <header className="flex justify-between items-center bg-white shadow-md p-4 relative">
       {/* Logo */}
       <div className="flex items-center">
         <img src={logo} alt="EasyRoomie Logo" className="h-13 w-auto" />
@@ -58,4 +58,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderLandlord;
