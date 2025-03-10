@@ -3,7 +3,9 @@ import CustomerTable from "../../../components/Admin/CustomerTable.jsx";
 import LandlordTable from "../../../components/Admin/LandlordTable.jsx";
 import getAllCustomer from "../../../Services/Admin/customerAPI";
 import getAllLandlords from "../../../Services/Admin/landlordAPI";
-import "./AccountManagement.scss"; 
+import "./AccountManagement.scss";
+import { people } from "ionicons/icons";
+import { IonIcon } from "@ionic/react";
 
 const AccountManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -11,7 +13,7 @@ const AccountManagement = () => {
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [totalLandlords, setTotalLandlords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const customersPerPage = 10;
+  const customersPerPage = 2;
   const [selectedStatus, setSelectedStatus] = useState("Status");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("customers");
@@ -54,33 +56,39 @@ const AccountManagement = () => {
 
   const fetchLandlords = async () => {
     try {
-      const response = await getAllLandlords.getLandlords(
-        currentPage,
-        customersPerPage,
-        searchTerm
-      );
+        const statusFilter = selectedStatus === "Status" ? "" : selectedStatus;
+        const response = await getAllLandlords.getLandlords(
+            currentPage,
+            customersPerPage, 
+            searchTerm,
+            statusFilter
+        );
 
-      if (response && response.data && Array.isArray(response.data.landlords)) {
-        const uniqueLandlords = response.data.landlords.map((landlord, index) => ({
-          ...landlord,
-          uniqueKey: landlord.userId || `index-${index}`,
-        }));
-        setLandlords(uniqueLandlords);
-        setTotalLandlords(response.data.totalLandlords || 0);
-      } else {
+        if (response && response.data) {
+            const uniqueLandlords = response.data.landlords.map((landlord, index) => ({
+                ...landlord,
+                uniqueKey: landlord.userId || `index-${index}`,
+            }));
+            setLandlords(uniqueLandlords);
+            setTotalLandlords(response.data.totalUser || response.data.totalLandlords || 0);
+        } else {
+            setLandlords([]);
+            setTotalLandlords(0);
+        }
+    } catch (error) {
+        console.error("Failed to fetch landlords:", error);
         setLandlords([]);
         setTotalLandlords(0);
-      }
-    } catch (error) {
-      console.error("Failed to fetch landlords:", error);
-      setLandlords([]);
-      setTotalLandlords(0);
     }
-  };
+};
+
 
   return (
     <div className="account-management-container">
-      <h1 className="title">Account Management</h1>
+      <h1 className="title">
+        <IonIcon icon={people} className="icon" />
+        Account Management
+      </h1>
 
       {/* Tab Navigation */}
       <div className="tab-navigation">
@@ -118,6 +126,8 @@ const AccountManagement = () => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           landlordsPerPage={customersPerPage}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
