@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Typography, Descriptions, Image, Button, Spin, message } from "antd";
-import { LeftOutlined, RightOutlined, CheckCircleOutlined, CloseCircleOutlined, FileTextOutlined } from "@ant-design/icons";
-import "./LandlordRegisDetailAdmin.scss";
+import { LeftOutlined, RightOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { getLandlordById, updateLandlordStatus } from "../../Services/userAPI";
 import { toast } from "react-toastify";
-import { BoxPlotOutlined } from "@ant-design/icons";
+import "./LandlordRegisDetailAdmin.scss";
+import img from "../../assets/image-login.png"
 
 const { Title } = Typography;
 
@@ -40,15 +40,15 @@ const LandlordRegisDetailAdmin = () => {
       setLoading(true);
       const response = await updateLandlordStatus(userId, isApproved);
       if (response.isSuccess) {
-        toast.success("Bạn đã duyệt thành công!");
+        toast.success("Status updated successfully!");
         setTimeout(() => {
           navigate("/admin/regis");
         }, 1500);
       } else {
-        toast.error("Cập nhật thất bại!");
+        toast.error("Update failed!");
       }
     } catch (error) {
-      toast.error(error.message || "Lỗi khi cập nhật trạng thái!");
+      toast.error(error.message || "Error updating status!");
     } finally {
       setLoading(false);
     }
@@ -59,44 +59,57 @@ const LandlordRegisDetailAdmin = () => {
   return (
     <div className="landlord-detail-container">
       <Card className="landlord-card">
-      <Button 
-    type="default" 
-    className="back-button"
-    onClick={() => navigate("/admin/regis")}
-  >
-    <LeftOutlined /> Back
-  </Button>
-      <Title level={2} className="title">
-  <span role="img" aria-label="notebook" style={{ marginRight: 10 }}>📝</span> 
-  Service Package Management
-</Title>
+        <Button 
+          type="default" 
+          className="back-button"
+          onClick={() => navigate("/admin/regis")}
+        >
+          <LeftOutlined /> Back
+        </Button>
 
+        <Title level={2} className="title">Landlord Registration Detail</Title>
 
         <div className="content-wrapper">
+          {/* Left Section - Details */}
           <div className="left-section">
-          <Descriptions bordered column={1} className="details">
-              <Descriptions.Item label="Company Name">{landlord.companyName}</Descriptions.Item>
-              <Descriptions.Item label="Number of Rooms">{landlord.numberRoom}</Descriptions.Item>
-              <Descriptions.Item label="License Number">{landlord.licenseNumber}</Descriptions.Item>
-              <Descriptions.Item label="Landlord Name">{landlord.fullName}</Descriptions.Item>
-              <Descriptions.Item label="Phone">{landlord.phoneNumber}</Descriptions.Item>
-              <Descriptions.Item label="Email">{landlord.email}</Descriptions.Item>
-              <Descriptions.Item label="Gender">{landlord.gender}</Descriptions.Item>
-              <Descriptions.Item label="Status" className={`status ${landlord.status.toLowerCase()}`}>
-                {landlord.status}
-              </Descriptions.Item>
-              <Descriptions.Item label="Created Date">
+            <Descriptions bordered column={1} className="details">
+              <Descriptions.Item label={<strong>Company Name</strong>}>{landlord.companyName}</Descriptions.Item>
+              <Descriptions.Item label={<strong>Number of Rooms</strong>}>{landlord.numberRoom}</Descriptions.Item>
+              <Descriptions.Item label={<strong>License Number</strong>}>{landlord.licenseNumber}</Descriptions.Item>
+              <Descriptions.Item label={<strong>Landlord Name</strong>}>{landlord.fullName}</Descriptions.Item>
+              <Descriptions.Item label={<strong>Phone</strong>}>{landlord.phoneNumber}</Descriptions.Item>
+              <Descriptions.Item label={<strong>Email</strong>}>{landlord.email}</Descriptions.Item>
+              <Descriptions.Item label={<strong>Gender</strong>}>{landlord.gender}</Descriptions.Item>
+              <Descriptions.Item label={<strong>Created Date</strong>}>
                 {new Date(landlord.createdDate).toLocaleString()}
               </Descriptions.Item>
+              <Descriptions.Item label={<strong>Status</strong>} className={`status ${landlord.status.toLowerCase()}`}>
+                {landlord.status}
+              </Descriptions.Item>
             </Descriptions>
-
           </div>
+
+          {/* Right Section - Image Gallery */}
           <div className="right-section">
+            <Title level={4} className="image-title">Business License Images</Title>
             {landlord?.businessImageUrls?.length > 0 ? (
               <div className="image-container">
-                <Button icon={<LeftOutlined />} onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? landlord.businessImageUrls.length - 1 : prev - 1))} className="image-nav-button left" />
-                <Image src={landlord.businessImageUrls[currentImageIndex]} width={350} className="business-image" />
-                <Button icon={<RightOutlined />} onClick={() => setCurrentImageIndex((prev) => (prev === landlord.businessImageUrls.length - 1 ? 0 : prev + 1))} className="image-nav-button right" />
+                <Button 
+                  icon={<LeftOutlined />} 
+                  onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? landlord.businessImageUrls.length - 1 : prev - 1))}
+                  className="image-nav-button left"
+                />
+                <Image 
+                  src={landlord.businessImageUrls[currentImageIndex]} 
+                  width={350} 
+                  className="business-image" 
+                  preview={false}
+                />
+                <Button 
+                  icon={<RightOutlined />} 
+                  onClick={() => setCurrentImageIndex((prev) => (prev === landlord.businessImageUrls.length - 1 ? 0 : prev + 1))}
+                  className="image-nav-button right"
+                />
               </div>
             ) : (
               <span className="no-image">No image available</span>
@@ -104,23 +117,21 @@ const LandlordRegisDetailAdmin = () => {
           </div>
         </div>
 
+        {/* Approve / Reject Buttons */}
         <div className="button-group">
           <Button 
-            type="primary" 
             className="approve"
             onClick={() => handleUpdateStatus(landlordId, true)}
           >
             <CheckCircleOutlined /> Approve
           </Button>
           <Button 
-            danger 
             className="reject"
             onClick={() => handleUpdateStatus(landlordId, false)}
           >
             <CloseCircleOutlined /> Reject
           </Button>
         </div>
-
       </Card>
     </div>
   );

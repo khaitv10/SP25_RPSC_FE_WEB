@@ -19,23 +19,28 @@ import ContractManagement from "../pages/Admin/ContractManagement/ContractManage
 const AppRoutes = () => {
   return (
     <Routes>
+
+      {/* user */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/register-landlord" element={<RegisterLandlord />} />
       <Route path="/otpRegister" element={<OtpRegis />} />
-      <Route path="/landlord/service" element={<ServiceLandlord />} />
+
+      {/* admin */}
       <Route path="/admin/account" element={<AccountManagement />} />
       <Route path="/admin/request" element={<RequestManagement />} />
       <Route path="/admin/request/room-type/:roomTypeId" element={<RoomTypeDetail />} />
       <Route path="/admin/package/:packageId" element={<AdminPackageDetail />} />
-
       <Route path="/admin/service" element={<AdminPackage />} />
       <Route path="/packagecontract" element={<PackageContract />} />
       <Route path="/admin/contract" element={<ContractManagement />} />
-      <Route path="/admin/service" element={<AdminPackage />} />
       <Route path="/admin/regis" element={<LandlordRegisAdmin />} />
+
+      {/* landlord */}
+      <Route path="/register-landlord" element={<RegisterLandlord />} />
+      <Route path="/landlord/service" element={<ServiceLandlord />} />
       <Route path="/landlord-detail/:landlordId" element={<LandlordRegisDetailAdmin />} />
+      <Route path="/packagecontract" element={<PackageContract />} />
 
 
       <Route

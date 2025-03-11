@@ -50,26 +50,18 @@ const LandlordRegisAdmin = () => {
       key: "phoneNumber",
     },
     {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm"),
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
       render: (status) => (
         <Tag color={status === "Pending" ? "orange" : "green"}>{status}</Tag>
       ),
-    },
-    {
-      title: "User Status",
-      dataIndex: "userStatus",
-      key: "userStatus",
-      render: (userStatus) => (
-        <Tag color={userStatus === "Pending" ? "red" : "blue"}>{userStatus}</Tag>
-      ),
-    },
-    {
-      title: "Created Date",
-      dataIndex: "createdDate",
-      key: "createdDate",
-      render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: "Action",
@@ -81,7 +73,6 @@ const LandlordRegisAdmin = () => {
             icon={<EyeOutlined />}
             onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
           >
-            Xem chi tiết
           </Button>
         </Space>
       ),
@@ -91,16 +82,8 @@ const LandlordRegisAdmin = () => {
   return (
     <div className="landlord-admin">
       <Card className="landlord-card">
-        <Title level={2} style={{ color: "#4a5568" }}>🏠 Landlord Registrations</Title>
-        <p style={{ fontSize: "16px", fontWeight: "bold" }}>Total Users: {totalUser}</p>
-        <Space className="landlord-actions">
-          <Input
-            className="search-input"
-            placeholder="🔍 Search by name or email"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </Space>
+        <Title level={2} style={{ color: "black" }}>🏠 Landlord Registrations</Title>
+        <p style={{ fontSize: "16px", fontWeight: "bold" }}>Total New Registration: {totalUser}</p>
         <Table
           dataSource={landlords}
           columns={columns}

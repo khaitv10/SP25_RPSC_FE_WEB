@@ -1,37 +1,43 @@
 .account-management-container {
-    padding: 24px;
-    background-color: #f3f4f6;
-    min-height: 100vh;
-  
-    .title {
-      font-size: 2rem;
+  padding: 24px;
+  background-color: #f3f4f6;
+  min-height: 100vh;
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  .icon{
+    color: #226003;
+  }
+
+  .tab-navigation {
+    display: flex;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+
+    button {
+      padding: 10px 16px;
+      font-size: 1rem;
       font-weight: bold;
-      margin-bottom: 20px;
-    }
-  
-    .tab-navigation {
-      display: flex;
-      margin-bottom: 16px;
-      border-bottom: 2px solid #e5e7eb;
-  
-      button {
-        padding: 10px 16px;
-        font-size: 1rem;
-        font-weight: bold;
-        color: #6b7280;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-  
-        &.active {
-          border-bottom: 3px solid #2563eb;
-          color: #2563eb;
-        }
-  
-        &:hover {
-          color: #1e40af;
-        }
+      color: #6b7280;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+
+      &.active {
+        border-bottom: 3px solid #2563eb;
+        color: #2563eb;
+      }
+
+      &:hover {
+        color: #1e40af;
       }
     }
   }
-  
+}

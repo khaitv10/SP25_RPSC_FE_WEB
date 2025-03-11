@@ -1,7 +1,7 @@
 import axiosClient from "../axios/config";
 
 const getAllLandlord = {
-  getCustomers: async (pageIndex = 1, pageSize = 10, searchQuery = "", status = "") => {
+  getLandlords: async (pageIndex = 1, pageSize = 10, searchQuery = "", status = "") => {
     try {
       const response = await axiosClient.get(
         `/api/user/get-landlord?pageIndex=${pageIndex}&pageSize=${pageSize}` +

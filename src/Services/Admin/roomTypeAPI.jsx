@@ -8,10 +8,10 @@ const getAllRoomTypePending = {
       );
       console.log("API Response:", response.data);
 
-      return response.data?.data || []; 
+      return response.data?.data || [];
     } catch (error) {
       console.error("Error fetching pending room types:", error.response ? error.response.data : error);
-      return []; 
+      return [];
     }
   },
 };
@@ -23,7 +23,7 @@ const getRoomTypeDetail = async (roomTypeId) => {
     console.log(`Fetching API: /api/roomtype/get-detail/${roomTypeId}`);
 
     const response = await axiosClient.get(`/api/roomtype/get-detail/${roomTypeId}`);
-    
+
     console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
@@ -34,11 +34,19 @@ const getRoomTypeDetail = async (roomTypeId) => {
 
 
 const approveRoomType = async (roomTypeId) => {
-  return axiosClient.post(`/api/roomtype/approve/${roomTypeId}`);
+  try {
+    return axiosClient.post(`/api/roomtype/approve/${roomTypeId}`);
+  } catch (error) {
+    throw error.response ? error.response.data : new Error("An error occurred while approve room type");
+  }
 };
 
 const rejectRoomType = async (roomTypeId) => {
-  return axiosClient.post(`/api/roomtype/reject/${roomTypeId}`);
+  try {
+    return axiosClient.post(`/api/roomtype/deny/${roomTypeId}`);
+  } catch (error) {
+    throw error.response ? error.response.data : new Error("An error occurred while reject room type");
+  }
 };
 
 

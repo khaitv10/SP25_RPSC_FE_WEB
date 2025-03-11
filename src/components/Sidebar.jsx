@@ -14,8 +14,8 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", path: "/admin/dashboard", icon: HomeIcon },
-    { name: "Package", path: "/admin/service", icon: ArchiveIcon },
     { name: "Manage", path: "/admin/account", icon: UserGroupIcon },
+    { name: "Package", path: "/admin/service", icon: ArchiveIcon },
     { name: "Contract", path: "/admin/contract", icon: ClipboardListIcon },
     { name: "Register", path: "/admin/regis", icon: ChatIcon },
     { name: "Request", path: "/admin/request", icon: DocumentTextIcon },

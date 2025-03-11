@@ -1,85 +1,38 @@
-.request-management-container {
-  padding: 24px;
-  background-color: #f4f7fc;
-  min-height: 100vh;
+.request-management {
+  padding: 20px;
 
-  .title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
-  .tab-navigation {
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #d1d5db;
-
-    button {
-      padding: 12px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #6b7280;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      &.active {
-        border-bottom: 3px solid #2563eb;
-        color: #2563eb;
-      }
-
-      &:hover {
-        color: #1e40af;
-      }
-    }
-  }
-
-  .section {
-    background: white;
+  .request-card {
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    width: 100%;
+    background: #fff;
   }
 
-  .request-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
+  .ant-table {
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
 
-    th, td {
-      padding: 14px;
-      text-align: left;
-      border-bottom: 1px solid #e5e7eb;
-    }
+  .ant-table-thead > tr > th {
+    background: #4a5568;
+    color: white;
+    font-size: 17px;
+    text-align: center;
+  }
 
-    th {
-      background-color: #4a5568;
-      color: white;
-      font-weight: bold;
-    }
+  .ant-table-tbody > tr > td {
+    text-align: center;
+  }
 
-    tr:hover {
-      background-color: #f3f4f6;
-    }
+  .view-button {
+    background: #4a5568;
+    color: white;
+    border: none;
+    transition: 0.3s;
 
-    .icon-btn {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: #2563eb;
-      transition: transform 0.2s ease;
-
-      &:hover {
-        transform: scale(1.2);
-        color: #1e40af;
-      }
+    &:hover {
+      background: #2d3748;
     }
   }
 }
