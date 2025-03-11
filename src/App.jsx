@@ -8,6 +8,8 @@ import RegisterLandlord from "./pages/Regis/RegisterLandlord";
 import OtpRegis from "./pages/Regis/OtpRegis";
 import AppRoutes from "./routes/routes";
 
+
+
 function App() {
   return (
     <Router>
