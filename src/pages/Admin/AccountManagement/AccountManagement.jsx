@@ -13,7 +13,7 @@ const AccountManagement = () => {
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [totalLandlords, setTotalLandlords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const customersPerPage = 2;
+  const customersPerPage = 10;
   const [selectedStatus, setSelectedStatus] = useState("Status");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("customers");
@@ -86,8 +86,7 @@ const AccountManagement = () => {
   return (
     <div className="account-management-container">
       <h1 className="title">
-        <IonIcon icon={people} className="icon" />
-        Account Management
+       👤Account Management
       </h1>
 
       {/* Tab Navigation */}

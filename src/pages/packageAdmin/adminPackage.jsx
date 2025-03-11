@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllServicePackage } from "../../Services/serviceApi";
-import { Table, Button, Tag, Input, Modal, Card, Space, Typography } from "antd";
+import { Table, Button, Tag, Input, Card, Space, Typography } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "./adminPackage.scss";
@@ -64,9 +64,9 @@ const AdminPackage = () => {
       key: "action",
       render: (record) => (
         <Space>
-          <Button 
-            icon={<EyeOutlined />} 
-            onClick={() => handleViewDetails(record.packageId)} 
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => handleViewDetails(record.packageId)}
           />
         </Space>
       ),
@@ -77,23 +77,14 @@ const AdminPackage = () => {
     <div className="admin-package">
       <Card className="package-card">
         <Title level={2}>📦 Service Package</Title>
-        <Space className="package-actions">
-          <Button type="primary" icon={<PlusOutlined />}>Add new package</Button>
-          <Input
-            className="search-input"
-            placeholder="🔍 Search by Package Name"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </Space>
         <Table
           dataSource={packages}
           columns={columns}
           rowKey="packageId"
           loading={loading}
-          pagination={{ pageSize: 10 }}
-          bordered // Thêm viền cho bảng
-          size="middle" // Làm bảng gọn gàng hơn
+          bordered
+          size="middle"
+          pagination={false} 
         />
 
       </Card>

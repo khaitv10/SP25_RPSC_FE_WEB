@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRoomTypeDetail } from "../../../Services/Admin/roomTypeAPI";
+import { Card, Typography, Descriptions, Image, Button, Spin, message } from "antd";
+import { LeftOutlined, RightOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { getRoomTypeDetail, approveRoomType, rejectRoomType } from "../../../Services/Admin/roomTypeAPI";
 import "./RoomTypeDetail.scss";
-import room from "../../../assets/room.jpg";
+import { toast } from "react-toastify";
+import pic from "../../../assets/image-login.png";
+
+const { Title } = Typography;
 
 const RoomTypeDetail = () => {
     const { roomTypeId } = useParams();
@@ -10,8 +15,6 @@ const RoomTypeDetail = () => {
     const [loading, setLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const navigate = useNavigate();
-
-    const DEFAULT_IMAGE = "https://dummyimage.com/300x200/cccccc/000000&text=No+Image";
 
     useEffect(() => {
         fetchRoomTypeDetail();
@@ -21,122 +24,153 @@ const RoomTypeDetail = () => {
         try {
             setLoading(true);
             const response = await getRoomTypeDetail(roomTypeId);
-            console.log("API Response:", response);
 
             let data = response.data;
-
             if (!data.roomImageUrls || data.roomImageUrls.length === 0) {
-                data.roomImageUrls = [room];
+                //data.roomImageUrls = ["https://dummyimage.com/600x400/cccccc/000000&text=No+Image"];
+                data.roomImageUrls = [pic];
             }
 
             setRoomType(data);
         } catch (error) {
-            console.error("Failed to fetch room type details:", error);
+            message.error("Failed to fetch room type details!");
         } finally {
             setLoading(false);
         }
     };
 
-    const handlePrevImage = () => {
-        if (!roomType || !roomType.roomImageUrls || roomType.roomImageUrls.length === 0) return;
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === 0 ? roomType.roomImageUrls.length - 1 : prevIndex - 1
-        );
+    const handleApprove = async (roomTypeId) => {
+        try {
+            setLoading(true);
+            const response = await approveRoomType(roomTypeId);
+
+            if (response.data?.isSuccess) {
+                toast.success("Approve room type successfully!");
+                setTimeout(() => {
+                    navigate("/admin/request");
+                }, 1500);
+            } else {
+                toast.error(response.data?.message || "Approve failed!");
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Error approving room type");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleNextImage = () => {
-        if (!roomType || !roomType.roomImageUrls || roomType.roomImageUrls.length === 0) return;
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === roomType.roomImageUrls.length - 1 ? 0 : prevIndex + 1
-        );
+    const handleReject = async (roomTypeId) => {
+        try {
+            setLoading(true);
+            const response = await rejectRoomType(roomTypeId);
+
+            if (response.data?.isSuccess) {
+                toast.success("Reject room type successfully!");
+                setTimeout(() => {
+                    navigate("/admin/request");
+                }, 1500);
+            } else {
+                toast.error(response.data?.message || "Reject failed!");
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Error rejecting room type");
+        } finally {
+            setLoading(false);
+        }
     };
+
+
+    if (loading) return <Spin size="large" className="loading-spinner" />;
 
     return (
-        <div className="container">
-            <h1 className="title">Room Type Details</h1>
+        <div className="room-detail-container">
+            <Card className="room-card">
+                <Button
+                    type="default"
+                    className="back-button"
+                    onClick={() => navigate("/admin/request")}
+                >
+                    <LeftOutlined /> Back
+                </Button>
 
-            {loading ? (
-                <p>Loading...</p>
-            ) : roomType ? (
-                <div className="detailsLayout">
-                    {/* Left Column */}
-                    <div className="leftColumn">
-                        <div className="formGroup">
-                            <label>Room Type Name</label>
-                            <div className="infoBox">{roomType.roomTypeName || ""}</div>
-                        </div>
+                <Title level={2} className="title">Room Type Details</Title>
 
-                        <div className="grid">
-                            <div className="formGroup">
-                                <label>Deposit</label>
-                                <div className="infoBox">{roomType.deposite ? `$${roomType.deposite}` : ""}</div>
-                            </div>
-
-                            <div className="formGroup">
-                                <label>Square</label>
-                                <div className="infoBox">{roomType.square ? `${roomType.square} m²` : ""}</div>
-                            </div>
-                        </div>
-
-                        <div className="grid">
-                            <div className="formGroup">
-                                <label>Status</label>
-                                <div className="infoBox">{roomType.status || ""}</div>
-                            </div>
-
-                            <div className="formGroup">
-                                <label>Created At</label>
-                                <div className="infoBox">{roomType.createdAt ? new Date(roomType.createdAt).toLocaleString() : ""}</div>
-                            </div>
-                        </div>
-
-                        <div className="formGroup">
-                            <label>Address</label>
-                            <div className="infoBox">{roomType.address || ""}</div>
-                        </div>
-
-                        <div className="grid">
-                            <div className="formGroup">
-                                <label>Landlord</label>
-                                <div className="infoBox">{roomType.landlordName || ""}</div>
-                            </div>
-
-                            <div className="formGroup">
-                                <label>Room Price</label>
-                                <div className="infoBox">{roomType.roomPrices && roomType.roomPrices.length > 0 ? `$${roomType.roomPrices.join(", ")}` : ""}</div>
-                            </div>
-                        </div>
+                <div className="content-wrapper">
+                    {/* Left Section - Details */}
+                    <div className="left-section">
+                        <Descriptions bordered column={1} className="details">
+                            <Descriptions.Item label={<strong>Room Type Name</strong>}>{roomType.roomTypeName || ""}</Descriptions.Item>
+                            <Descriptions.Item label={<strong>Deposit</strong>}>${roomType.deposite || "0"}</Descriptions.Item>
+                            <Descriptions.Item label={<strong>Square</strong>}>{roomType.square ? `${roomType.square} m²` : ""}</Descriptions.Item>
+                            <Descriptions.Item label={<strong>Status</strong>}>{roomType.status || ""}</Descriptions.Item>
+                            <Descriptions.Item label={<strong>Created At</strong>}>
+                                {roomType.createdAt ? new Date(roomType.createdAt).toLocaleString() : ""}
+                            </Descriptions.Item>
+                            <Descriptions.Item label={<strong>Address</strong>}>{roomType.address || ""}</Descriptions.Item>
+                            <Descriptions.Item label={<strong>Company Name</strong>}>{roomType.landlordName || ""}</Descriptions.Item>
+                            <Descriptions.Item label={<strong>Room Prices</strong>}>
+                                {roomType.roomPrices && roomType.roomPrices.length > 0 ? `$${roomType.roomPrices.join(", ")}` : ""}
+                            </Descriptions.Item>
+                        </Descriptions>
 
                         {/* Services List */}
-                        <div className="servicesList">
-                            <label>Services</label>
-                            {roomType.roomServiceNames && roomType.roomServiceNames.length > 0 ? (
-                                <ul>
-                                    {roomType.roomServiceNames.map((service, index) => (
-                                        <li key={index}>
-                                            <span className="serviceName">{service}</span>
-                                            <span className="servicePrice">${roomType.roomServicePrices[index]}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <div className="infoBox"></div>
-                            )}
-                        </div>
+                        <Title level={4} className="services-title">Services</Title>
+                        {roomType.roomServiceNames && roomType.roomServiceNames.length > 0 ? (
+                            <ul className="service-list">
+                                {roomType.roomServiceNames.map((service, index) => (
+                                    <li key={index}>
+                                        <span className="service-name">{service}</span>
+                                        <span className="service-price">${roomType.roomServicePrices[index]}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="no-services">No services available.</p>
+                        )}
                     </div>
 
-                    {/* Right Column - Image Carousel */}
-                    <div className="rightColumn">
-                        <div className="imageCarousel">
-                            <button className="prevBtn" onClick={handlePrevImage}>&lt;</button>
-                            <img src={roomType.roomImageUrls[currentImageIndex]} alt="Room" />
-                            <button className="nextBtn" onClick={handleNextImage}>&gt;</button>
+                    {/* Right Section - Image Carousel */}
+                    <div className="right-section">
+                        <div className="image-container">
+                            <Image
+                                src={roomType.roomImageUrls[currentImageIndex]}
+                                className="room-image"
+                                preview={false}
+                            />
+                            <Button
+                                icon={<LeftOutlined />}
+                                onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? roomType.roomImageUrls.length - 1 : prev - 1))}
+                                className="image-nav-button left"
+                            />
+                            <Button
+                                icon={<RightOutlined />}
+                                onClick={() => setCurrentImageIndex((prev) => (prev === roomType.roomImageUrls.length - 1 ? 0 : prev + 1))}
+                                className="image-nav-button right"
+                            />
                         </div>
                     </div>
                 </div>
-            ) : (
-                <p>Room type not found.</p>
-            )}
+
+                {/* Approve / Reject Buttons */}
+                <div className="button-group">
+                    <Button
+                        className="approve"
+                        onClick={() => handleApprove(roomTypeId)}
+                        disabled={loading} 
+                    >
+                        <CheckCircleOutlined /> Approve
+                    </Button>
+                    <Button
+                        className="reject"
+                        onClick={() => handleReject(roomTypeId)}
+                        disabled={loading} 
+                    >
+                        <CloseCircleOutlined /> Reject
+                    </Button>
+                </div>
+
+
+            </Card>
         </div>
     );
 };

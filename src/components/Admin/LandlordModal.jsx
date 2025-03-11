@@ -6,11 +6,11 @@ const LandlordModal = ({ isOpen, landlord, onClose }) => {
   if (!isOpen || !landlord) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl relative">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-2xl relative transition-transform transform scale-95 hover:scale-100 duration-300">
         {/* Close Button */}
         <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition transform hover:scale-110"
           onClick={onClose}
         >
           <FaTimes size={24} />
@@ -24,20 +24,20 @@ const LandlordModal = ({ isOpen, landlord, onClose }) => {
           <img
             src={landlord.avatar || profilePic}
             alt="Avatar"
-            className="w-28 h-28 rounded-full border-4 border-gray-300 shadow-md"
+            className="w-28 h-28 rounded-full border-4 border-gray-300 shadow-md transition-transform transform hover:scale-105"
           />
 
           {/* Landlord Basic Info */}
           <div className="mt-4 text-center">
-            <p className="text-xl font-semibold text-gray-700">{landlord.fullName}</p>
-            <p className="text-gray-500">{landlord.email}</p>
-            <p className="text-gray-500">{landlord.phoneNumber}</p>
-            <p className="text-gray-500">{landlord.gender}</p>
+            <p className="text-2xl font-semibold text-gray-700">{landlord.fullName}</p>
+            <p className="text-gray-500 text-lg">{landlord.email}</p>
+            <p className="text-gray-500 text-lg">{landlord.phoneNumber}</p>
+            <p className="text-gray-500 text-lg">{landlord.gender}</p>
           </div>
         </div>
 
         {/* Additional Details */}
-        <div className="grid grid-cols-2 gap-6 text-sm">
+        <div className="grid grid-cols-2 gap-6 text-md bg-gray-100 p-4 rounded-lg shadow-inner">
           <div className="info-item"><strong>Company Name:</strong> {landlord.companyName}</div>
           <div className="info-item"><strong>License Number:</strong> {landlord.licenseNumber}</div>
           <div className="info-item"><strong>Number of Rooms:</strong> {landlord.numberRoom}</div>
