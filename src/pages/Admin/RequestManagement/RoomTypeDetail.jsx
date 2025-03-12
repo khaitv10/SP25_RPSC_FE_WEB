@@ -5,7 +5,7 @@ import { LeftOutlined, RightOutlined, CheckCircleOutlined, CloseCircleOutlined }
 import { getRoomTypeDetail, approveRoomType, rejectRoomType } from "../../../Services/Admin/roomTypeAPI";
 import "./RoomTypeDetail.scss";
 import { toast } from "react-toastify";
-import pic from "../../../assets/image-login.png";
+import pic from "../../../assets/room.jpg";
 
 const { Title } = Typography;
 
@@ -40,15 +40,20 @@ const RoomTypeDetail = () => {
     };
 
     const handleApprove = async (roomTypeId) => {
+        if (!roomTypeId) {
+            toast.error("Room Type ID is invalid!");
+            return;
+        }
+    
         try {
             setLoading(true);
             const response = await approveRoomType(roomTypeId);
-
+    
             if (response.data?.isSuccess) {
                 toast.success("Approve room type successfully!");
                 setTimeout(() => {
                     navigate("/admin/request");
-                }, 1500);
+                }, 1000);
             } else {
                 toast.error(response.data?.message || "Approve failed!");
             }
@@ -58,8 +63,14 @@ const RoomTypeDetail = () => {
             setLoading(false);
         }
     };
+    
 
     const handleReject = async (roomTypeId) => {
+        if (!roomTypeId) {
+            toast.error("Room Type ID is invalid!");
+            return;
+        }
+        
         try {
             setLoading(true);
             const response = await rejectRoomType(roomTypeId);
@@ -68,7 +79,7 @@ const RoomTypeDetail = () => {
                 toast.success("Reject room type successfully!");
                 setTimeout(() => {
                     navigate("/admin/request");
-                }, 1500);
+                }, 1000);
             } else {
                 toast.error(response.data?.message || "Reject failed!");
             }
@@ -84,7 +95,7 @@ const RoomTypeDetail = () => {
 
     return (
         <div className="room-detail-container">
-            <Card className="room-card">
+            <Card className="room-type-card">
                 <Button
                     type="default"
                     className="back-button"
@@ -100,7 +111,7 @@ const RoomTypeDetail = () => {
                     <div className="left-section">
                         <Descriptions bordered column={1} className="details">
                             <Descriptions.Item label={<strong>Room Type Name</strong>}>{roomType.roomTypeName || ""}</Descriptions.Item>
-                            <Descriptions.Item label={<strong>Deposit</strong>}>${roomType.deposite || "0"}</Descriptions.Item>
+                            <Descriptions.Item label={<strong>Deposit</strong>}>{roomType.deposite || "0"} VNĐ</Descriptions.Item>
                             <Descriptions.Item label={<strong>Square</strong>}>{roomType.square ? `${roomType.square} m²` : ""}</Descriptions.Item>
                             <Descriptions.Item label={<strong>Status</strong>}>{roomType.status || ""}</Descriptions.Item>
                             <Descriptions.Item label={<strong>Created At</strong>}>
@@ -109,7 +120,7 @@ const RoomTypeDetail = () => {
                             <Descriptions.Item label={<strong>Address</strong>}>{roomType.address || ""}</Descriptions.Item>
                             <Descriptions.Item label={<strong>Company Name</strong>}>{roomType.landlordName || ""}</Descriptions.Item>
                             <Descriptions.Item label={<strong>Room Prices</strong>}>
-                                {roomType.roomPrices && roomType.roomPrices.length > 0 ? `$${roomType.roomPrices.join(", ")}` : ""}
+                                {roomType.roomPrices && roomType.roomPrices.length > 0 ? `${roomType.roomPrices.join(", ")} VNĐ` : ""}
                             </Descriptions.Item>
                         </Descriptions>
 
@@ -120,7 +131,7 @@ const RoomTypeDetail = () => {
                                 {roomType.roomServiceNames.map((service, index) => (
                                     <li key={index}>
                                         <span className="service-name">{service}</span>
-                                        <span className="service-price">${roomType.roomServicePrices[index]}</span>
+                                        <span className="service-price">{roomType.roomServicePrices[index]} VNĐ</span>
                                     </li>
                                 ))}
                             </ul>
@@ -134,7 +145,7 @@ const RoomTypeDetail = () => {
                         <div className="image-container">
                             <Image
                                 src={roomType.roomImageUrls[currentImageIndex]}
-                                className="room-image"
+                                className="room-type-image"
                                 preview={false}
                             />
                             <Button
