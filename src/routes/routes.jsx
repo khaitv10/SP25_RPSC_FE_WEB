@@ -3,7 +3,6 @@ import PrivateRoute from "../components/PrivateRoute";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Regis/Register";
 import OtpRegis from "../pages/Regis/OtpRegis";
-import ServiceLandlord from "../pages/packageLandlord/packageLandlord";
 import Dashboard from "../pages/homePage/Dashboard";
 import AccountManagement from "../pages/Admin/AccountManagement/AccountManagement";
 import RequestManagement from "../pages/Admin/RequestManagement/RequestManagement";
@@ -17,6 +16,7 @@ import LandlordRegisDetailAdmin from "../pages/landlordRegisAdmin/LandlordRegisD
 import AdminPackageDetail from "../pages/packageAdmin/adminPackageDetail";
 import ContractManagement from "../pages/Admin/ContractManagement/ContractManagement";
 import RoomManagement from "../pages/Landlord/RoomManagement";
+import PricingTable from "../pages/packageLandlord/PricingTable";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -39,10 +39,10 @@ const AppRoutes = () => {
 
       {/* landlord */}
       <Route path="/register-landlord" element={<RegisterLandlord />} />
-      <Route path="/landlord/service" element={<ServiceLandlord />} />
       <Route path="/landlord-detail/:landlordId" element={<LandlordRegisDetailAdmin />} />
       <Route path="/packagecontract" element={<PackageContract />} />
       <Route path="/landlord/room" element={<RoomManagement />} />
+      <Route path="/landlord/service" element={<PricingTable />} />
 
 
       <Route
