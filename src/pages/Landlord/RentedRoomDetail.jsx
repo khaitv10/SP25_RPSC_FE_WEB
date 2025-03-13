@@ -5,6 +5,7 @@ import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import CustomerModal from "../../components/Admin/CustomerModal";
 import "./RentedRoomDetail.scss";
 import defaultImage from "../../assets/room.jpg";
+import defaultImage2 from "../../assets/image-login.png";
 import defaultAvatar from "../../assets/avatar.jpg";
 
 const { Title } = Typography;
@@ -18,18 +19,43 @@ const mockRoomData = {
     price: "10,000,000",
     deposit: "5.000.000",
     status: "Rented",
-    description: "A luxury apartment with modern design. " 
-     + "The package contains an Axios instance configuration for making HTTP requests. It includes settings for base URLs",
+    description: "A luxury apartment with modern design. "
+        + "The package contains an Axios instance configuration for making HTTP requests. It includes settings for base URLs",
     tenants: [
-        { name: "John Doe", email: "john@example.com", avatar: defaultAvatar, role: "Person In Charge" },
-        { name: "Jane Smith", email: "jane@example.com", avatar: defaultAvatar, role: "Tenant" },
-        { name: "Jane Smith", email: "jane@example.com", avatar: defaultAvatar, role: "Tenant" }
+        {
+            fullName: "John Doe",
+            email: "john@example.com",
+            phoneNumber: "123-456-7890",
+            gender: "Male",
+            avatar: defaultAvatar,
+            address: "New York City",
+            preferences: "Quiet environment",
+            lifeStyle: "Night Owl",
+            budgetRange: "$500 - $1000",
+            preferredLocation: "Downtown",
+            requirement: "No pets",
+            role: "Person In Charge"
+        },
+        {
+            fullName: "Jane Smith",
+            email: "jane@example.com",
+            phoneNumber: "987-654-3210",
+            gender: "Female",
+            avatar: defaultAvatar,
+            address: "Brooklyn",
+            preferences: "Pet-friendly",
+            lifeStyle: "Early Bird",
+            budgetRange: "$700 - $1200",
+            preferredLocation: "Suburb",
+            requirement: "Near public transport",
+            role: "Member"
+        }
     ],
     services: [
         { name: "Electricity", price: "5 VNĐ" },
         { name: "Parking", price: "30 VNĐ" }
     ],
-    roomImageUrls: [defaultImage, defaultAvatar]
+    roomImageUrls: [defaultImage, defaultImage2]
 };
 
 const RentedRoomDetail = () => {
@@ -37,6 +63,7 @@ const RentedRoomDetail = () => {
     const [room, setRoom] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTenant, setSelectedTenant] = useState(null);
     const navigate = useNavigate();
 
@@ -49,9 +76,11 @@ const RentedRoomDetail = () => {
 
     const openTenantModal = (tenant) => {
         setSelectedTenant(tenant);
+        setIsModalOpen(true);
     };
 
     const closeTenantModal = () => {
+        setIsModalOpen(false);
         setSelectedTenant(null);
     };
 
@@ -90,31 +119,49 @@ const RentedRoomDetail = () => {
                                     </li>
                                 ))}
                             </ul>
-                            
+
                         </div>
                     </div>
 
                     <div className="rented-room-right">
                         <div className="rented-room-image-container">
-                            <Image src={room.roomImageUrls[currentImageIndex]} className="rented-room-image" preview={false} />
-                            <Button icon={<LeftOutlined />} onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? room.roomImageUrls.length - 1 : prev - 1))} className="rented-room-image-nav left" />
-                            <Button icon={<RightOutlined />} onClick={() => setCurrentImageIndex((prev) => (prev === room.roomImageUrls.length - 1 ? 0 : prev + 1))} className="rented-room-image-nav right" />
+                            <Image
+                                src={room.roomImageUrls[currentImageIndex]}
+                                className="rented-room-image"
+                                preview={false}
+                            />
+                            <Button
+                                icon={<LeftOutlined />}
+                                onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? room.roomImageUrls.length - 1 : prev - 1))}
+                                className="rented-room-image-nav left"
+                            />
+                            <Button
+                                icon={<RightOutlined />}
+                                onClick={() => setCurrentImageIndex((prev) => (prev === room.roomImageUrls.length - 1 ? 0 : prev + 1))}
+                                className="rented-room-image-nav right"
+                            />
                         </div>
                     </div>
+
                 </div>
 
-                <Title level={3} className="rented-room-tenants-title">Tenants</Title>
+                <Title level={3} className="rented-room-tenants-title">
+                    Tenants
+                </Title>
                 <ul className="rented-room-tenant-list">
                     {room.tenants.map((tenant, index) => (
                         <li key={index} className="rented-room-tenant-item" onClick={() => openTenantModal(tenant)}>
                             <Avatar src={tenant.avatar} size={60} className="rented-room-tenant-avatar" />
                             <div className="rented-room-tenant-info">
-                                <span className="rented-room-tenant-name">{tenant.name}</span>
+                                <span className="rented-room-tenant-name">{tenant.fullName}</span>
                             </div>
                             <span className="rented-room-tenant-role">{tenant.role}</span>
                         </li>
                     ))}
                 </ul>
+
+                {/* Customer Modal */}
+                <CustomerModal isOpen={isModalOpen} customer={selectedTenant} onClose={closeTenantModal} />
             </Card>
         </div>
     );
