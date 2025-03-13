@@ -7,7 +7,7 @@ import Register from "./pages/Regis/Register";
 import RegisterLandlord from "./pages/Regis/RegisterLandlord";
 import OtpRegis from "./pages/Regis/OtpRegis";
 import AppRoutes from "./routes/routes";
-
+import ForgotPassword from "./pages/forgotPassword/ForgotPassword.jsx";
 
 
 function App() {
@@ -20,6 +20,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/otpRegister" element={<OtpRegis />} />
         <Route path="/register-landlord" element={<RegisterLandlord />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
 
         {/* Các trang cần Layout */}
         <Route path="/*" element={<Layout><AppRoutes /></Layout>} />

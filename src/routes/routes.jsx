@@ -17,6 +17,7 @@ import AdminPackageDetail from "../pages/packageAdmin/adminPackageDetail";
 import ContractManagement from "../pages/Admin/ContractManagement/ContractManagement";
 import RoomManagement from "../pages/Landlord/RoomManagement";
 import PricingTable from "../pages/packageLandlord/PricingTable";
+import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -26,6 +27,8 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/otpRegister" element={<OtpRegis />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
 
       {/* admin */}
       <Route path="/admin/account" element={<AccountManagement />} />
