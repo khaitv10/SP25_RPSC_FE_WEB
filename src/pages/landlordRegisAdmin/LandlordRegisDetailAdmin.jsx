@@ -36,19 +36,28 @@ const LandlordRegisDetailAdmin = () => {
   };
 
   const handleUpdateStatus = async (userId, isApproved) => {
+    if (!userId) {
+      toast.error("User ID is invalid!");
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await updateLandlordStatus(userId, isApproved);
-      if (response.isSuccess) {
+      console.log("Update response:", response);
+
+      if (response?.isSuccess || response?.data?.isSuccess) {
         toast.success("Status updated successfully!");
         setTimeout(() => {
           navigate("/admin/regis");
-        }, 1500);
+        }, 1000);
       } else {
-        toast.error("Update failed!");
+        const errorMsg = response?.message || response?.data?.message || "Update failed!";
+        toast.error(errorMsg);
       }
     } catch (error) {
-      toast.error(error.message || "Error updating status!");
+      console.error("Update error:", error);
+      toast.error(error?.response?.data?.message || error?.message || "Error updating status!");
     } finally {
       setLoading(false);
     }
@@ -59,8 +68,8 @@ const LandlordRegisDetailAdmin = () => {
   return (
     <div className="landlord-detail-container">
       <Card className="landlord-card">
-        <Button 
-          type="default" 
+        <Button
+          type="default"
           className="back-button"
           onClick={() => navigate("/admin/regis")}
         >
@@ -94,19 +103,19 @@ const LandlordRegisDetailAdmin = () => {
             <Title level={4} className="image-title">Business License Images</Title>
             {landlord?.businessImageUrls?.length > 0 ? (
               <div className="image-container">
-                <Button 
-                  icon={<LeftOutlined />} 
+                <Button
+                  icon={<LeftOutlined />}
                   onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? landlord.businessImageUrls.length - 1 : prev - 1))}
                   className="image-nav-button left"
                 />
-                <Image 
-                  src={landlord.businessImageUrls[currentImageIndex]} 
-                  width={350} 
-                  className="business-image" 
+                <Image
+                  src={landlord.businessImageUrls[currentImageIndex]}
+                  width={350}
+                  className="business-image"
                   preview={false}
                 />
-                <Button 
-                  icon={<RightOutlined />} 
+                <Button
+                  icon={<RightOutlined />}
                   onClick={() => setCurrentImageIndex((prev) => (prev === landlord.businessImageUrls.length - 1 ? 0 : prev + 1))}
                   className="image-nav-button right"
                 />
@@ -119,13 +128,13 @@ const LandlordRegisDetailAdmin = () => {
 
         {/* Approve / Reject Buttons */}
         <div className="button-group">
-          <Button 
+          <Button
             className="approve"
             onClick={() => handleUpdateStatus(landlordId, true)}
           >
             <CheckCircleOutlined /> Approve
           </Button>
-          <Button 
+          <Button
             className="reject"
             onClick={() => handleUpdateStatus(landlordId, false)}
           >

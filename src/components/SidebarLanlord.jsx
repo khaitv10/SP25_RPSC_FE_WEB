@@ -5,7 +5,8 @@ import {
   ChatIcon, 
   DocumentTextIcon ,
   ChartBarIcon,
-  ClipboardIcon
+  ClipboardIcon,
+  NewspaperIcon
 } from "@heroicons/react/solid";
 import { Link } from "react-router-dom";
 
@@ -18,6 +19,7 @@ const SidebarLandlord = () => {
     { name: "Room", path: "/landlord/room", icon: HomeIcon },
     { name: "Feedback", path: "/landlord/feedback", icon: ChatIcon },
     { name: "Service", path: "/landlord/service", icon: ClipboardIcon },
+    { name: "Post", path: "/landlord/post", icon: NewspaperIcon },
     { name: "Request", path: "/landlord/request", icon: DocumentTextIcon },
   ];
 
