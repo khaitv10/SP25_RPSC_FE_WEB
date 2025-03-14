@@ -45,11 +45,10 @@ export const verifyOTP = async (email, otp) => {
     }
 };
 
-export const registerLandlord = async (email, companyName, numberRoom, licenseNumber, bankName, bankNumber, workshopImages) => {
+export const registerLandlord = async (email, companyName, licenseNumber, bankName, bankNumber, workshopImages) => {
     try {
         const formData = new FormData();
         formData.append("CompanyName", companyName);
-        formData.append("NumberRoom", numberRoom);
         formData.append("LicenseNumber", licenseNumber);
         formData.append("BankName", bankName);
         formData.append("BankNumber", bankNumber);
