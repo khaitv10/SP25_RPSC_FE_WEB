@@ -26,10 +26,10 @@ const CustomerModal = ({ isOpen, customer, onClose }) => {
           />
 
           <div className="mt-4 text-center">
-            <p className="text-2xl font-semibold text-gray-700">{customer.fullName}</p>
-            <p className="text-gray-500 text-lg">{customer.email}</p>
-            <p className="text-gray-500 text-lg">{customer.phoneNumber}</p>
-            <p className="text-gray-500 text-lg">{customer.gender}</p>
+            <p className="text-2xl font-bold text-black">{customer.fullName}</p>
+            <p className="text-gray-500 font-semibold  text-lg">{customer.email}</p>
+            <p className="text-gray-500 font-semibold  text-lg">{customer.phoneNumber}</p>
+            <p className="text-gray-500 font-semibold  text-lg">{customer.gender}</p>
           </div>
         </div>
 

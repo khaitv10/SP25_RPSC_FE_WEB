@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";  
 import SignatureCanvas from "react-signature-canvas";
 import {
   Box,
@@ -24,22 +24,14 @@ const schema = z.object({
 });
 
 const PackageContract = () => {
+  const location = useLocation();
+  const { packageType, price, duration, titleColor, PackageId, ServiceDetailId } = location.state || {};
+  console.log(PackageId, ServiceDetailId);
   const userSignatureRef = useRef(null);
   const [, setUserSignature] = useState(null);
-  const location = useLocation();
 
-  // Hardcoded values
-  const user = {
-    fullname: "Nguyen Vi Lord",
-    representativeId: "12345",
-  };
-  const selectedPlan = {
-    packageName: "Premium Plan",
-    price: 100000,
-    packageId: "67890",
-    duration: 12,
-  };
-  const paymentMethod = "VnPay";
+  const [user, setUser] = useState(null);
+  const [selectedPlan] = useState({ packageName: packageType, price, duration, titleColor, PackageId, ServiceDetailId });
 
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -58,6 +50,20 @@ const PackageContract = () => {
 
   const predefinedSignature =
     "https://res.cloudinary.com/dzoxs1sd7/image/upload/easyroomie-sign";
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    const fullName = localStorage.getItem("fullName");
+    const email = localStorage.getItem("email");
+    const phoneNumber = localStorage.getItem("phoneNumber");
+    const token = localStorage.getItem("token");
+    const roleUserId = localStorage.getItem("roleUserId");
+
+    if (role && fullName && token && roleUserId) {
+      setUser({ role, fullName, email, phoneNumber, token, roleUserId });
+      setValue("fullName", fullName);
+    }
+  }, [setValue]);
 
   const clearSignature = () => {
     userSignatureRef.current?.clear();
@@ -85,46 +91,20 @@ const PackageContract = () => {
     return price.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
   };
 
-  const onSubmit = async (data) => {
-    if (user && selectedPlan && paymentMethod) {
-      setIsLoading(true);
-      try {
-        // Simulate a successful response
-        const response = {
-          statusCode: 201,
-          data: "https://vnpay-redirect-link.com", // Example URL for VnPay redirection
-        };
-
-        console.log(paymentMethod);
-        console.log(response);
-
-        if (response.statusCode === 201 && response.data) {
-          toast.success("Payment successful");
-          if (paymentMethod === "VnPay") {
-            if (typeof response.data === "string") {
-              window.location.replace(response.data);
-            } else {
-              toast.error("Invalid response data");
-            }
-          } else if (paymentMethod === "1") {
-            if (
-              typeof response.data !== "string" &&
-              response.data.checkoutUrl
-            ) {
-              window.location.replace(response.data.checkoutUrl);
-            } else {
-              toast.error("Invalid response data");
-            }
-          }
-        } else {
-          toast.error("Payment failed");
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
+  const dataURLtoFile = (dataUrl, filename) => {
+    const arr = dataUrl.split(",");
+    const mime = arr[0].match(/:(.*?);/)?.[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
     }
+    return new File([u8arr], filename, { type: mime });
+  };
+  
+
+  const onSubmit = async () => {
   };
 
   return (
@@ -166,11 +146,11 @@ const PackageContract = () => {
           </Typography>
 
           <Typography variant="body1" mt={3} mb={2}>
-            <b>BÊN B (BÊN SỬ DỤNG DỊCH VỤ - LANDLORD):</b> <span>{user?.fullname}</span>
+            <b>BÊN B (BÊN SỬ DỤNG DỊCH VỤ - LANDLORD):</b> <span>{user?.fullName}</span>
             <br />
-            <b>Số điện thoại:</b> ...
+            <b>Số điện thoại:</b> <span>{user?.phoneNumber}</span>
             <br />
-            <b>Email:</b> ...
+            <b>Email:</b> <span>{user?.email}</span>
           </Typography>
 
           <div className="w-full border-t border-gray-300 opacity-50 mt-3"></div>
@@ -182,9 +162,8 @@ const PackageContract = () => {
             <ListItem>
               <span>
                 🎯 Bên A đồng ý cung cấp cho Bên B gói dịch vụ{" "}
-                <b>{selectedPlan?.packageName}</b>, bao gồm quyền đăng tải số
-                lượng bài viết ... trong thời gian{" "}
-                <b>{selectedPlan?.duration} tháng</b>, kể từ ngày ký hợp đồng.
+                <b>{selectedPlan?.packageName}</b>, bao gồm quyền đăng tải bài viết với màu sắc tiêu đề <b>{selectedPlan?.titleColor}</b> trong thời gian{" 3 "}
+                <b>{selectedPlan?.duration}</b>, kể từ ngày ký hợp đồng.
               </span>
             </ListItem>
 
