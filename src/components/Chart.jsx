@@ -43,9 +43,9 @@ const Chart = () => {
           </select>
         </div>
       </div>
-      <p className="text-sm text-gray-500 mt-2">
+      {/* <p className="text-sm text-gray-500 mt-2">
         Last Month <span className="text-green-500 font-bold">563,443 VNĐ</span>
-      </p>
+      </p> */}
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} barGap={2}>
           <XAxis dataKey="month" tickLine={false} />

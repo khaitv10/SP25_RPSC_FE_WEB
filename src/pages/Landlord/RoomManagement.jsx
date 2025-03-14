@@ -3,10 +3,10 @@ import RoomCard from "../../components/Landlord/RoomCard";
 import "./RoomManagement.scss";
 
 const rooms = [
-  { id: 1, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Active", image: "room1.jpg" },
-  { id: 2, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Active", image: "room2.jpg" },
-  { id: 3, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Active", image: "room3.jpg" },
-  { id: 4, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Active", image: "room4.jpg" },
+  { id: 1, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Available", image: "room1.jpg" },
+  { id: 2, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Available", image: "room2.jpg" },
+  { id: 3, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Rented", image: "room3.jpg" },
+  { id: 4, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Rented", image: "room4.jpg" },
   { id: 5, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Active", image: "room5.jpg" },
   { id: 6, type: "Phòng cao cấp", area: "123 cm2", slot: 4, status: "Active", image: "room6.jpg" },
 ];
