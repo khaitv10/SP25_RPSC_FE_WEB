@@ -33,16 +33,15 @@ const AppRoutes = () => {
       <Route path="/admin/request/room-type/:roomTypeId" element={<RoomTypeDetail />} />
       <Route path="/admin/package/:packageId" element={<AdminPackageDetail />} />
       <Route path="/admin/service" element={<AdminPackage />} />
-      <Route path="/packagecontract" element={<PackageContract />} />
       <Route path="/admin/contract" element={<ContractManagement />} />
       <Route path="/admin/regis" element={<LandlordRegisAdmin />} />
 
       {/* landlord */}
       <Route path="/register-landlord" element={<RegisterLandlord />} />
       <Route path="/landlord-detail/:landlordId" element={<LandlordRegisDetailAdmin />} />
-      <Route path="/packagecontract" element={<PackageContract />} />
       <Route path="/landlord/room" element={<RoomManagement />} />
       <Route path="/landlord/service" element={<PricingTable />} />
+      <Route path="/landlord/packagecontract" element={<PackageContract />} />
 
 
       <Route

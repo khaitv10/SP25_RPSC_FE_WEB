@@ -26,10 +26,14 @@ const Login = () => {
       const response = await login(phone, password);
 
       if (response?.data?.token) {
-        const { role, token } = response.data;
+        const { role, email, fullName, phoneNumber, token, roleUserId } = response.data;
 
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
+        localStorage.setItem("email", email);
+        localStorage.setItem("fullName", fullName);
+        localStorage.setItem("phoneNumber", phoneNumber);
+        localStorage.setItem("roleUserId", roleUserId);
         localStorage.setItem("loggedIn", "true");
 
         toast.success("Login successful!");
