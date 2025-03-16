@@ -34,20 +34,19 @@ const AdminPackage = () => {
 
   const columns = [
     {
-      title: "📌 Package Name",
-      dataIndex: "name",
-      key: "name",
+      title: "📌 Package Type",
+      dataIndex: "type",
+      key: "type",
     },
     {
-      title: "📝 Description",
-      dataIndex: "description",
-      key: "description",
+      title: "🌟 HighLight",
+      dataIndex: "highLight",
+      key: "highLight",
     },
     {
-      title: "⏳ Duration",
-      dataIndex: "duration",
-      key: "duration",
-      render: (text) => `${text} days`,
+      title: "📏 Size",
+      dataIndex: "size",
+      key: "size",
     },
     {
       title: "Service Status",
@@ -77,6 +76,17 @@ const AdminPackage = () => {
     <div className="admin-package">
       <Card className="package-card">
         <Title level={2}>📦 Service Package</Title>
+        <div className="search-container">
+          <Input.Search
+            className="search-input"
+            placeholder="🔍 Search by type..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onSearch={fetchPackages}
+            enterButton
+          />
+        </div>
+<div></div>
         <Table
           dataSource={packages}
           columns={columns}
@@ -86,7 +96,6 @@ const AdminPackage = () => {
           size="middle"
           pagination={false} 
         />
-
       </Card>
     </div>
   );

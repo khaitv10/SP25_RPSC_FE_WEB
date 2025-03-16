@@ -18,8 +18,8 @@ import ContractManagement from "../pages/Admin/ContractManagement/ContractManage
 import RoomManagement from "../pages/Landlord/RoomManagement";
 import RentedRoomManagement from "../pages/Landlord/RentedRoomManagement";
 import RentedRoomDetail from "../pages/Landlord/RentedRoomDetail";
-import PricingTable from "../pages/packageLandlord/PricingTable";
 import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
+import PricingTable1 from "../pages/packageLandlord/PricingTable1";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -45,7 +45,8 @@ const AppRoutes = () => {
       <Route path="/register-landlord" element={<RegisterLandlord />} />
       <Route path="/landlord-detail/:landlordId" element={<LandlordRegisDetailAdmin />} />
       <Route path="/landlord/room" element={<RoomManagement />} />
-      <Route path="/landlord/service" element={<PricingTable />} />
+      <Route path="/landlord/service" element={<PricingTable1 />} />
+
       <Route path="/landlord/manage" element={<RentedRoomManagement />} />
       <Route path="/landlord/rented-room/:roomId" element={<RentedRoomDetail />} />
       <Route path="/landlord/packagecontract" element={<PackageContract />} />
