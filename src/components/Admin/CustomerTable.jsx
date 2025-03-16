@@ -39,7 +39,7 @@ const CustomerTable = ({
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="Status">Status</option>
+            <option value="Status">All</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>

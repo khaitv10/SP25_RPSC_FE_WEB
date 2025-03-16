@@ -1,30 +1,138 @@
-import React, { useState } from "react";
-import { Table, Tag, Select, Button, Space, Card, Typography, Input, Tooltip } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Tag, Select, Button, Space, Card, Typography, Input, Tooltip, message } from "antd";
 import { EyeOutlined, SearchOutlined, FilterOutlined, CalendarOutlined } from "@ant-design/icons";
 import "./ContractManagement.scss";
-import img from "../../../assets/room.jpg";
+import { getAllLandlordContract } from "../../../Services/Admin/landlordAPI";
 
 const { Title } = Typography;
 const { Option } = Select;
 
-// Thêm thông tin về số người đang sử dụng gói dịch vụ
-const packageUsage = {
-  "Gói 1 tháng": 24,
-  "Gói 1 tuần": 8,
-  "Gói 3 tháng": 15
+// Define package colors
+const getPackageColor = (packageName) => {
+  if (!packageName) return "black";
+
+  const lowercaseName = packageName.toLowerCase();
+
+  if (lowercaseName.includes("tin thường")) return "black";
+  if (lowercaseName.includes("tin vip 1")) return "#003cff"; // Blue
+  if (lowercaseName.includes("tin vip 2")) return "#fa460a"; // Orange
+  if (lowercaseName.includes("tin vip 3")) return "#d102c7"; // Pink
+  if (lowercaseName.includes("tin vip 4")) return "#e8071d"; // Red
+
+  return "black"; // Default color
 };
 
-const contracts = [
-  { package: "Gói 1 tháng", price: "300,000 VND", landlord: "Nguyen Xuan Tien", phone: "0903764392", type: "Tin Vip 1", startDate: "23/12/2024", endDate: "23/01/2025", status: "Active", contractImage: img  },
-  { package: "Gói 1 tuần", price: "150,000 VND", landlord: "Tran Vu Tien", phone: "0903764391", type: "Tin Vip 1", startDate: "23/12/2024", endDate: "30/12/2024", status: "Active", contractImage: img },
-  { package: "Gói 3 tháng", price: "900,000 VND", landlord: "Nguyen Nhat Tien", phone: "0903764390", type: "Tin Vip 1", startDate: "23/12/2024", endDate: "23/03/2025", status: "Active", contractImage: img  },
-  { package: "Gói 3 tháng", price: "500,000 VND", landlord: "Nguyen Vu Tien", phone: "0903712345", type: "Tin Vip 1", startDate: "23/12/2024", endDate: "23/03/2025", status: "Active", contractImage: img  },
-];
-
 const ContractManagement = () => {
+  const [contracts, setContracts] = useState([]);
   const [selectedPackage, setSelectedPackage] = useState("");
   const [activeTab, setActiveTab] = useState("Active");
   const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
+  const [packageTypes, setPackageTypes] = useState([]);
+  const [packageUsage, setPackageUsage] = useState({});
+
+  // Format date string from API's ISO format to dd/mm/yyyy
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '/');
+    } catch (error) {
+      return dateString;
+    }
+  };
+
+  // Fetch contract data from API
+  const fetchContracts = async () => {
+    setLoading(true);
+    try {
+      const status = activeTab === "All" ? "" : activeTab;
+      const response = await getAllLandlordContract.getLandlordContracts(
+        pagination.current,
+        pagination.pageSize,
+        searchText,
+        status
+      );
+
+      // Check if the API response has the expected structure
+      if (response && response.isSuccess && response.data) {
+        // Transform the data to match what the component expects
+        const transformedContracts = response.data.contracts.map(contract => ({
+          package: contract.packageName,
+          price: `${contract.price.toLocaleString()} VND`,
+          landlord: contract.landlordName,
+          phone: contract.phoneNumber,
+          type: `${contract.packageName} (${contract.duration} ngày)`,
+          startDate: formatDate(contract.startDate),
+          endDate: formatDate(contract.endDate),
+          status: contract.status,
+          contractImage: contract.lcontractUrl,
+          id: `${contract.landlordName}-${contract.startDate}` // Create a unique id
+        }));
+
+        setContracts(transformedContracts);
+        setPagination({
+          ...pagination,
+          total: response.data.totalContract || 0
+        });
+
+        // Extract unique package types and calculate usage
+        const packages = {};
+        const packageCount = {};
+
+        transformedContracts.forEach(contract => {
+          if (contract.package) {
+            if (!packages[contract.package]) {
+              packages[contract.package] = true;
+            }
+
+            packageCount[contract.package] = (packageCount[contract.package] || 0) + 1;
+          }
+        });
+
+        setPackageTypes(Object.keys(packages));
+        setPackageUsage(packageCount);
+      } else {
+        console.error("Invalid API response format:", response);
+        message.error("API response format is unexpected");
+      }
+    } catch (error) {
+      message.error("Failed to fetch contract data");
+      console.error("Error fetching contracts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial load and reload when filters change
+  useEffect(() => {
+    fetchContracts();
+  }, [activeTab, pagination.current, pagination.pageSize]);
+
+  // Handle search with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (pagination.current === 1) {
+        fetchContracts();
+      } else {
+        // Reset to first page when search changes
+        setPagination(prev => ({
+          ...prev,
+          current: 1
+        }));
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchText]);
 
   const handleFilterChange = (value) => {
     setSelectedPackage(value);
@@ -34,60 +142,70 @@ const ContractManagement = () => {
     setSearchText(e.target.value);
   };
 
-  const viewContractImage = (imageUrl, landlordName) => {
-    // Mở ảnh trong tab mới của trình duyệt
-    const newWindow = window.open(imageUrl, '_blank');
-    if (newWindow) {
-      newWindow.focus();
+  const handleTableChange = (pagination) => {
+    setPagination({
+      ...pagination
+    });
+  };
+
+  const viewContractImage = (imageUrl) => {
+    if (imageUrl) {
+      const newWindow = window.open(imageUrl, '_blank');
+      if (newWindow) {
+        newWindow.focus();
+      }
+    } else {
+      message.info("No contract image available");
     }
   };
 
   const filteredContracts = contracts.filter((contract) =>
-    (activeTab === "All" || contract.status === activeTab) &&
-    (!selectedPackage || contract.package === selectedPackage) &&
-    (!searchText || 
-      contract.landlord.toLowerCase().includes(searchText.toLowerCase()) ||
-      contract.phone.includes(searchText))
+    (!selectedPackage || contract.package === selectedPackage)
   );
 
   const columns = [
-    { 
-      title: "Package Service", 
-      dataIndex: "package", 
+    {
+      title: "Package Service",
+      dataIndex: "package",
       key: "package",
       render: (text) => (
         <div className="package-cell">
-          <span className="cell-content package-name">{text}</span>
+          <span
+            className="cell-content package-name"
+            style={{ color: getPackageColor(text), fontWeight: "bold" }}
+          >
+            {text}
+          </span>
         </div>
       )
     },
-    { 
-      title: "Price", 
-      dataIndex: "price", 
+    {
+      title: "Price",
+      dataIndex: "price",
       key: "price",
       render: (text) => <span className="cell-content price">{text}</span>
     },
-    { 
-      title: "Landlord", 
-      dataIndex: "landlord", 
+    {
+      title: "Landlord",
+      dataIndex: "landlord",
       key: "landlord",
       render: (text) => <span className="cell-content landlord-name">{text}</span>
     },
-    { 
-      title: "Phone", 
-      dataIndex: "phone", 
+    {
+      title: "Phone",
+      dataIndex: "phone",
       key: "phone",
       render: (text) => <span className="cell-content">{text}</span>
     },
-    { 
-      title: "Type", 
-      dataIndex: "type", 
+    {
+      title: "Type",
+      dataIndex: "type",
       key: "type",
       render: (text) => <span className="cell-content">{text}</span>
     },
-    { 
-      title: "Start Date", 
-      dataIndex: "startDate", 
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
       key: "startDate",
       render: (text) => (
         <div className="date-cell">
@@ -96,9 +214,9 @@ const ContractManagement = () => {
         </div>
       )
     },
-    { 
-      title: "End Date", 
-      dataIndex: "endDate", 
+    {
+      title: "End Date",
+      dataIndex: "endDate",
       key: "endDate",
       render: (text) => (
         <div className="date-cell">
@@ -112,7 +230,7 @@ const ContractManagement = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag 
+        <Tag
           className={`status-tag ${status.toLowerCase()}`}
           color={status === "Active" ? "green" : "red"}
         >
@@ -126,10 +244,10 @@ const ContractManagement = () => {
       render: (_, record) => (
         <Space size="middle" className="action-buttons">
           <Tooltip title="View contract image">
-            <Button 
-              icon={<EyeOutlined />} 
-              className="view-button" 
-              onClick={() => viewContractImage(record.contractImage, record.landlord)} 
+            <Button
+              icon={<EyeOutlined />}
+              className="view-button"
+              onClick={() => viewContractImage(record.contractImage, record.landlord)}
             />
           </Tooltip>
         </Space>
@@ -172,21 +290,26 @@ const ContractManagement = () => {
               prefix={<SearchOutlined className="search-icon" />}
               onChange={handleSearch}
               className="search-input"
+              value={searchText}
               allowClear
             />
           </div>
-          
+
           <div className="filter-container">
             <FilterOutlined className="filter-icon" />
             <Select
               className="package-filter"
               placeholder="Filter by Package"
               onChange={handleFilterChange}
+              value={selectedPackage || undefined} // Make sure undefined is used when empty
               allowClear
+              showSearch={false} // Disable search to ensure placeholder shows
             >
-              {Array.from(new Set(contracts.map((contract) => contract.package))).map((pkg, index) => (
+              {packageTypes.map((pkg, index) => (
                 <Option key={index} value={pkg}>
-                  <strong>{pkg} ({packageUsage[pkg] || 0} người dùng)</strong>
+                  <strong style={{ color: getPackageColor(pkg) }}>
+                    {pkg} ({packageUsage[pkg] || 0} Users)
+                  </strong>
                 </Option>
               ))}
             </Select>
@@ -197,18 +320,18 @@ const ContractManagement = () => {
           <Table
             columns={columns}
             dataSource={filteredContracts}
-            rowKey="phone"
-            pagination={{ 
-              defaultPageSize: 10,
-              pageSize: 10,
-              showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} hợp đồng`,
+            rowKey={(record) => record.id}
+            pagination={{
+              ...pagination,
+              showTotal: (total, range) => `${range[0]}-${range[1]} on ${total} Contracts`,
             }}
+            onChange={handleTableChange}
+            loading={loading}
             className="contracts-table"
             rowClassName={(record) => record.status === "Inactive" ? "inactive-row" : ""}
           />
         </div>
       </Card>
-
     </div>
   );
 };

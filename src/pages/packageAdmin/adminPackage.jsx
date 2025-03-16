@@ -76,7 +76,7 @@ const AdminPackage = () => {
   return (
     <div className="admin-package">
       <Card className="package-card">
-        <Title level={2}>📦 Service Package</Title>
+        <Title level={2} style={{ color: "black", fontWeight: "bold"}}>📦 Service Package</Title>
         <Table
           dataSource={packages}
           columns={columns}

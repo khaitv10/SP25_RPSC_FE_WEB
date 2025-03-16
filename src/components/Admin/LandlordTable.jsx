@@ -44,7 +44,7 @@ const LandlordTable = ({
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="Status">Status</option>
+            <option value="Status">On</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
