@@ -16,7 +16,7 @@ const LandlordModal = ({ isOpen, landlord, onClose }) => {
           <FaTimes size={24} />
         </button>
 
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Landlord Details</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-800">Landlord Details</h2>
 
         {/* Avatar & Basic Info */}
         <div className="flex flex-col items-center mb-6">

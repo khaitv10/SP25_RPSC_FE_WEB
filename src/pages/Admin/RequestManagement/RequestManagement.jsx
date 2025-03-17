@@ -86,7 +86,7 @@ const RequestManagement = () => {
   return (
     <div className="request-management">
       <Card className="request-card">
-        <Title level={2} style={{ color: "black" }}>📋 Request Management</Title>
+        <Title level={2} style={{ color: "black", fontWeight: "bold"}}>📋 Request Management</Title>
 
         <Table
           dataSource={pendingRoomTypes}

@@ -82,7 +82,7 @@ const LandlordRegisAdmin = () => {
   return (
     <div className="landlord-admin">
       <Card className="landlord-card">
-        <Title level={2} style={{ color: "black" }}>🏠 Landlord Registrations</Title>
+        <Title level={2} style={{ color: "black", fontWeight: "bold"}}>🏠 Landlord Registrations</Title>
         <p style={{ fontSize: "16px", fontWeight: "bold" }}>Total New Registration: {totalUser}</p>
         <Table
           dataSource={landlords}

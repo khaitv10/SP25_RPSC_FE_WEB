@@ -18,8 +18,13 @@ import ContractManagement from "../pages/Admin/ContractManagement/ContractManage
 import RoomManagement from "../pages/Landlord/RoomManagement";
 import RentedRoomManagement from "../pages/Landlord/RentedRoomManagement";
 import RentedRoomDetail from "../pages/Landlord/RentedRoomDetail";
+
+import RoomRequestManagement from "../pages/Landlord/RoomRequestManagement";
+import PricingTable from "../pages/packageLandlord/PricingTable";
+
 import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
 import PricingTable1 from "../pages/packageLandlord/PricingTable1";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -49,7 +54,9 @@ const AppRoutes = () => {
 
       <Route path="/landlord/manage" element={<RentedRoomManagement />} />
       <Route path="/landlord/rented-room/:roomId" element={<RentedRoomDetail />} />
+      <Route path="/landlord/request" element={<RoomRequestManagement />} />
       <Route path="/landlord/packagecontract" element={<PackageContract />} />
+
 
 
       <Route
