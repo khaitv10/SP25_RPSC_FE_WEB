@@ -20,7 +20,6 @@ import RentedRoomManagement from "../pages/Landlord/RentedRoomManagement";
 import RentedRoomDetail from "../pages/Landlord/RentedRoomDetail";
 
 import RoomRequestManagement from "../pages/Landlord/RoomRequestManagement";
-import PricingTable from "../pages/packageLandlord/PricingTable";
 
 import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
 import PricingTable1 from "../pages/packageLandlord/PricingTable1";

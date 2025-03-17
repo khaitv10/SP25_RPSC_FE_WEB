@@ -1,134 +1,277 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Table, Card, Typography, Button, Descriptions, Tag, Modal, Input, message } from "antd";
+import { Table, Card, Typography, Button, Descriptions, Tag, Modal, Input, message, Spin } from "antd";
 import dayjs from "dayjs";
 import "./adminPackageDetail.scss";
+import { getServiceDetailByPackageId, createServiceDetail, updatePrice } from "../../Services/serviceApi";
+import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
 const AdminPackageDetail = () => {
   const { packageId } = useParams();
+  const navigate = useNavigate();
+  
   const [packageInfo, setPackageInfo] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [newPrice, setNewPrice] = useState("");
-  const navigate = useNavigate();
+  const [newService, setNewService] = useState({
+    packageId: packageId,
+    name: "",
+    duration: "",
+    description: "",
+    price: "",
+  });
+
+  const fetchPackageDetails = async () => {
+    setLoading(true);
+    try {
+      const data = await getServiceDetailByPackageId(packageId);
+      setPackageInfo(data);
+    } catch (error) {
+      message.error("Lỗi khi tải dữ liệu gói dịch vụ!");
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    setPackageInfo({
-      packageId: "142D8DF5-4CCC-425D-B616-CF9E960DB7AB",
-      type: "Tin thường",
-      highLight: "Màu mặc định, viết thường",
-      size: "Nhỏ",
-      status: "Active",
-      listDetails: [
-        {
-          serviceDetailId: "3457C1E2-D1BA-4230-9FB4-C4CC934F5383",
-          applicableDate: "2025-03-15T17:53:20.617",
-          price: 2000,
-          name: "Gói 1 ngày",
-          duration: "1",
-          description: "Gói dịch vụ 1 ngày",
-          packageId: "142D8DF5-4CCC-425D-B616-CF9E960DB7AB",
-          priceId: "446394D6-6487-47EF-A06B-79C5C0CF1653"
-        },
-        {
-          serviceDetailId: "1F748D81-4D7D-44E7-8DD8-B785CD142AAF",
-          applicableDate: "2025-03-15T17:53:20.617",
-          price: 4000,
-          name: "Gói 1 tuần",
-          duration: "7",
-          description: "Gói dịch vụ 1 tuần",
-          packageId: "142D8DF5-4CCC-425D-B616-CF9E960DB7AB",
-          priceId: "29DF47E7-A85C-4DA0-B696-A0250B8A8210"
-        },
-        {
-          serviceDetailId: "B4A6518E-6BC3-4BA8-A928-DDE713A68801",
-          applicableDate: "2025-03-15T17:53:20.617",
-          price: 8000,
-          name: "Gói 1 tháng",
-          duration: "30",
-          description: "Gói dịch vụ 1 tháng",
-          packageId: "142D8DF5-4CCC-425D-B616-CF9E960DB7AB",
-          priceId: "D732C061-A77E-43EE-B9BC-04C7BDF0B6F5"
-        }
-      ]
-    });
+    if (packageId) fetchPackageDetails();
   }, [packageId]);
 
   const handleEditPrice = (record) => {
     setSelectedService(record);
     setNewPrice(record.price.toString());
-    setIsModalOpen(true);
+    setIsPriceModalOpen(true);
   };
 
-  const handleUpdatePrice = () => {
+  const handleUpdatePrice = async () => {
     const formattedPrice = parseFloat(newPrice);
     if (isNaN(formattedPrice) || formattedPrice <= 0) {
       message.error("Vui lòng nhập giá hợp lệ lớn hơn 0.");
       return;
     }
-    
-    setPackageInfo((prev) => {
-      const updatedDetails = prev.listDetails.map((service) =>
-        service.serviceDetailId === selectedService.serviceDetailId
-          ? { ...service, price: formattedPrice }
-          : service
-      );
-      return { ...prev, listDetails: updatedDetails };
+  
+    console.log("🔍 Dữ liệu gửi lên API:", {
+      priceId: selectedService?.priceId, // ✅ Đúng ID
+      newPrice: formattedPrice,
+      newName: selectedService?.name,
+      newDuration: selectedService?.duration,
+      newDescription: selectedService?.description
     });
-    message.success("Cập nhật giá thành công!");
-    setIsModalOpen(false);
+  
+    try {
+      const response = await updatePrice(
+        selectedService?.priceId, // ✅ Đúng ID
+        formattedPrice,
+        selectedService?.name,
+        selectedService?.duration,
+        selectedService?.description
+      );
+  
+      console.log("✅ Phản hồi từ server:", response);
+  
+      message.success("🎉 Cập nhật dịch vụ thành công!");
+  
+      // Đóng modal và load lại dữ liệu từ server
+      setIsPriceModalOpen(false);
+      fetchPackageDetails();
+    } catch (error) {
+      console.error("❌ Lỗi khi cập nhật:", error);
+      message.error(error.message || "❌ Lỗi khi cập nhật dịch vụ.");
+    }
   };
-
-  const formatPrice = (price) => `${price.toLocaleString()} VNĐ`;
+  
+  const handleCreateService = async () => {
+    const { name, duration, price } = newService;
+  
+    // Kiểm tra các field bắt buộc
+    if (!name.trim() || !duration.trim() || !price.trim()) {
+      toast.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
+      return;
+    }
+  
+    // Kiểm tra Duration phải là số nguyên từ 1 đến 365
+    const parsedDuration = parseInt(duration, 10);
+    if (!/^\d+$/.test(duration) || parsedDuration <= 0 || parsedDuration > 365) {
+      toast.error("⏳ Duration phải là số nguyên từ 1 đến 365!");
+      return;
+    }
+  
+    // Kiểm tra Price phải là số hợp lệ
+    const formattedPrice = parseFloat(price);
+    if (isNaN(formattedPrice) || formattedPrice <= 0) {
+      toast.error("💰 Price phải là số hợp lệ lớn hơn 0!");
+      return;
+    }
+  
+    try {
+      await createServiceDetail(newService);
+      toast.success("🎉 Thêm dịch vụ thành công!", { duration: 5000 }); // Hiển thị 5 giây
+  
+      // 🛠 Reset lại form nhập
+      setNewService({
+        packageId: packageId,
+        name: "",
+        duration: "",
+        description: "",
+        price: "",
+      });
+  
+      setIsCreateModalOpen(false);
+      fetchPackageDetails(); // Cập nhật lại danh sách dịch vụ
+    } catch (error) {
+      toast.error("❌ Lỗi khi tạo dịch vụ!");
+    }
+  };
+  
+  
+  
 
   return (
     <div className="admin-package-detail">
       <Card className="package-detail-card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <Title level={2} style={{ margin: 0 }}>📦 Package Details</Title>
           <Button onClick={() => navigate(-1)} size="large">⬅ Back</Button>
+          <Title level={2}>📦 Package Details</Title>
+          <Button type="primary" size="large" onClick={() => setIsCreateModalOpen(true)}>➕ Add Service</Button>
         </div>
 
-        {packageInfo && (
-          <Descriptions bordered column={2} size="middle">
-            <Descriptions.Item label="📌 Package Type">{packageInfo.type}</Descriptions.Item>
-            <Descriptions.Item label="⭐ Highlight">{packageInfo.highLight}</Descriptions.Item>
-            <Descriptions.Item label="📏 Size">{packageInfo.size}</Descriptions.Item>
-            <Descriptions.Item label="⚡ Status">
-              <Tag color={packageInfo.status === "Active" ? "green" : "red"}>{packageInfo.status}</Tag>
-            </Descriptions.Item>
-          </Descriptions>
+        {loading ? (
+          <Spin tip="Đang tải dữ liệu..." style={{ display: "flex", justifyContent: "center", marginBottom: 20 }} />
+        ) : (
+          <>
+            {packageInfo && (
+              <Descriptions bordered column={2} size="middle">
+                <Descriptions.Item label="📌 Package Type">{packageInfo.type}</Descriptions.Item>
+                <Descriptions.Item label="⭐ Highlight">{packageInfo.highLight}</Descriptions.Item>
+                <Descriptions.Item label="📏 Size">{packageInfo.size}</Descriptions.Item>
+                <Descriptions.Item label="⚡ Status">
+                  <Tag color={packageInfo.status === "Active" ? "green" : "red"}>{packageInfo.status}</Tag>
+                </Descriptions.Item>
+              </Descriptions>
+            )}
+            
+            <Table
+              dataSource={packageInfo?.listDetails || []}
+              columns={[
+                { title: "📋 Name", dataIndex: "name", key: "name", width: 200 },
+                { title: "⏳ Duration", dataIndex: "duration", key: "duration", width: 150, render: (text) => `${text} ngày` },
+                { title: "📝 Description", dataIndex: "description", key: "description", width: 250 },
+                { title: "📅 Date", dataIndex: "applicableDate", key: "applicableDate", width: 180, render: (date) => dayjs(date).format("DD/MM/YYYY") },
+                { title: "💰 Price", dataIndex: "price", key: "price", width: 120, render: (price) => `${price.toLocaleString()} VNĐ` },
+                {
+                  title: "✏️ Action",
+                  key: "action",
+                  width: 100,
+                  render: (_, record) => (
+                    <Button type="primary" onClick={() => handleEditPrice(record)}>Edit</Button>
+                  ),
+                },
+              ]}
+              rowKey="serviceDetailId"
+              pagination={false}
+            />
+          </>
         )}
-
-        <Table
-        
-          dataSource={packageInfo?.listDetails || []}
-          columns={[
-            { title: "📋 Name", dataIndex: "name", key: "name", width: 200 },
-            { title: "⏳ Duration", dataIndex: "duration", key: "duration", width: 150, render: (text) => `${text} ngày` },
-            { title: "📝 Description", dataIndex: "description", key: "description", width: 250 },
-            { title: "📅 Applicable Date", dataIndex: "applicableDate", key: "applicableDate", width: 180, render: (date) => dayjs(date).format("DD/MM/YYYY") },
-            { title: "💰 Price", dataIndex: "price", key: "price", width: 120, render: (price) => formatPrice(price) },
-            {
-              title: "✏️ Action",
-              key: "action",
-              width: 100,
-              render: (_, record) => (
-                <Button type="primary" onClick={() => handleEditPrice(record)}>Edit</Button>
-              ),
-            },
-          ]}
-          
-          rowKey="serviceDetailId"
-          pagination={false}
-        />
       </Card>
 
-      <Modal title="Update Price" open={isModalOpen} onOk={handleUpdatePrice} onCancel={() => setIsModalOpen(false)} okText="Update">
-        <Input type="number" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} placeholder="Enter new price" min="0" step="1000" />
+           {/* Modal Edit Price */}
+           <Modal 
+        title="✏️ Update Service Details"
+        open={isPriceModalOpen} 
+        onOk={handleUpdatePrice} 
+        onCancel={() => setIsPriceModalOpen(false)} 
+        okText="Update"
+      >
+        <Input 
+          placeholder="📋 Name" 
+          value={selectedService?.name || ""} 
+          onChange={(e) => setSelectedService({ ...selectedService, name: e.target.value })} 
+          style={{ marginBottom: 10 }}
+        />
+        
+        <Input 
+          type="number" 
+          placeholder="⏳ Duration (days)" 
+          value={selectedService?.duration || ""} 
+          onChange={(e) => setSelectedService({ ...selectedService, duration: e.target.value })} 
+          style={{ marginBottom: 10 }}
+        />
+        
+        <Input 
+          placeholder="📝 Description" 
+          value={selectedService?.description || ""} 
+          onChange={(e) => setSelectedService({ ...selectedService, description: e.target.value })} 
+          style={{ marginBottom: 10 }}
+        />
+        
+        <Input 
+          type="number" 
+          placeholder="💰 Price (VND)" 
+          value={newPrice} 
+          onChange={(e) => setNewPrice(e.target.value)} 
+          min="1" 
+          step="1000" 
+          style={{ marginBottom: 10 }}
+        />
       </Modal>
+
+      {/* Modal Create Service */}
+      <Modal 
+          title="➕ Create New Service" 
+          open={isCreateModalOpen} 
+          onOk={handleCreateService} 
+          onCancel={() => setIsCreateModalOpen(false)} 
+          okText="Create"
+          okButtonProps={{ disabled: !newService.name.trim() || !newService.duration.trim() || !newService.price.trim() }}
+        >
+          <Input 
+            placeholder="📋 Name" 
+            value={newService.name} 
+            onChange={(e) => setNewService({ ...newService, name: e.target.value })}
+          />
+          <Input 
+            type="number"
+            placeholder="⏳ Duration (days)" 
+            value={newService.duration} 
+            onChange={(e) => {
+              let value = e.target.value;
+
+              // Chặn nhập ký tự không phải số
+              if (!/^\d*$/.test(value)) return;
+
+              let numberValue = parseInt(value, 10);
+              
+              // Giới hạn từ 1 đến 365
+              if (numberValue > 365) numberValue = 365;
+              if (numberValue < 1) numberValue = 1;
+
+              setNewService({ ...newService, duration: numberValue.toString() });
+            }}
+            style={{ marginTop: 10 }}
+          />
+
+
+          <Input 
+            placeholder="📝 Description" 
+            value={newService.description} 
+            onChange={(e) => setNewService({ ...newService, description: e.target.value })}
+            style={{ marginTop: 10 }}
+          />
+          <Input 
+            type="number"
+            placeholder="💰 Price (VND)" 
+            value={newService.price} 
+            onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+            min="1"
+            style={{ marginTop: 10 }}
+          />
+        </Modal>
+
+
     </div>
   );
 };

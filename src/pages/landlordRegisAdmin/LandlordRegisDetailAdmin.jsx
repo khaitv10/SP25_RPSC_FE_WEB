@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Typography, Descriptions, Image, Button, Spin, message } from "antd";
+import { Card, Typography, Descriptions, Image, Button, Spin, Modal, Input, message } from "antd";
 import { LeftOutlined, RightOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { getLandlordById, updateLandlordStatus } from "../../Services/userAPI";
 import { toast } from "react-toastify";
 import "./LandlordRegisDetailAdmin.scss";
-import img from "../../assets/image-login.png"
 
 const { Title } = Typography;
+const { TextArea } = Input;
 
 const LandlordRegisDetailAdmin = () => {
   const { landlordId } = useParams();
@@ -15,6 +15,8 @@ const LandlordRegisDetailAdmin = () => {
   const [landlord, setLandlord] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   useEffect(() => {
     fetchLandlordDetail();
@@ -35,18 +37,11 @@ const LandlordRegisDetailAdmin = () => {
     setLoading(false);
   };
 
-  const handleUpdateStatus = async (userId, isApproved) => {
-    if (!userId) {
-      toast.error("User ID is invalid!");
-      return;
-    }
-
+  const handleUpdateStatus = async (userId, isApproved, reason = "") => {
     try {
       setLoading(true);
-      const response = await updateLandlordStatus(userId, isApproved);
-      console.log("Update response:", response);
-
-      if (response?.isSuccess || response?.data?.isSuccess) {
+      const response = await updateLandlordStatus(userId, isApproved, reason);
+      if (response.isSuccess) {
         toast.success("Status updated successfully!");
         setTimeout(() => {
           navigate("/admin/regis");
@@ -63,16 +58,22 @@ const LandlordRegisDetailAdmin = () => {
     }
   };
 
+  const handleReject = () => {
+    if (!rejectionReason.trim()) {
+      message.warning("Please enter a reason for rejection!");
+      return;
+    }
+    handleUpdateStatus(landlordId, false, rejectionReason);
+    setIsRejectModalOpen(false);
+    setRejectionReason("");
+  };
+
   if (loading) return <Spin size="large" className="loading-spinner" />;
 
   return (
     <div className="landlord-detail-container">
       <Card className="landlord-card">
-        <Button
-          type="default"
-          className="back-button"
-          onClick={() => navigate("/admin/regis")}
-        >
+        <Button type="default" className="back-button" onClick={() => navigate("/admin/regis")}>
           <LeftOutlined /> Back
         </Button>
 
@@ -136,12 +137,30 @@ const LandlordRegisDetailAdmin = () => {
           </Button>
           <Button
             className="reject"
-            onClick={() => handleUpdateStatus(landlordId, false)}
+            onClick={() => setIsRejectModalOpen(true)}
           >
             <CloseCircleOutlined /> Reject
           </Button>
         </div>
       </Card>
+
+      {/* Rejection Modal */}
+      <Modal
+        title="Confirm Rejection"
+        open={isRejectModalOpen}
+        onCancel={() => setIsRejectModalOpen(false)}
+        onOk={handleReject}
+        okText="Confirm"
+        cancelText="Cancel"
+      >
+        <p>Please enter the reason for rejection:</p>
+        <TextArea
+          rows={4}
+          value={rejectionReason}
+          onChange={(e) => setRejectionReason(e.target.value)}
+          placeholder="Enter rejection reason..."
+        />
+      </Modal>
     </div>
   );
 };
