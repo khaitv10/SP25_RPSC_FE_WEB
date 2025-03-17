@@ -4,6 +4,7 @@ import { getServicePackageByLandlord } from "../../Services/serviceApi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; 
 import "./PricingTable1.scss";
+import { duration } from "@mui/material";
 
 const PricingTable = () => {
   const [pricingData, setPricingData] = useState([]);
@@ -44,6 +45,7 @@ const PricingTable = () => {
       highLight: packageData.highLight,
       size: packageData.size,
       name: service.name,
+      duration: service.duration,
       description: service.description,
       serviceDetailId: service.serviceDetailId,
       packageId: service.packageId,
@@ -61,7 +63,7 @@ const PricingTable = () => {
           name: selectedPackage.name,
           price: selectedPackage.price,
           duration: selectedPackage.duration || "Không xác định",
-          titleColor: "#FF5733", // 🆕 Màu tiêu đề
+          titleColor: selectedPackage.highLight, // 🆕 Màu tiêu đề
           packageId: selectedPackage.packageId,
           serviceDetailId: selectedPackage.serviceDetailId,
           priceId: selectedPackage.priceId,

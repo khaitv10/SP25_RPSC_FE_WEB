@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";  
+import axiosClient from "../../Services/axios/config";
 import SignatureCanvas from "react-signature-canvas";
 import {
   Box,
@@ -25,13 +26,13 @@ const schema = z.object({
 
 const PackageContract = () => {
   const location = useLocation();
-  const { packageType, price, duration, titleColor, PackageId, ServiceDetailId } = location.state || {};
-  console.log(PackageId, ServiceDetailId);
+  const { name, price, duration, titleColor, packageId, serviceDetailId } = location.state || {};
+  // console.log(packageId, serviceDetailId);
   const userSignatureRef = useRef(null);
   const [, setUserSignature] = useState(null);
 
   const [user, setUser] = useState(null);
-  const [selectedPlan] = useState({ packageName: packageType, price, duration, titleColor, PackageId, ServiceDetailId });
+  const [selectedPlan] = useState({ name, price, duration, titleColor, packageId, serviceDetailId });
 
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -104,8 +105,43 @@ const PackageContract = () => {
   };
   
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
+    try {
+      setIsLoading(true);
+  
+      const { fullName, signature } = data;
+      const formData = new FormData();
+      
+      formData.append('LandlordId', user?.roleUserId);
+      formData.append('PackageId', selectedPlan.packageId);
+      formData.append('ServiceDetailId', selectedPlan.serviceDetailId);
+      
+      const signatureFile = dataURLtoFile(signature, 'signature.png');
+      formData.append('SignatureFile', signatureFile);
+  
+      const response = await axiosClient.post('/api/payment/package', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+    if (response.data.isSuccess === false && response.data.data.checkoutUrl) {
+      // Mở URL thanh toán trong cửa sổ mới
+      window.location.href = response.data.data.checkoutUrl;
+      toast.success('Thanh toán đang chờ. Vui lòng hoàn tất thanh toán.');
+    } else {
+      toast.error('Có lỗi xảy ra khi tạo thanh toán.');
+    }
+
+  
+      setIsLoading(false); // Kết thúc loading
+    } catch (error) {
+      setIsLoading(false);
+      console.error('Lỗi khi gửi yêu cầu thanh toán:', error);
+      toast.error('Có lỗi xảy ra. Vui lòng thử lại.');
+    }
   };
+  
 
   return (
     <Box
@@ -161,9 +197,9 @@ const PackageContract = () => {
             </ListItem>
             <ListItem>
               <span>
-                🎯 Bên A đồng ý cung cấp cho Bên B gói dịch vụ{" "}
-                <b>{selectedPlan?.packageName}</b>, bao gồm quyền đăng tải bài viết với màu sắc tiêu đề <b>{selectedPlan?.titleColor}</b> trong thời gian{" 3 "}
-                <b>{selectedPlan?.duration}</b>, kể từ ngày ký hợp đồng.
+                🎯 Bên A đồng ý cung cấp cho Bên B dịch vụ{" "}
+                <b>{selectedPlan?.name}</b>, bao gồm quyền đăng tải bài viết với màu sắc tiêu đề <b>{selectedPlan?.titleColor}</b> trong thời gian
+                <b> {selectedPlan?.duration} </b>ngày, kể từ ngày ký hợp đồng.
               </span>
             </ListItem>
 
