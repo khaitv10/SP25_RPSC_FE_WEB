@@ -16,11 +16,27 @@
     margin-bottom: 24px;
   }
 
-  .search-input {
-    width: 350px;
-    font-size: 16px;
-    height: 40px;
+  .search-container {
+    display: flex;
+    justify-content: flex-end; /* Đẩy Input.Search về bên phải */
+    align-items: center;
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    margin-bottom: 10px;
   }
+  
+  .search-input {
+    width: 320px; /* Điều chỉnh độ rộng input */
+  }
+  
+  .search-container .ant-input-search-button {
+    height: 32px !important; /* Giảm chiều cao */
+    font-size: 14px !important; /* Giảm kích thước chữ */
+    padding: 4px 10px !important;
+  }
+  
+  
+    
+  
 
   .ant-table {
     border-radius: 10px;

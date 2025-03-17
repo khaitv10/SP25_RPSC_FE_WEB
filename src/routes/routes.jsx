@@ -18,8 +18,13 @@ import ContractManagement from "../pages/Admin/ContractManagement/ContractManage
 import RoomManagement from "../pages/Landlord/RoomManagement";
 import RentedRoomManagement from "../pages/Landlord/RentedRoomManagement";
 import RentedRoomDetail from "../pages/Landlord/RentedRoomDetail";
+
 import RoomRequestManagement from "../pages/Landlord/RoomRequestManagement";
 import PricingTable from "../pages/packageLandlord/PricingTable";
+
+import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
+import PricingTable1 from "../pages/packageLandlord/PricingTable1";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -29,6 +34,8 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/otpRegister" element={<OtpRegis />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
 
       {/* admin */}
       <Route path="/admin/account" element={<AccountManagement />} />
@@ -36,19 +43,19 @@ const AppRoutes = () => {
       <Route path="/admin/request/room-type/:roomTypeId" element={<RoomTypeDetail />} />
       <Route path="/admin/package/:packageId" element={<AdminPackageDetail />} />
       <Route path="/admin/service" element={<AdminPackage />} />
-      <Route path="/packagecontract" element={<PackageContract />} />
       <Route path="/admin/contract" element={<ContractManagement />} />
       <Route path="/admin/regis" element={<LandlordRegisAdmin />} />
 
       {/* landlord */}
       <Route path="/register-landlord" element={<RegisterLandlord />} />
       <Route path="/landlord-detail/:landlordId" element={<LandlordRegisDetailAdmin />} />
-      <Route path="/packagecontract" element={<PackageContract />} />
       <Route path="/landlord/room" element={<RoomManagement />} />
-      <Route path="/landlord/service" element={<PricingTable />} />
+      <Route path="/landlord/service" element={<PricingTable1 />} />
+
       <Route path="/landlord/manage" element={<RentedRoomManagement />} />
       <Route path="/landlord/rented-room/:roomId" element={<RentedRoomDetail />} />
       <Route path="/landlord/request" element={<RoomRequestManagement />} />
+      <Route path="/landlord/packagecontract" element={<PackageContract />} />
 
 
 
