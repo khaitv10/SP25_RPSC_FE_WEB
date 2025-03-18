@@ -124,7 +124,7 @@ const PackageContract = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+      console.log(response);
     if (response.data.isSuccess === false && response.data.data.checkoutUrl) {
       // Mở URL thanh toán trong cửa sổ mới
       window.location.href = response.data.data.checkoutUrl;
