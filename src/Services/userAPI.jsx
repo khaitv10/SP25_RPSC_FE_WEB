@@ -99,10 +99,10 @@ export const getLandlordById = async (landlordId) => {
     }
   };
   
-  export const updateLandlordStatus = async (landlordId, isApproved) => {
+  export const updateLandlordStatus = async (landlordId, isApproved, rejectionReason = "") => {
     try {
         const response = await axiosClient.put(`/api/user/Update-Landlord-Status`, null, {
-            params: { landlordId, isApproved },
+            params: { landlordId, isApproved, rejectionReason }, // Thêm rejectionReason vào params
         });
 
         return response.data;
@@ -110,6 +110,7 @@ export const getLandlordById = async (landlordId) => {
         throw error.response ? error.response.data : new Error("An error occurred while updating landlord status");
     }
 };
+
 
 export const forgotPassword = async (email) => {
     try {
@@ -145,5 +146,14 @@ export const resetPassword = async (email, newPassword) => {
     } catch (error) {
         toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi đặt lại mật khẩu.");
         throw error.response ? error.response.data : new Error("Error in reset password");
+    }
+};
+
+export const getTotalUsers = async () => {
+    try {
+        const response = await axiosClient.get('/api/user/get-total-users');
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error("An error occurred while fetching total users");
     }
 };

@@ -34,28 +34,51 @@ export const getServicePackageByLandlord = async () => {
 };
 
 
-export const updatePrice = async (priceId, newPrice) => {
-  try {
-      if (!priceId || typeof newPrice !== "number" || newPrice <= 0) {
-          throw new Error("Invalid priceId or newPrice must be a positive number.");
-      }
-
-      // Gửi request cập nhật giá
-      const response = await axiosClient.put(
-          `/api/packageservice/update-price/${priceId}`,
-          { newPrice }, // Dữ liệu gửi trong body
-          {
-              headers: {
-                  "Content-Type": "application/json",
-              },
-          }
+export const updatePrice = async (priceId, newPrice, newName, newDuration, newDescription) => {
+    if (!priceId || typeof newPrice !== "number" || newPrice <= 0) {
+      throw new Error("Invalid priceId or newPrice must be a positive number.");
+    }
+  
+    try {
+      const { data } = await axiosClient.put(
+        `/api/packageservice/update-price/${priceId}`,
+        { newPrice, newName, newDuration, newDescription },
+        { headers: { "Content-Type": "application/json" } }
       );
+      return data;
+    } catch (error) {
+      console.error("Error updating price and service details:", error);
+      throw new Error(error.response?.data?.message || "An error occurred while updating.");
+    }
+  };
+  
 
-      return response.data;
-  } catch (error) {
-      // Xử lý lỗi trả về từ API
-      console.error("Error updating price:", error);
+export const createService = async (packageData) => {
+    try {
+        const response = await axiosClient.post(`/api/packageservice/create-service`, packageData, {
+            headers: { "Content-Type": "application/json" }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error creating service:", error);
+        throw error.response?.data?.message || "An error occurred while creating service.";
+    }
+};
 
-      throw error.response?.data?.message || "An error occurred while updating price.";
-  }
+
+export const createServiceDetail = async (serviceDetailData) => {
+    try {
+        if (!serviceDetailData) {
+            throw new Error("Service detail data is required.");
+        }
+
+        const response = await axiosClient.post(`/api/packageservice/create-service-detail`, serviceDetailData, {
+            headers: { "Content-Type": "application/json" }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error creating service detail:", error);
+        throw error.response?.data?.message || "An error occurred while creating service detail.";
+    }
 };
