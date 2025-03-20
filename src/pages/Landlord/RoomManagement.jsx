@@ -94,32 +94,52 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
       listRoomServices: Array.from({ length: count }, () => ({
         roomServiceName: "",
         description: "",
-        price: 0,
+        price: { price: 0 }, 
       })),
     });
   };
+  
 
   const handleServiceChange = (index, field, value) => {
     const updatedServices = [...roomData.listRoomServices];
-    updatedServices[index][field] = value;
+    updatedServices[index][field] =
+  field === "price" ? { price: Number(value) } : value;
     setRoomData({ ...roomData, listRoomServices: updatedServices });
   };
+  
 
   const handleSubmit = async () => {
+    const token = getAccessToken();
+    if (!token) return;
+  
+    // Kiểm tra các trường bắt buộc
+    if (!roomData.roomTypeName.trim()) {
+      message.error("Room Type Name is required");
+      return;
+    }
+    if (!roomData.description.trim()) {
+      message.error("Description is required");
+      return;
+    }
+  
+    const updatedRoomData = {
+      ...roomData,
+      listRoomServices: roomData.listRoomServices.length > 0 ? roomData.listRoomServices : [],
+    };
+  
     try {
-      let token = getAccessToken();
-      // console.log(roomData);
-      // console.log(token);
-
-      createRoomTypeAPI(roomData, token);
+      console.log("Dữ liệu gửi lên API:", updatedRoomData);
+      await createRoomTypeAPI(updatedRoomData, token);
       message.success("Room created successfully!");
-      onSave(roomData);
+      onSave(updatedRoomData);
       onClose();
-      // eslint-disable-next-line no-unused-vars
     } catch (error) {
+      console.error("Lỗi tạo phòng:", error);
       message.error("Error creating room");
     }
   };
+  
+  
 
   const getAccessToken = () => {
     return localStorage.getItem("token");
