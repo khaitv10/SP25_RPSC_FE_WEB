@@ -1,0 +1,62 @@
+.feedback-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.feedback-paper {
+    padding: 24px;
+    max-width: 900px;
+    width: 100%;
+    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+.feedback-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.info-card {
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 16px;
+    background: white;
+}
+
+.info-field {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(0, 123, 255, 0.1);
+    margin: 10px 0;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #007bff;
+    width: 100px;
+}
+
+.info-value {
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+}
+
+.go-back-button {
+    background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 25px;
+    transition: all 0.3s;
+}
+
+.go-back-button:hover {
+    background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+}

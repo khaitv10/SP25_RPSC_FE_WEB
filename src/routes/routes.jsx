@@ -24,6 +24,8 @@ import RoomRequestManagement from "../pages/Landlord/RoomRequestManagement";
 import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
 import PricingTable1 from "../pages/packageLandlord/PricingTable1";
 import ConfirmPayment from "../pages/PackageContract/confirmPayment";
+import FeedbackRoom from "../pages/Landlord/FeedbackRoom/FeedbackRoom";
+import FeedbackDetail from "../pages/Landlord/FeedbackRoom/FeedbackDetail";
 
 const AppRoutes = () => {
   return (
@@ -57,6 +59,8 @@ const AppRoutes = () => {
       <Route path="/landlord/rented-room/:roomId" element={<RentedRoomDetail />} />
       <Route path="/landlord/request" element={<RoomRequestManagement />} />
       <Route path="/landlord/packagecontract" element={<PackageContract />} />
+      <Route path="/landlord/feedback" element={<FeedbackRoom/>} />
+      <Route path="/landlord/feedback/:id" element={<FeedbackDetail/>} />
 
 
 

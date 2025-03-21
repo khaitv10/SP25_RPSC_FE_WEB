@@ -1,0 +1,33 @@
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+  
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eaeaea;
+    }
+  
+    th {
+      background: #f9f9f9;
+      font-weight: bold;
+    }
+  
+    tbody tr {
+      transition: background 0.3s ease-in-out;
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
+  
+    .view-icon {
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
