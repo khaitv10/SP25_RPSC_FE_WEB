@@ -2,57 +2,44 @@ import { FaTimes } from "react-icons/fa";
 import PropTypes from "prop-types";
 import profilePic from "../../assets/avatar.jpg";
 
-const img = 'https://instagram.fsgn2-8.fna.fbcdn.net/v/t51.29350-15/350970694_3321822604796846_4687603280114794613_n.jpg?stp=dst-jpg_e35_p640x640_sh0.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xNDQweDE4MDAuc2RyLmYyOTM1MC5kZWZhdWx0X2ltYWdlIn0&_nc_ht=instagram.fsgn2-8.fna.fbcdn.net&_nc_cat=102&_nc_oc=Q6cZ2AGj2WUA0QZaSpQsJfnt9-NIBOMpIUP0B8ZjKnoiFSvHDKM5jbIuimC02zw7y1jz2qk&_nc_ohc=NOJaPFRYc-IQ7kNvgH_NxLY&_nc_gid=34b89f2b3e584501a59446c978ec4960&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzExNTU1MzI0MjgzMTI2NDU1MQ%3D%3D.3-ccb7-5&oh=00_AYAmrx00wtB_kEmKxWN9pUp091mzJOLpfTwyhMoAgtDJyQ&oe=67CD046F&_nc_sid=7a9f4b';
-
 const CustomerModal = ({ isOpen, customer, onClose }) => {
   if (!isOpen || !customer) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-10 rounded-lg shadow-lg w-2/3 max-h-[80vh] overflow-auto relative">
-        {/* Close Button */}
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-2xl relative transition-transform transform scale-95 hover:scale-100 duration-300">
         <button
-          className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition transform hover:scale-110"
           onClick={onClose}
         >
-          <FaTimes size={20} />
+          <FaTimes size={24} />
         </button>
 
-        <h2 className="text-2xl font-bold mb-4 text-center">Customer Details</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-800">Customer Details</h2>
 
-        {/* Avatar & Basic Info */}
-        <div className="flex items-center gap-6 mb-4">
-          {/* Avatar */}
-          {customer.avatar ? (
-            <img
-              src={profilePic}
-              //src={customer.avatar}
-              alt="Avatar"
-              className="w-24 h-24 rounded-full border border-gray-300"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
-              No Image
-            </div>
-          )}
+        <div className="flex flex-col items-center mb-6">
+          <img
+            //src={customer.avatar || profilePic}
+            src={profilePic}
+            alt="Avatar"
+            className="w-28 h-28 rounded-full border-4 border-gray-300 shadow-lg transition-transform transform hover:scale-105"
+          />
 
-          {/* Customer Basic Info */}
-          <div>
-            <p className="text-lg font-semibold">{customer.fullName}</p>
-            <p className="text-gray-600">{customer.email}</p>
-            <p className="text-gray-600">{customer.phoneNumber}</p>
-            <p className="text-gray-600">{customer.gender}</p>
+          <div className="mt-4 text-center">
+            <p className="text-2xl font-bold text-black">{customer.fullName}</p>
+            <p className="text-gray-500 font-semibold  text-lg">{customer.email}</p>
+            <p className="text-gray-500 font-semibold  text-lg">{customer.phoneNumber}</p>
+            <p className="text-gray-500 font-semibold  text-lg">{customer.gender}</p>
           </div>
         </div>
 
-        {/* Additional Details */}
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <p><strong>Address:</strong> {customer.address}</p>
-          <p><strong>Preferences:</strong> {customer.preferences}</p>
-          <p><strong>Life Style:</strong> {customer.lifeStyle}</p>
-          <p><strong>Budget Range:</strong> {customer.budgetRange}</p>
-          <p><strong>Preferred Location:</strong> {customer.preferredLocation}</p>
-          <p><strong>Requirement:</strong> {customer.requirement}</p>
+        <div className="grid grid-cols-2 gap-6 text-md bg-gray-100 p-4 rounded-lg shadow-inner">
+          <div className="info-item"><strong>Address:</strong> {customer.address}</div>
+          <div className="info-item"><strong>Preferences:</strong> {customer.preferences}</div>
+          <div className="info-item"><strong>Life Style:</strong> {customer.lifeStyle}</div>
+          <div className="info-item"><strong>Budget Range:</strong> {customer.budgetRange}</div>
+          <div className="info-item"><strong>Preferred Location:</strong> {customer.preferredLocation}</div>
+          <div className="info-item"><strong>Requirement:</strong> {customer.requirement}</div>
         </div>
       </div>
     </div>

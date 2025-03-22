@@ -21,7 +21,7 @@ const HeaderLandlord = () => {
   };
 
   return (
-    <header className="flex justify-between items-center bg-white shadow-md p-4 relative">
+    <header className="flex justify-between items-center bg-white shadow-md relative">
       {/* Logo */}
       <div className="flex items-center">
         <img src={logo} alt="EasyRoomie Logo" className="h-13 w-auto" />

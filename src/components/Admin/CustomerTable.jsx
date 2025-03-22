@@ -39,13 +39,13 @@ const CustomerTable = ({
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="Status">Status</option>
+            <option value="Status">All</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
 
           {/* Search Phone Number with Icon */}
-          <div className="relative flex items-center w-64 border rounded-md overflow-hidden">
+          <div className="relative flex items-center w-1/4 border rounded-md overflow-hidden">
             <input
               type="text"
               placeholder="Search Phone Number"
@@ -92,7 +92,6 @@ const CustomerTable = ({
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '5px',
                         background: 'transparent',
                         border: 'none',
                         cursor: 'pointer',
@@ -109,7 +108,6 @@ const CustomerTable = ({
                       }}
                       onClick={() => handleViewDetails(customer)}
                     >
-                      <span>Details</span>
                       <FaEye size={20} />
                     </button>
 

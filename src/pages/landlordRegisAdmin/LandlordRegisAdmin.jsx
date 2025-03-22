@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getLandlordRegistrations } from "../../Services/userAPI"
+import { getLandlordRegistrations } from "../../Services/userAPI";
 import { useNavigate } from "react-router-dom";
 import { Table, Button, Tag, Input, Card, Space, Typography } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
@@ -28,7 +28,7 @@ const LandlordRegisAdmin = () => {
         setTotalUser(data.data.totalUser);
       }
     } catch (error) {
-      //console.error("Error fetching landlords:", error);
+      console.error("Error fetching landlords:", error);
     }
     setLoading(false);
   };
@@ -50,6 +50,12 @@ const LandlordRegisAdmin = () => {
       key: "phoneNumber",
     },
     {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm"),
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -58,48 +64,26 @@ const LandlordRegisAdmin = () => {
       ),
     },
     {
-      title: "User Status",
-      dataIndex: "userStatus",
-      key: "userStatus",
-      render: (userStatus) => (
-        <Tag color={userStatus === "Pending" ? "red" : "blue"}>{userStatus}</Tag>
+      title: "Action",
+      key: "action",
+      render: (record) => (
+        <Space>
+          <Button
+            className="view-button"
+            icon={<EyeOutlined />}
+            onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
+          >
+          </Button>
+        </Space>
       ),
     },
-    {
-      title: "Created Date",
-      dataIndex: "createdDate",
-      key: "createdDate",
-      render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm"),
-    },
-    {
-  title: "Action",
-  key: "action",
-  render: (record) => (
-    <Space>
-      <Button
-        icon={<EyeOutlined />}
-        onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
-      >
-        Xem chi tiết
-      </Button>
-    </Space>
-  ),
-},
   ];
 
   return (
     <div className="landlord-admin">
       <Card className="landlord-card">
-        <Title level={2}>Landlord Registrations</Title>
-        <p>Total Users: {totalUser}</p>
-        <Space className="landlord-actions">
-          <Input
-            className="search-input"
-            placeholder="Search by name or email"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </Space>
+        <Title level={2} style={{ color: "black", fontWeight: "bold"}}>🏠 Landlord Registrations</Title>
+        <p style={{ fontSize: "16px", fontWeight: "bold" }}>Total New Registration: {totalUser}</p>
         <Table
           dataSource={landlords}
           columns={columns}

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.scss";
-import { FaFacebook, FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { login } from "../../Services/userAPI";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,10 +26,14 @@ const Login = () => {
       const response = await login(phone, password);
 
       if (response?.data?.token) {
-        const { role, token } = response.data;
+        const { role, email, fullName, phoneNumber, token, roleUserId } = response.data;
 
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
+        localStorage.setItem("email", email);
+        localStorage.setItem("fullName", fullName);
+        localStorage.setItem("phoneNumber", phoneNumber);
+        localStorage.setItem("roleUserId", roleUserId);
         localStorage.setItem("loggedIn", "true");
 
         toast.success("Login successful!");
@@ -47,13 +51,29 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      toast.error(err.response?.data?.message || "Login failed. Please try again.");
+      console.error("Error response:", err.response);
+
+      const errorMessage =
+        err.response?.data?.message || 
+        err.response?.message ||      
+        err.message ||               
+        "Login failed. Please try again.";
+
+      if (errorMessage.includes("password")) {
+        toast.error("Incorrect password. Please try again.");
+      } else if (errorMessage.includes("not found") || errorMessage.includes("does not exist")) {
+        toast.error("Account does not exist. Please check your credentials.");
+      } else if (errorMessage.includes("deactivated") || errorMessage.includes("banned")) {
+        toast.error("Your account has been deactivated. Contact support for help.");
+      } else {
+        toast.error(errorMessage);
+      }
     }
   };
 
   return (
     <div className="login-container">
-      
+
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <img src={logo} alt="EasyRoomie Logo" className="otp-logo" />
 
@@ -65,7 +85,7 @@ const Login = () => {
 
           <form onSubmit={handleSubmit}>
             {/* Phone Number Input */}
-            <label>Phone</label>
+            <label>Phone or email</label>
             <input
               type="text"
               value={phone}
@@ -111,7 +131,7 @@ const Login = () => {
             Do not have an account? <Link to="/register">Sign up</Link>
           </p>
 
-          
+
         </div>
 
         {/* Illustration Image */}

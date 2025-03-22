@@ -1,4 +1,5 @@
     import axiosClient from "./axios/config";
+    import { toast } from "react-toastify";
 
     export const login = async (phoneNumber, password) => {
     try {
@@ -44,16 +45,14 @@ export const verifyOTP = async (email, otp) => {
     }
 };
 
-export const registerLandlord = async (email, companyName, numberRoom, licenseNumber, bankName, bankNumber, workshopImages) => {
+export const registerLandlord = async (email, companyName, licenseNumber, bankName, bankNumber, workshopImages) => {
     try {
         const formData = new FormData();
         formData.append("CompanyName", companyName);
-        formData.append("NumberRoom", numberRoom);
         formData.append("LicenseNumber", licenseNumber);
         formData.append("BankName", bankName);
         formData.append("BankNumber", bankNumber);
         
-        // Thêm từng ảnh vào FormData
         workshopImages.forEach((image) => {
             formData.append("WorkshopImages", image);
         });
@@ -66,7 +65,9 @@ export const registerLandlord = async (email, companyName, numberRoom, licenseNu
 
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : new Error("An error occurred during landlord registration");
+        const errorMessage = error.response?.data?.message || "An error occurred during landlord registration";
+        toast.error(`Registration failed: ${errorMessage}`); // 🔥 Hiển thị lỗi trên Toast
+        throw error.response ? error.response.data : new Error(errorMessage);
     }
 };
 
@@ -98,14 +99,61 @@ export const getLandlordById = async (landlordId) => {
     }
   };
   
-  export const updateLandlordStatus = async (landlordId, isApproved) => {
+  export const updateLandlordStatus = async (landlordId, isApproved, rejectionReason = "") => {
     try {
         const response = await axiosClient.put(`/api/user/Update-Landlord-Status`, null, {
-            params: { landlordId, isApproved },
+            params: { landlordId, isApproved, rejectionReason }, // Thêm rejectionReason vào params
         });
 
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : new Error("An error occurred while updating landlord status");
+    }
+};
+
+
+export const forgotPassword = async (email) => {
+    try {
+        const response = await axiosClient.post('/api/authentication/forgot-password', { email });
+        toast.success("OTP đã được gửi đến email của bạn.");
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi gửi yêu cầu quên mật khẩu.");
+        throw error.response ? error.response.data : new Error("Error in forgot password");
+    }
+};
+export const verifyForgotPasswordOTP = async (email, otp) => {
+    try {
+        const response = await axiosClient.post('/api/otp/verify-otp-forgot-password', {
+            email,
+            otp
+        });
+        toast.success("Xác minh OTP thành công. Vui lòng đặt lại mật khẩu.");
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Mã OTP không hợp lệ hoặc đã hết hạn.");
+        throw error.response ? error.response.data : new Error("Error in OTP verification");
+    }
+};
+export const resetPassword = async (email, newPassword) => {
+    try {
+        const response = await axiosClient.post('/api/authentication/reset-password', {
+            email,
+            newPassword
+        });
+        toast.success("Mật khẩu của bạn đã được đặt lại thành công.");
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi đặt lại mật khẩu.");
+        throw error.response ? error.response.data : new Error("Error in reset password");
+    }
+};
+
+export const getTotalUsers = async () => {
+    try {
+        const response = await axiosClient.get('/api/user/get-total-users');
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error("An error occurred while fetching total users");
     }
 };
