@@ -5,6 +5,7 @@ import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "./adminPackage.scss";
 
+
 const { Title } = Typography;
 
 const AdminPackage = () => {

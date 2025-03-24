@@ -111,30 +111,6 @@
   width: 20% !important;
 }
 
-/* Featured column highlight */
-.ant-table-tbody > tr > td:nth-child(2) {
-  background-color: #ebf8ff !important;
-  position: relative;
-}
-
-.ant-table-thead > tr > th:nth-child(2) {
-  background: linear-gradient(135deg, #3182ce, #2c5282) !important;
-  position: relative;
-}
-
-.ant-table-thead > tr > th:nth-child(2)::after {
-  content: 'POPULAR';
-  position: absolute;
-  top: -12px;
-  right: 0;
-  left: 0;
-  font-size: 11px;
-  background: #38b2ac;
-  padding: 2px 8px;
-  border-radius: 10px;
-  width: 80px;
-  margin: 0 auto;
-}
 
 /* Pagination */
 .pagination-box {
