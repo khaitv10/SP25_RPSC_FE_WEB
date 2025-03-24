@@ -56,7 +56,7 @@ const AppRoutes = () => {
       <Route path="/landlord/confirmpayment" element={<ConfirmPayment />} />
 
       <Route path="/landlord/manage" element={<RentedRoomManagement />} />
-      <Route path="/landlord/rented-room/:roomId" element={<RentedRoomDetail />} />
+      <Route path="/landlord/rented-room/:roomStayId" element={<RentedRoomDetail />} />
       <Route path="/landlord/request" element={<RoomRequestManagement />} />
       <Route path="/landlord/packagecontract" element={<PackageContract />} />
       <Route path="/landlord/feedback" element={<FeedbackRoom/>} />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { useNavigate } from "react-router-dom";
 import { getLandlordRegistrations, getTotalUsers } from "../../Services/userAPI";
+import { getTransactionSummary } from "../../Services/Admin/landlordAPI"; // 🔹 Thêm API lấy tổng hợp giao dịch
 import Card from "../../components/Card";
 import Chart from "../../components/Chart";
 import Table from "../../components/Table";
@@ -12,7 +13,10 @@ const Dashboard = () => {
   const [totalLandlords, setTotalLandlords] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [totalUser, setTotalUser] = useState(0);
-  const navigate = useNavigate(); // ✅ Hook để chuyển hướng
+  const [year, setYear] = useState(new Date().getFullYear().toString()); // ✅ Mặc định là năm nay
+  const [chartData, setChartData] = useState([]); // 🔹 State lưu dữ liệu biểu đồ
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("Dashboard mounted, checking localStorage...");
@@ -29,20 +33,18 @@ const Dashboard = () => {
 
     fetchTotalUsers();
     fetchLandlords();
-  }, []);
+    fetchTransactionSummary(year); // 🔹 Gọi API lấy dữ liệu biểu đồ
+  }, [year]); // 🔥 Khi `year` thay đổi, gọi lại API
 
   // 🟢 Lấy tổng số landlords & customers
   const fetchTotalUsers = async () => {
     try {
       const response = await getTotalUsers();
-      console.log("API Total Users Response:", response);
-
       if (response?.isSuccess) {
         setTotalLandlords(response.data.totalLandlords);
         setTotalCustomers(response.data.totalCustomers);
       }
     } catch (error) {
-      console.error("Error fetching total users:", error);
       toast.error("Failed to fetch total user data");
     }
   };
@@ -51,16 +53,28 @@ const Dashboard = () => {
   const fetchLandlords = async () => {
     try {
       const response = await getLandlordRegistrations(1, 10, "");
-      console.log("API Landlord Registrations Response:", response);
-
       if (response?.isSuccess) {
-        const limitedLandlords = response.data.landlords.slice(0, 5); // ✅ Chỉ lấy 5 cái
-        setLandlords(limitedLandlords);
+        setLandlords(response.data.landlords.slice(0, 5));
         setTotalUser(response.data.totalUser);
       }
     } catch (error) {
-      console.error("Error fetching landlords:", error);
       toast.error("Failed to fetch landlord registrations");
+    }
+  };
+
+  // 📊 Lấy dữ liệu giao dịch theo năm để hiển thị biểu đồ
+  const fetchTransactionSummary = async (selectedYear) => {
+    try {
+      const response = await getTransactionSummary(selectedYear);
+      if (response?.isSuccess) {
+        const formattedData = Object.entries(response.data).map(([key, value]) => ({
+          month: key.split("-")[1], // Lấy tháng từ "2024-03"
+          actualValue: value,
+        }));
+        setChartData(formattedData);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch transaction summary");
     }
   };
 
@@ -76,11 +90,11 @@ const Dashboard = () => {
       </div>
 
       <div className="bg-white shadow-lg rounded-xl p-6 mb-8">
-        <Chart />
+        <Chart year={year} setYear={setYear} data={chartData} /> {/* ✅ Truyền props */}
       </div>
 
       <div className="bg-white shadow-lg rounded-xl p-6">
-        <Table data={landlords} onViewMore={() => navigate("/admin/regis")} /> {/* ✅ Truyền hàm onViewMore */}
+        <Table data={landlords} onViewMore={() => navigate("/admin/regis")} />
       </div>
     </div>
   );

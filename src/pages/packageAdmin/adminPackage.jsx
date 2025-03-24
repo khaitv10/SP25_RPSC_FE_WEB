@@ -54,14 +54,20 @@ const AdminPackage = () => {
       key: "type",
     },
     {
-      title: "🌟 HighLight",
-      dataIndex: "highLight",
-      key: "highLight",
+      title: "🌟 HighLight Time",
+      dataIndex: "highLightTime",
+      key: "highLightTime",
     },
     {
-      title: "📏 Size",
-      dataIndex: "size",
-      key: "size",
+      title: "📏 Max Post",
+      dataIndex: "maxPost",
+      key: "maxPost",
+      render: (maxPost) => (maxPost ? maxPost : "No Limit"),
+    },
+    {
+      title: "🏷️ Label",
+      dataIndex: "label",
+      key: "label",
     },
     {
       title: "Service Status",
@@ -110,8 +116,6 @@ const AdminPackage = () => {
             </Button>
           </div>
 
-
-
         <Table
           dataSource={packages}
           columns={columns}
@@ -135,13 +139,15 @@ const AdminPackage = () => {
           <Form.Item name="type" label="📌 Package Type" rules={[{ required: true, message: "Please enter package type" }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="highLight" label="🌟 HighLight" rules={[{ required: true, message: "Please enter highlight" }]}>
+          <Form.Item name="highLightTime" label="🌟 HighLight Time" rules={[{ required: true, message: "Please enter highlight time" }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="size" label="📏 Size" rules={[{ required: true, message: "Please enter size" }]}>
+          <Form.Item name="maxPost" label="📏 Max Post">
+            <Input type="number" placeholder="Enter max post (leave blank for No Limit)" />
+          </Form.Item>
+          <Form.Item name="label" label="🏷️ Label" rules={[{ required: true, message: "Please enter label" }]}>
             <Input />
           </Form.Item>
-          
         </Form>
       </Modal>
     </div>

@@ -38,32 +38,38 @@ const PricingTable = () => {
     .sort((a, b) => Number(a) - Number(b));
   const paginatedData = pricingData.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
 
-  // 🆕 Mở modal khi bấm vào giá tiền
   const handlePaymentClick = (packageData, service) => {
-    setSelectedPackage({
+    const newPackage = {
+      duration: service.duration,  
       type: packageData.type,
       highLight: packageData.highLight,
       size: packageData.size,
       name: service.name,
-      duration: service.duration,
       description: service.description,
       serviceDetailId: service.serviceDetailId,
       packageId: service.packageId,
       priceId: service.priceId,
       price: service.price.toLocaleString() + " VND",
-    });
+    };
+  
+    console.log("📌 Đã chọn gói dịch vụ:", newPackage);
+    setSelectedPackage(newPackage);
     setIsModalOpen(true);
   };
+  
+  
 
   // 🆕 Xử lý khi bấm "Thanh toán"
   const handleConfirmPayment = () => {
     if (selectedPackage) {
+
+      console.log("duration123123",selectedPackage.duration );
       navigate("/landlord/packagecontract", {
         state: {
           name: selectedPackage.name,
           price: selectedPackage.price,
           duration: selectedPackage.duration || "Không xác định",
-          titleColor: selectedPackage.highLight, // 🆕 Màu tiêu đề
+          titleColor: "#FF5733", // 🆕 Màu tiêu đề
           packageId: selectedPackage.packageId,
           serviceDetailId: selectedPackage.serviceDetailId,
           priceId: selectedPackage.priceId,
@@ -117,7 +123,7 @@ const PricingTable = () => {
 
   return (
     <div className="pricing-table-container">
-      <Typography.Title level={4} className="table-title">📋 Bảng giá tin đăng</Typography.Title>
+      <Typography.Title level={5} className="table-title">📋 Bảng giá tin đăng</Typography.Title>
       <Card className="custom-table">
         <AnimatePresence mode="wait">
           <motion.div
@@ -154,7 +160,8 @@ const PricingTable = () => {
             <p><b>📌 Loại tin:</b> {selectedPackage.type}</p>
             <p><b>⭐ Gói dịch vụ:</b> {selectedPackage.name}</p>
             <p><b>📝 Mô tả:</b> {selectedPackage.description}</p>
-            <p><b>📏 Kích thước:</b> {selectedPackage.size}</p>
+            <p><b>💰 Thời gian:</b> {selectedPackage.duration}</p>
+            <p><b>📏 Số bài đ:</b> {selectedPackage.maxPost}</p>
             <p><b>📌 Nổi bật:</b> {selectedPackage.highLight}</p>
             <p><b>💰 Giá:</b> {selectedPackage.price}</p>
           </div>
