@@ -1,168 +1,139 @@
 import React, { useState, useEffect } from "react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    IconButton,
-    InputBase,
-    Pagination,
-    Typography,
-    Box,
-    Rating,
-    CircularProgress
-} from "@mui/material";
-import { Eye, Search, MessageSquare } from "lucide-react";
+import { Search, Eye, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getLandlordFeedbacks } from "../../../Services/Landlord/feedbackApi";
+import './FeedbackRoom.scss';
 
 const FeedbackRoom = () => {
-    const navigate = useNavigate();
-    const [feedbacks, setFeedbacks] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [page, setPage] = useState(1);
-    const rowsPerPage = 5;
-    const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10; // Increased rows per page
+  const [search, setSearch] = useState("");
 
-    useEffect(() => {
-        const fetchFeedbacks = async () => {
-            try {
-                const data = await getLandlordFeedbacks();
-                setFeedbacks(data.feebacks);
-            } catch (err) {
-                setError(err.message || "Lỗi khi tải feedbacks");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFeedbacks();
-    }, []);
-
-    const handleChangePage = (event, value) => {
-        setPage(value);
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const data = await getLandlordFeedbacks();
+        setFeedbacks(data.feebacks);
+      } catch (err) {
+        setError(err.message || "Error loading feedbacks");
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchFeedbacks();
+  }, []);
 
-    const filteredFeedbacks = feedbacks.filter((feedback) =>
-        feedback.roomNumber.includes(search)
-    );
-
-    const totalPages = Math.ceil(filteredFeedbacks.length / rowsPerPage);
-
+  const StarRating = ({ rating }) => {
     return (
-        <Box sx={{ width: "100%" }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <MessageSquare size={28} color="#F9A856" />
-                <Typography variant="h4" fontWeight="bold">
-                    Feedback Reports
-                </Typography>
-            </Box>
-
-            <Paper sx={{ width: "100%", overflow: "hidden", padding: 2 }}>
-                {/* Thanh tìm kiếm */}
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        backgroundColor: "#f0f0f0",
-                        padding: "6px 10px",
-                        borderRadius: "20px",
-                        width: "250px",
-                        marginBottom: "10px",
-                    }}
-                >
-                    <Search size={18} style={{ marginRight: 5, color: "#888" }} />
-                    <InputBase
-                        placeholder="Search Room Number"
-                        fullWidth
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        sx={{ fontSize: "14px" }}
-                    />
-                </div>
-
-                {/* Xử lý trạng thái tải dữ liệu */}
-                {loading ? (
-                    <Box display="flex" justifyContent="center" mt={3}>
-                        <CircularProgress />
-                    </Box>
-                ) : error ? (
-                    <Typography color="error" textAlign="center">
-                        {error}
-                    </Typography>
-                ) : (
-                    <>
-                        {/* Bảng dữ liệu */}
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>ReviewerName</TableCell>
-                                        <TableCell>ReviewerPhone</TableCell>
-                                        <TableCell>RoomNumber</TableCell>
-                                        <TableCell>Type</TableCell>
-                                        <TableCell>Rate</TableCell>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Action</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {filteredFeedbacks
-                                        .slice((page - 1) * rowsPerPage, page * rowsPerPage)
-                                        .map((feedback) => (
-                                            <TableRow key={feedback.feedbackID}>
-                                                <TableCell>{feedback.feedbackID}</TableCell>
-                                                <TableCell>{feedback.reviewerName}</TableCell>
-                                                <TableCell>{feedback.reviewerPhoneNumber}</TableCell>
-                                                <TableCell>{feedback.roomNumber}</TableCell>
-                                                <TableCell>{feedback.type}</TableCell>
-                                                <TableCell>
-                                                    <Rating value={feedback.rating} precision={0.5} readOnly />
-                                                </TableCell>
-                                                <TableCell>{new Date(feedback.createdDate).toLocaleDateString()}</TableCell>
-                                                <TableCell>
-                                                    <IconButton onClick={() => navigate(`/landlord/feedback/${feedback.feedbackID}`)}>
-                                                        <Eye size={18} />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-
-                        {/* Phân trang */}
-                        <div style={{ display: "flex", justifyContent: "right", marginTop: "10px" }}>
-                            <Pagination
-                                count={totalPages}
-                                page={page}
-                                onChange={handleChangePage}
-                                shape="rounded"
-                                sx={{
-                                    "& .MuiPaginationItem-root": {
-                                        color: "#333",
-                                        borderRadius: "8px",
-                                    },
-                                    "& .Mui-selected": {
-                                        backgroundColor: "#F9A856",
-                                        color: "#fff",
-                                        fontWeight: "bold",
-                                        "&:hover": {
-                                            backgroundColor: "#F9A856",
-                                        },
-                                    },
-                                }}
-                            />
-                        </div>
-                    </>
-                )}
-            </Paper>
-        </Box>
+      <div className="feedback-room-star-rating">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span 
+            key={star} 
+            className={`feedback-room-star-rating-star ${
+              rating >= star 
+                ? 'feedback-room-star-rating-star-full' 
+                : rating >= star - 0.5 
+                ? 'feedback-room-star-rating-star-half' 
+                : 'feedback-room-star-rating-star-empty'
+            }`}
+          >
+            ★
+          </span>
+        ))}
+        <span className="feedback-room-star-rating-value">{rating.toFixed(1)}</span>
+      </div>
     );
+  };
+
+  const filteredFeedbacks = feedbacks.filter((feedback) =>
+    feedback.roomNumber.includes(search)
+  );
+
+  const paginatedFeedbacks = filteredFeedbacks.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+
+  return (
+    <div className="feedback-room-container">
+      <div className="feedback-room-wrapper">
+        <header className="feedback-room-header">
+          <div className="feedback-room-header-title">
+            <MessageSquare className="feedback-room-header-icon" />
+            <h1>Feedback Reports</h1>
+          </div>
+          <div className="feedback-room-header-info">
+            {filteredFeedbacks.length} feedback reports found
+          </div>
+        </header>
+
+        <div className="feedback-room-search-container">
+          <div className="feedback-room-search">
+            <Search className="feedback-room-search-icon" />
+            <input 
+              type="text" 
+              placeholder="Search Room Number" 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="feedback-room-search-input"
+            />
+          </div>
+        </div>
+
+        <div className="feedback-room-table-container">
+          <table className="feedback-room-table">
+            <thead>
+              <tr>
+                <th>Reviewer Name</th>
+                <th>Phone</th>
+                <th>Room Number</th>
+                <th>Type</th>
+                <th>Rating</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedFeedbacks.map((feedback) => (
+                <tr key={feedback.feedbackID}>
+                  <td>{feedback.reviewerName}</td>
+                  <td>{feedback.reviewerPhoneNumber}</td>
+                  <td>{feedback.roomNumber}</td>
+                  <td>
+                    <span className={`feedback-room-table-badge 
+                      ${feedback.type === 'Issue' 
+                        ? 'feedback-room-table-badge-issue' 
+                        : feedback.type === 'Suggestion' 
+                        ? 'feedback-room-table-badge-suggestion' 
+                        : 'feedback-room-table-badge-default'}`}
+                    >
+                      {feedback.type}
+                    </span>
+                  </td>
+                  <td>
+                    <StarRating rating={feedback.rating} />
+                  </td>
+                  <td>{new Date(feedback.createdDate).toLocaleDateString('vi-VN')}</td>
+                  <td>
+                    <button 
+                      onClick={() => navigate(`/landlord/feedback/${feedback.feedbackID}`)}
+                      className="feedback-room-table-action"
+                    >
+                      <Eye size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default FeedbackRoom;
