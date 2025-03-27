@@ -151,9 +151,9 @@ const RentedRoomDetail = () => {
 
           <div className="rented-room-right">
             <div className="rented-room-image-container">
-              <div className="image-counter">
+              {/* <div className="image-counter">
                 {currentImageIndex + 1} / {totalImages}
-              </div>
+              </div> */}
               <Image
                 src={room?.roomStay?.room?.roomImages?.[currentImageIndex]?.imageUrl}
                 className="rented-room-image"

@@ -1,159 +1,160 @@
-.pricing-table-container {
-  max-width: 100%;
-  margin: 30px auto;
-  padding: 30px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.12);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.table-title {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #1a202c;
-  letter-spacing: -0.5px;
-}
-
-.custom-table {
-  border-radius: 12px;
-  overflow: hidden;
-  table-layout: fixed !important;
-  width: 100% !important;
-  border-collapse: separate;
-  border-spacing: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* Header Table */
-.ant-table-thead > tr > th {
-  background: linear-gradient(135deg, #4a5568, #2d3748) !important;
-  color: white !important;
-  text-align: center;
-  font-weight: 600;
-  padding: 16px !important;
-  width: 20% !important;
-  white-space: nowrap;
-  letter-spacing: 0.5px;
-  border: none !important;
-}
-
-/* Header Gradient Styling */
-.header-cell {
-  font-weight: 600;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 16px !important;
-  font-size: 15px;
-  width: 20% !important;
-  background: linear-gradient(135deg, #4a5568, #2d3748) !important;
-  color: white !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.header-cell::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, #38b2ac, #4299e1);
-  transform: scaleX(0.8);
-  opacity: 0.8;
-}
-
-/* Header styling for each column */
-.header-0, .header-1, .header-2, .header-3, .header-4 {
-  background: linear-gradient(135deg, #4a5568, #2d3748) !important;
-  width: 20% !important;
-  transition: all 0.3s ease;
-}
-
-/* Table Cell Styling */
-.ant-table-tbody > tr > td {
-  padding: 16px !important;
-  text-align: center !important;
-  font-size: 15px !important;
-  width: 20% !important;
-  line-height: 1.6;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid #e2e8f0 !important;
-}
-
-.ant-table-tbody > tr:hover > td {
-  background-color: #ebf8ff !important;
-}
-
-.bold-text {
-  font-weight: 600;
-  color: #2d3748;
-}
-
-/* Row background colors */
-.cell-0 {
-  font-weight: 600;
-  background-color: #f7fafc !important;
-  width: 20% !important;
-  color: #2d3748;
-}
-
-.cell-1, .cell-3 {
-  background-color: #ffffff !important;
-  width: 20% !important;
-}
-
-.cell-2, .cell-4 {
-  background-color: #f8fafc !important;
-  width: 20% !important;
-}
-
-
-/* Pagination */
-.pagination-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.pagination-box button {
-  background: #edf2f7;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  margin: 0 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pagination-box button:hover {
-  background: #e2e8f0;
-}
-
-.page-indicator {
-  margin: 0 12px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #4a5568;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .ant-table-thead > tr > th,
-  .ant-table-tbody > tr > td {
-    padding: 12px 8px !important;
-    font-size: 14px !important;
+.pricing-table-wrapper {
+  .pricing-table-container {
+    max-width: 100%;
+    margin: 30px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.12);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  
+
   .table-title {
-    font-size: 24px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #1a202c;
+    letter-spacing: -0.5px;
+  }
+
+  .custom-table {
+    border-radius: 12px;
+    overflow: hidden;
+    table-layout: fixed !important;
+    width: 100% !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Header Table */
+  .ant-table-thead > tr > th {
+    background: linear-gradient(135deg, #4a5568, #2d3748) !important;
+    color: white !important;
+    text-align: center;
+    font-weight: 600;
+    padding: 16px !important;
+    width: 20% !important;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    border: none !important;
+  }
+
+  /* Header Gradient Styling */
+  .header-cell {
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 16px !important;
+    font-size: 15px;
+    width: 20% !important;
+    background: linear-gradient(135deg, #4a5568, #2d3748) !important;
+    color: white !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-cell::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #38b2ac, #4299e1);
+    transform: scaleX(0.8);
+    opacity: 0.8;
+  }
+
+  /* Header styling for each column */
+  .header-0, .header-1, .header-2, .header-3, .header-4 {
+    background: linear-gradient(135deg, #4a5568, #2d3748) !important;
+    width: 20% !important;
+    transition: all 0.3s ease;
+  }
+
+  /* Table Cell Styling */
+  .ant-table-tbody > tr > td {
+    padding: 16px !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    width: 20% !important;
+    line-height: 1.6;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background-color: #ebf8ff !important;
+  }
+
+  .bold-text {
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  /* Row background colors */
+  .cell-0 {
+    font-weight: 600;
+    background-color: #f7fafc !important;
+    width: 20% !important;
+    color: #2d3748;
+  }
+
+  .cell-1, .cell-3 {
+    background-color: #ffffff !important;
+    width: 20% !important;
+  }
+
+  .cell-2, .cell-4 {
+    background-color: #f8fafc !important;
+    width: 20% !important;
+  }
+
+  /* Pagination */
+  .pagination-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .pagination-box button {
+    background: #edf2f7;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    margin: 0 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pagination-box button:hover {
+    background: #e2e8f0;
+  }
+
+  .page-indicator {
+    margin: 0 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #4a5568;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 12px 8px !important;
+      font-size: 14px !important;
+    }
+    
+    .table-title {
+      font-size: 24px;
+    }
   }
 }

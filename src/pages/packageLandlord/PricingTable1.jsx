@@ -129,6 +129,7 @@ const PricingTable = () => {
   ];
 
   return (
+    <div className="pricing-table-wrapper">
     <div className="pricing-table-container">
       <Typography.Title level={5} className="table-title">📋 Bảng giá tin đăng</Typography.Title>
       <Card className="custom-table">
@@ -205,6 +206,7 @@ const PricingTable = () => {
             ➡️
           </Button>
         </motion.div>
+      </div>
       </div>
     </div>
   );

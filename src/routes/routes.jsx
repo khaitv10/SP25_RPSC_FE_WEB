@@ -26,6 +26,9 @@ import PricingTable1 from "../pages/packageLandlord/PricingTable1";
 import ConfirmPayment from "../pages/PackageContract/confirmPayment";
 import FeedbackRoom from "../pages/Landlord/FeedbackRoom/FeedbackRoom";
 import FeedbackDetail from "../pages/Landlord/FeedbackRoom/FeedbackDetail";
+import ContractLand from "../pages/ContractLandxCus/ContractLand";
+import ContractLandDetail from "../pages/ContractLandxCus/ContractLandDetail";
+import ChatPage from "../pages/ChatLandlord/ChatPage";
 
 const AppRoutes = () => {
   return (
@@ -61,6 +64,11 @@ const AppRoutes = () => {
       <Route path="/landlord/packagecontract" element={<PackageContract />} />
       <Route path="/landlord/feedback" element={<FeedbackRoom/>} />
       <Route path="/landlord/feedback/:id" element={<FeedbackDetail/>} />
+      <Route path="/landlord/contract" element={<ContractLand/>} />
+      <Route path="/landlord/contract/contract-detail/:contractId" element={<ContractLandDetail />} />
+      <Route path="/landlord/chat" element={<ChatPage/>} />
+
+
 
 
 

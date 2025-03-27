@@ -2,18 +2,40 @@
     import { toast } from "react-toastify";
 
     export const login = async (phoneNumber, password) => {
-    try {
-        const response = await axiosClient.post('/api/authentication/login', { phoneNumber, password });
-        
-        const { token, role } = response.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', role);
-        
-        return response.data;
-    } catch (error) {
-        throw error.response ? error.response.data : new Error('An error occurred');
-    }
-};
+        try {
+            const response = await axiosClient.post('/api/authentication/login', { phoneNumber, password });
+    
+            console.log("📩 API Response:", response.data); 
+    
+            if (!response.data || !response.data.data) {
+                console.error("❌ API không trả về dữ liệu hợp lệ!");
+                return;
+            }
+    
+            const { token, role, userId } = response.data.data; 
+    
+            if (!token || !role || !userId) {
+                console.error("❌ API trả về thiếu thông tin:", { token, role, userId });
+                return;
+            }
+    
+            localStorage.setItem('token', token);
+            localStorage.setItem('role', role);
+            localStorage.setItem('userId', userId);
+    
+            console.log("✅ Lưu vào localStorage:", {
+                token: localStorage.getItem('token'),
+                role: localStorage.getItem('role'),
+                userId: localStorage.getItem('userId'),
+            });
+    
+            return response.data;
+        } catch (error) {
+            console.error("❌ Lỗi đăng nhập:", error.response ? error.response.data : error);
+            throw error.response ? error.response.data : new Error('An error occurred');
+        }
+    };
+    
 
 export const register = async (email, password, confirmPassword, fullName, phoneNumber, gender) => {
     try {

@@ -21,6 +21,7 @@ const SidebarLandlord = () => {
     { name: "Service", path: "/landlord/service", icon: ClipboardIcon },
     { name: "Post", path: "/landlord/post", icon: NewspaperIcon },
     { name: "Request", path: "/landlord/request", icon: DocumentTextIcon },
+    { name: "Contract", path: "/landlord/contract", icon: DocumentTextIcon },
   ];
 
   return (
