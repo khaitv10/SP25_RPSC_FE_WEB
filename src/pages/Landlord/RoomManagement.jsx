@@ -13,6 +13,7 @@ import {
 import RoomCard from "../../components/Landlord/RoomCard";
 import "./RoomManagement.scss";
 import { createRoomTypeAPI } from "../../Services/Lanlord/RoomApi";
+import { AmenityCard } from "../../components/Landlord/AmentyCard";
 
 const { Title } = Typography;
 
@@ -67,6 +68,24 @@ const rooms = [
   },
 ];
 
+const amenityList = [
+  {
+    RoomAmenityId: 1,
+    Name: "điều hòa",
+    Compensation: "100.000 vnđ",
+  },
+  {
+    RoomAmenityId: 2,
+    Name: "điều hòa",
+    Compensation: "100.000 vnđ",
+  },
+  {
+    RoomAmenityId: 3,
+    Name: "điều hòa",
+    Compensation: "100.000 vnđ",
+  },
+];
+
 // eslint-disable-next-line react/prop-types
 const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
   const [roomData, setRoomData] = useState({
@@ -94,24 +113,22 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
       listRoomServices: Array.from({ length: count }, () => ({
         roomServiceName: "",
         description: "",
-        price: { price: 0 }, 
+        price: { price: 0 },
       })),
     });
   };
-  
 
   const handleServiceChange = (index, field, value) => {
     const updatedServices = [...roomData.listRoomServices];
     updatedServices[index][field] =
-  field === "price" ? { price: Number(value) } : value;
+      field === "price" ? { price: Number(value) } : value;
     setRoomData({ ...roomData, listRoomServices: updatedServices });
   };
-  
 
   const handleSubmit = async () => {
     const token = getAccessToken();
     if (!token) return;
-  
+
     // Kiểm tra các trường bắt buộc
     if (!roomData.roomTypeName.trim()) {
       message.error("Room Type Name is required");
@@ -121,12 +138,13 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
       message.error("Description is required");
       return;
     }
-  
+
     const updatedRoomData = {
       ...roomData,
-      listRoomServices: roomData.listRoomServices.length > 0 ? roomData.listRoomServices : [],
+      listRoomServices:
+        roomData.listRoomServices.length > 0 ? roomData.listRoomServices : [],
     };
-  
+
     try {
       console.log("Dữ liệu gửi lên API:", updatedRoomData);
       await createRoomTypeAPI(updatedRoomData, token);
@@ -138,8 +156,6 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
       message.error("Error creating room");
     }
   };
-  
-  
 
   const getAccessToken = () => {
     return localStorage.getItem("token");
@@ -250,6 +266,14 @@ const RoomManagement = () => {
 
   return (
     <div className="room-management">
+      <h1 className="title">
+        <span className="icon">✨</span> My Amenity
+      </h1>
+      <div className="amenity-list flex justify-center gap-6">
+        {amenityList.map((amenity) => (
+          <AmenityCard key={amenity.RoomAmenityId} amenity={amenity} />
+        ))}
+      </div>
       <h1 className="title">
         <span className="icon">🏠</span> My Rooms
       </h1>
