@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Modal,
   Input,
-  Button,
+  // Button,
   Form,
   Row,
   Col,
@@ -13,6 +13,8 @@ import {
 import RoomCard from "../../components/Landlord/RoomCard";
 import "./RoomManagement.scss";
 import { createRoomTypeAPI } from "../../Services/Lanlord/RoomApi";
+import { AmenityCard } from "../../components/Landlord/AmentyCard";
+import RoomTypeCard from "../../components/Landlord/RoomTypeCard";
 
 const { Title } = Typography;
 
@@ -67,9 +69,126 @@ const rooms = [
   },
 ];
 
+const amenityList = [
+  {
+    RoomAmenityId: 1,
+    Name: "điều hòa",
+    Compensation: "100.000 vnđ",
+  },
+  {
+    RoomAmenityId: 2,
+    Name: "điều hòa",
+    Compensation: "100.000 vnđ",
+  },
+  {
+    RoomAmenityId: 3,
+    Name: "điều hòa",
+    Compensation: "100.000 vnđ",
+  },
+];
+
+const roomTypeList = [
+  {
+    id: 1,
+    name: "Phòng tiêu chuẩn",
+    description: "Phòng đơn cơ bản với đầy đủ tiện nghi.",
+  },
+  {
+    id: 2,
+    name: "Phòng cao cấp",
+    description: "Phòng đôi rộng rãi với ban công và view đẹp.",
+  },
+  {
+    id: 3,
+    name: "Phòng VIP",
+    description:
+      "Phòng sang trọng với nội thất hiện đại, đầy đủ tiện nghi cao cấp.",
+  },
+];
+//=====================================================Modal==========================================================================================================
+
+// ✅ Modal để tạo Amenity mới
+// eslint-disable-next-line react/prop-types
+const CreateAmenityModal = ({ isOpen, onClose, onSave }) => {
+  const [amenity, setAmenity] = useState({ Name: "", Compensation: "" });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAmenity({ ...amenity, [name]: value });
+  };
+
+  const handleSubmit = () => {
+    if (!amenity.Name.trim() || !amenity.Compensation.trim()) {
+      message.error("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    onSave(amenity);
+    onClose();
+  };
+
+  return (
+    <Modal
+      title="Create New Amenity"
+      open={isOpen}
+      onCancel={onClose}
+      onOk={handleSubmit}
+      centered
+    >
+      <Form layout="vertical">
+        <Form.Item label="Amenity Name">
+          <Input name="Name" onChange={handleChange} />
+        </Form.Item>
+        <Form.Item label="Compensation">
+          <Input name="Compensation" onChange={handleChange} />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+// ✅ Modal để tạo Room  mới
+
 // eslint-disable-next-line react/prop-types
 const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
-  const [roomData, setRoomData] = useState({
+  const [room, setRoom] = useState({ type: "", area: "", slot: 1 });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRoom({ ...room, [name]: value });
+  };
+
+  const handleSubmit = () => {
+    if (!room.type.trim() || !room.area.trim()) {
+      message.error("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    onSave(room);
+    onClose();
+  };
+
+  return (
+    <Modal
+      title="Create New Room"
+      open={isOpen}
+      onCancel={onClose}
+      onOk={handleSubmit}
+      centered
+    >
+      <Form layout="vertical">
+        <Form.Item label="Room Type">
+          <Input name="type" onChange={handleChange} />
+        </Form.Item>
+        <Form.Item label="Area">
+          <Input name="area" onChange={handleChange} />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+// eslint-disable-next-line react/prop-types
+const CreateRoomTypeModal = ({ isOpen, onClose, onSave }) => {
+  const [roomTypeData, setRoomTypeData] = useState({
     roomTypeName: "",
     deposite: 0,
     area: 0,
@@ -78,55 +197,58 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
     maxOccupancy: 0,
     listRoomServices: [],
   });
+
+  //================================================================Handle====================================================================================================================
   // eslint-disable-next-line no-unused-vars
   const [serviceCount, setServiceCount] = useState(0);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setRoomData({ ...roomData, [name]: value });
+    setRoomTypeData({ ...roomTypeData, [name]: value });
   };
 
   const handleServiceCountChange = (e) => {
     const count = parseInt(e.target.value, 10) || 0;
     setServiceCount(count);
-    setRoomData({
-      ...roomData,
+    setRoomTypeData({
+      ...roomTypeData,
       listRoomServices: Array.from({ length: count }, () => ({
         roomServiceName: "",
         description: "",
-        price: { price: 0 }, 
+        price: { price: 0 },
       })),
     });
   };
-  
 
   const handleServiceChange = (index, field, value) => {
-    const updatedServices = [...roomData.listRoomServices];
+    const updatedServices = [...roomTypeData.listRoomServices];
     updatedServices[index][field] =
-  field === "price" ? { price: Number(value) } : value;
-    setRoomData({ ...roomData, listRoomServices: updatedServices });
+      field === "price" ? { price: Number(value) } : value;
+    setRoomTypeData({ ...roomTypeData, listRoomServices: updatedServices });
   };
-  
 
   const handleSubmit = async () => {
     const token = getAccessToken();
     if (!token) return;
-  
+
     // Kiểm tra các trường bắt buộc
-    if (!roomData.roomTypeName.trim()) {
+    if (!roomTypeData.roomTypeName.trim()) {
       message.error("Room Type Name is required");
       return;
     }
-    if (!roomData.description.trim()) {
+    if (!roomTypeData.description.trim()) {
       message.error("Description is required");
       return;
     }
-  
+
     const updatedRoomData = {
-      ...roomData,
-      listRoomServices: roomData.listRoomServices.length > 0 ? roomData.listRoomServices : [],
+      ...roomTypeData,
+      listRoomServices:
+        roomTypeData.listRoomServices.length > 0
+          ? roomTypeData.listRoomServices
+          : [],
     };
-  
+
     try {
       console.log("Dữ liệu gửi lên API:", updatedRoomData);
       await createRoomTypeAPI(updatedRoomData, token);
@@ -138,8 +260,8 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
       message.error("Error creating room");
     }
   };
-  
-  
+
+  //=====================================================================================================================================================================
 
   const getAccessToken = () => {
     return localStorage.getItem("token");
@@ -147,7 +269,7 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
 
   return (
     <Modal
-      title="Create New Room"
+      title="Create New Room Type"
       open={isOpen}
       onCancel={onClose}
       onOk={handleSubmit}
@@ -190,7 +312,7 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
           <Input type="number" onChange={handleServiceCountChange} />
         </Form.Item>
         <Row gutter={24}>
-          {roomData.listRoomServices.map((service, index) => (
+          {roomTypeData.listRoomServices.map((service, index) => (
             <Col span={12} key={index}>
               <div
                 style={{
@@ -242,6 +364,10 @@ const CreateRoomModal = ({ isOpen, onClose, onSave }) => {
 
 const RoomManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isAmenityModalOpen, setIsAmenityModalOpen] = useState(false);
+  const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
+
   const [roomList, setRoomList] = useState(rooms);
 
   const handleSaveRoom = (newRoom) => {
@@ -250,22 +376,72 @@ const RoomManagement = () => {
 
   return (
     <div className="room-management">
-      <h1 className="title">
-        <span className="icon">🏠</span> My Rooms
-      </h1>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-4xl font-bold flex items-center">✨ My Amenity</h2>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition ml-6"
+          onClick={() => setIsAmenityModalOpen(true)}
+        >
+          Create New Amenity
+        </button>
+      </div>
+      <div className="amenity-list flex justify-center gap-6">
+        {amenityList.map((amenity) => (
+          <AmenityCard key={amenity.RoomAmenityId} amenity={amenity} />
+        ))}
+      </div>
+
+      {/* My Room Type */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-4xl font-bold flex items-center">
+          🏡 My Room Type
+        </h2>
+        <button
+          type="primary"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition ml-6"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Create New Room Type
+        </button>
+      </div>
+      <div className="room-type-list flex flex-wrap justify-start gap-6">
+        {roomTypeList.map((roomType) => (
+          <RoomTypeCard key={roomType.id} roomType={roomType} />
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between mb-4 mt-6">
+        <h2 className="text-4xl font-bold flex items-center">🏠 My Room</h2>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition ml-6"
+          onClick={() => setIsRoomModalOpen(true)}
+        >
+          Create New Room
+        </button>
+      </div>
       <div className="room-list">
         {roomList.map((room) => (
           <RoomCard key={room.id} room={room} />
         ))}
       </div>
-      <Button
+      {/* <Button
         type="primary"
         className="create-room-btn"
         onClick={() => setIsModalOpen(true)}
       >
         Create new room
-      </Button>
+      </Button> */}
+      <CreateAmenityModal
+        isOpen={isAmenityModalOpen}
+        onClose={() => setIsAmenityModalOpen(false)}
+        onSave={handleSaveRoom}
+      />
       <CreateRoomModal
+        isOpen={isRoomModalOpen}
+        onClose={() => setIsRoomModalOpen(false)}
+        onSave={handleSaveRoom}
+      />
+      <CreateRoomTypeModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveRoom}

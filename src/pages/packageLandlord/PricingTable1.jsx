@@ -4,7 +4,6 @@ import { getServicePackageByLandlord } from "../../Services/serviceApi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; 
 import "./PricingTable1.scss";
-import { duration } from "@mui/material";
 
 const PricingTable = () => {
   const [pricingData, setPricingData] = useState([]);
@@ -38,32 +37,35 @@ const PricingTable = () => {
     .sort((a, b) => Number(a) - Number(b));
   const paginatedData = pricingData.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
 
-  // 🆕 Mở modal khi bấm vào giá tiền
   const handlePaymentClick = (packageData, service) => {
-    setSelectedPackage({
+    const newPackage = {
+      duration: service.duration,  
       type: packageData.type,
-      highLight: packageData.highLight,
-      size: packageData.size,
+      highLightTime: packageData.highLightTime,
+      maxPost: packageData.maxPost,
+      label: packageData.label,
       name: service.name,
-      duration: service.duration,
       description: service.description,
       serviceDetailId: service.serviceDetailId,
       packageId: service.packageId,
       priceId: service.priceId,
       price: service.price.toLocaleString() + " VND",
-    });
+    };
+  
+    console.log("📌 Đã chọn gói dịch vụ:", newPackage);
+    setSelectedPackage(newPackage);
     setIsModalOpen(true);
   };
-
-  // 🆕 Xử lý khi bấm "Thanh toán"
+  
   const handleConfirmPayment = () => {
     if (selectedPackage) {
+      console.log("duration123123", selectedPackage.duration);
       navigate("/landlord/packagecontract", {
         state: {
           name: selectedPackage.name,
           price: selectedPackage.price,
           duration: selectedPackage.duration || "Không xác định",
-          titleColor: selectedPackage.highLight, // 🆕 Màu tiêu đề
+          titleColor: "#FF5733", 
           packageId: selectedPackage.packageId,
           serviceDetailId: selectedPackage.serviceDetailId,
           priceId: selectedPackage.priceId,
@@ -95,6 +97,9 @@ const PricingTable = () => {
             </Button>
           ) : "N/A";
         }
+        if (record.type === "highLightTime") return item.highLightTime;
+        if (record.type === "maxPost") return item.maxPost;
+        if (record.type === "label") return item.label;
         return item[record.type] ? <>❌</> : <>✅</>;
       },
     })),
@@ -110,14 +115,23 @@ const PricingTable = () => {
   }
 
   const dataSource = [
-    ...allDurations.map(duration => ({ key: `duration-${duration}`, label: <>⏳ Giá {duration} ngày</>, type: "price", duration })),
+    ...allDurations.map(duration => ({ 
+      key: `duration-${duration}`, 
+      label: <>⏳ Giá {duration} ngày</>, 
+      type: "price", 
+      duration 
+    })),
+    { key: "highLightTime", label: <>🌟 Nổi bật</>, type: "highLightTime" },
+    { key: "maxPost", label: <>📝 Số bài đăng</>, type: "maxPost" },
+    { key: "label", label: <>🏷️ Nhãn</>, type: "label" },
     { key: "autoApprove", label: <>⚡ Tự động duyệt</>, type: "autoApprove" },
     { key: "showCallButton", label: <>📞 Hiển thị nút gọi điện</>, type: "showCallButton" },
   ];
 
   return (
+    <div className="pricing-table-wrapper">
     <div className="pricing-table-container">
-      <Typography.Title level={4} className="table-title">📋 Bảng giá tin đăng</Typography.Title>
+      <Typography.Title level={5} className="table-title">📋 Bảng giá tin đăng</Typography.Title>
       <Card className="custom-table">
         <AnimatePresence mode="wait">
           <motion.div
@@ -137,7 +151,7 @@ const PricingTable = () => {
         </AnimatePresence>
       </Card>
 
-      {/* 🆕 Modal Xác Nhận Gói Dịch Vụ */}
+      {/* Modal Xác Nhận Gói Dịch Vụ */}
       <Modal
         title="🛒 Xác nhận Gói Dịch Vụ"
         open={isModalOpen}
@@ -154,8 +168,10 @@ const PricingTable = () => {
             <p><b>📌 Loại tin:</b> {selectedPackage.type}</p>
             <p><b>⭐ Gói dịch vụ:</b> {selectedPackage.name}</p>
             <p><b>📝 Mô tả:</b> {selectedPackage.description}</p>
-            <p><b>📏 Kích thước:</b> {selectedPackage.size}</p>
-            <p><b>📌 Nổi bật:</b> {selectedPackage.highLight}</p>
+            <p><b>⏱️ Thời gian:</b> {selectedPackage.duration} ngày</p>
+            <p><b>📊 Số bài đăng:</b> {selectedPackage.maxPost}</p>
+            <p><b>🏷️ Nhãn:</b> {selectedPackage.label}</p>
+            <p><b>🌟 Nổi bật:</b> {selectedPackage.highLightTime}</p>
             <p><b>💰 Giá:</b> {selectedPackage.price}</p>
           </div>
         )}
@@ -190,6 +206,7 @@ const PricingTable = () => {
             ➡️
           </Button>
         </motion.div>
+      </div>
       </div>
     </div>
   );

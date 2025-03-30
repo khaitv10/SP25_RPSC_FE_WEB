@@ -55,7 +55,7 @@ const AdminPackageDetail = () => {
     }
   
     console.log("🔍 Dữ liệu gửi lên API:", {
-      priceId: selectedService?.priceId, // ✅ Đúng ID
+      priceId: selectedService?.priceId, 
       newPrice: formattedPrice,
       newName: selectedService?.name,
       newDuration: selectedService?.duration,
@@ -64,7 +64,7 @@ const AdminPackageDetail = () => {
   
     try {
       const response = await updatePrice(
-        selectedService?.priceId, // ✅ Đúng ID
+        selectedService?.priceId, 
         formattedPrice,
         selectedService?.name,
         selectedService?.duration,
@@ -145,13 +145,19 @@ const AdminPackageDetail = () => {
           <>
             {packageInfo && (
               <Descriptions bordered column={2} size="middle">
-                <Descriptions.Item label="📌 Package Type">{packageInfo.type}</Descriptions.Item>
-                <Descriptions.Item label="⭐ Highlight">{packageInfo.highLight}</Descriptions.Item>
-                <Descriptions.Item label="📏 Size">{packageInfo.size}</Descriptions.Item>
-                <Descriptions.Item label="⚡ Status">
-                  <Tag color={packageInfo.status === "Active" ? "green" : "red"}>{packageInfo.status}</Tag>
-                </Descriptions.Item>
-              </Descriptions>
+                  <Descriptions.Item label="📌 Package Type">{packageInfo.type}</Descriptions.Item>
+                  <Descriptions.Item label="⭐ Highlight Time">{packageInfo.highLightTime}</Descriptions.Item>
+                  <Descriptions.Item label="📏 Max Post">
+                    {packageInfo.maxPost ?? <Tag color="blue">No Limit</Tag>}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="🏷️ Label">{packageInfo.label || "N/A"}</Descriptions.Item>
+                  <Descriptions.Item label="⚡ Status" span={2}>
+                    <Tag color={packageInfo.status === "Active" ? "green" : "red"}>
+                      {packageInfo.status}
+                    </Tag>
+                  </Descriptions.Item>
+                </Descriptions>
+
             )}
             
             <Table

@@ -43,6 +43,16 @@ const getAllLandlordContract = {
   },
 };
 
+export const getTransactionSummary = async (year) => {
+  try {
+    const response = await axiosClient.get(`/api/transaction/get-transaction-summary?year=${year}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching transaction summary:", error);
+    throw error;
+  }
+};
+
 export default getAllLandlord;
 export { getAllLandlordContract };
 
