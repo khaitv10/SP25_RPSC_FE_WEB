@@ -16,7 +16,7 @@ const SidebarLandlord = () => {
   const menuItems = [
     { name: "Dashboard", path: "/landlord/dashboard", icon: ChartBarIcon },
     { name: "Manage", path: "/landlord/manage", icon: UserGroupIcon },
-    { name: "Room", path: "/landlord/room", icon: HomeIcon },
+    { name: "Room", path: "/landlord/roomtype", icon: HomeIcon },
     { name: "Feedback", path: "/landlord/feedback", icon: ChatIcon },
     { name: "Service", path: "/landlord/service", icon: ClipboardIcon },
     { name: "Post", path: "/landlord/post", icon: NewspaperIcon },

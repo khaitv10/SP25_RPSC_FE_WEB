@@ -1,0 +1,277 @@
+.room-type-detail {
+  padding: 0;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  
+  .detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+  
+  .back-button-container {
+    margin-bottom: 24px;
+    
+    .ant-btn {
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
+      background-color: white;
+      
+      &:hover {
+        background-color: #f8fafc;
+        border-color: #cbd5e1;
+        transform: translateX(-4px);
+      }
+    }
+  }
+  
+  .header-section {
+    background-color: white;
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+  
+  .room-type-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+  
+  .title-with-status {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    @media (max-width: 576px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+  
+  .status-tag {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 6px;
+  }
+  
+  .room-type-name {
+    margin: 0;
+    color: #0f172a;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  
+  .header-actions {
+    @media (max-width: 768px) {
+      width: 100%;
+      
+      .ant-btn {
+        width: 100%;
+      }
+    }
+    
+    .ant-btn-primary {
+      height: 44px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+      }
+      
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+  }
+  
+  .room-description {
+    color: #64748b;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 0;
+    margin-top: 16px;
+  }
+  
+  .content-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .info-card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border: none;
+    overflow: hidden;
+    
+    .card-title {
+      color: #0f172a;
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    
+    .card-divider {
+      margin: 16px 0 24px;
+      border-color: #e2e8f0;
+    }
+  }
+  
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-bottom: 32px;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+  
+  .detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .detail-icon-wrapper {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eef2ff;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #e0e7ff;
+      transform: scale(1.05);
+    }
+  }
+  
+  .detail-icon, .address-icon {
+    font-size: 24px;
+    color: #4f46e5;
+  }
+  
+  .detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .detail-value {
+    font-size: 18px;
+    color: #0f172a;
+    
+    &:empty:before {
+      content: "N/A";
+      color: #94a3b8;
+    }
+  }
+  
+  .address-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .address-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .address-value {
+    font-size: 16px;
+    color: #0f172a;
+    line-height: 1.6;
+  }
+  
+  .services-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+  }
+  
+  .service-item {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    border-left: 4px solid #4f46e5;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #f1f5f9;
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  .service-name {
+    color: #0f172a;
+    font-size: 16px;
+    margin-left: 8px;
+  }
+  
+  .service-description {
+    margin: 12px 0 0 28px;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  .service-price-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    margin-left: 28px;
+  }
+  
+  .service-price-label {
+    color: #334155;
+  }
+  
+  .service-price {
+    font-size: 16px;
+    color: #10b981;
+    font-weight: 600;
+  }
+  
+  .ant-empty {
+    margin: 32px 0;
+    padding: 24px;
+  }
+}

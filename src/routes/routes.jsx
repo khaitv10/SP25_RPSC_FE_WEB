@@ -15,7 +15,7 @@ import LandlordRegisAdmin from "../pages/landlordRegisAdmin/LandlordRegisAdmin";
 import LandlordRegisDetailAdmin from "../pages/landlordRegisAdmin/LandlordRegisDetailAdmin";
 import AdminPackageDetail from "../pages/packageAdmin/adminPackageDetail";
 import ContractManagement from "../pages/Admin/ContractManagement/ContractManagement";
-import RoomManagement from "../pages/Landlord/RoomManagement";
+import RoomManagement from "../pages/Landlord/RoomManagement/RoomManagement";
 import RentedRoomManagement from "../pages/Landlord/RentedRoomManagement";
 import RentedRoomDetail from "../pages/Landlord/RentedRoomDetail";
 
@@ -29,6 +29,12 @@ import FeedbackDetail from "../pages/Landlord/FeedbackRoom/FeedbackDetail";
 import ContractLand from "../pages/ContractLandxCus/ContractLand";
 import ContractLandDetail from "../pages/ContractLandxCus/ContractLandDetail";
 import ChatPage from "../pages/ChatLandlord/ChatPage";
+import AmenityManagement from "../pages/Landlord/RoomManagement/AmenityManagement";
+import RoomTypeManagement from "../pages/Landlord/RoomManagement/RoomTypeManagement";
+import RoomTypeDetailLandLord from "../pages/Landlord/RoomManagement/RoomTypeDetail";
+import CreateRoomType from "../pages/Landlord/RoomManagement/CreateRoomType";
+import RoomDetail from "../pages/Landlord/RoomManagement/RoomDetail";
+import RoomCreate from "../pages/Landlord/RoomManagement/RoomCreate";
 
 const AppRoutes = () => {
   return (
@@ -51,10 +57,23 @@ const AppRoutes = () => {
       <Route path="/admin/contract" element={<ContractManagement />} />
       <Route path="/admin/regis" element={<LandlordRegisAdmin />} />
 
+
       {/* landlord */}
       <Route path="/register-landlord" element={<RegisterLandlord />} />
       <Route path="/landlord-detail/:landlordId" element={<LandlordRegisDetailAdmin />} />
-      <Route path="/landlord/room" element={<RoomManagement />} />
+
+      <Route path="/landlord/roomtype/room" element={<RoomManagement />} />
+      <Route path="/landlord/room/amentities" element={<AmenityManagement />} />
+      <Route path="/landlord/roomtype" element={<RoomTypeManagement />} />
+      <Route path="/landlord/roomtype/:id" element={<RoomTypeDetailLandLord />} />
+      <Route path="/landlord/roomtype/create" element={<CreateRoomType />} />
+      <Route path="/landlord/roomtype/room/roomdetail/:roomId" element={<RoomDetail />} />
+      <Route path="/landlord/roomtype/:roomTypeId/add-room" element={<RoomCreate />} />
+
+
+      
+
+      {/* <Route path="/landlord/room/r" element={<AmenityManagement />} /> */}
       <Route path="/landlord/service" element={<PricingTable1 />} />
       <Route path="/landlord/confirmpayment" element={<ConfirmPayment />} />
 
@@ -67,6 +86,7 @@ const AppRoutes = () => {
       <Route path="/landlord/contract" element={<ContractLand/>} />
       <Route path="/landlord/contract/contract-detail/:contractId" element={<ContractLandDetail />} />
       <Route path="/landlord/chat" element={<ChatPage/>} />
+
 
 
 

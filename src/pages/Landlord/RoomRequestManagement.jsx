@@ -73,6 +73,16 @@ const RoomRequestManagement = () => {
         }
     }, [pageIndex, pageSize, searchQuery]);
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const year = date.getFullYear();
+        
+        return `${day}/${month}/${year}`;
+    };
+    
+
     const fetchRoomRentalRequirements = async () => {
         try {
             setLoading(true);
@@ -131,6 +141,7 @@ const RoomRequestManagement = () => {
                     email: customer.email || 'Not provided',
                     requestDate: new Date().toLocaleDateString(),
                     preferredMoveInDate: 'Not specified',
+                    dateWantToRent: customer.dateWantToRent || 'Not specified', 
                     numTenants: 1,
                     occupation: 'Not specified',
                     idCard: 'Not provided',
@@ -264,50 +275,52 @@ const RoomRequestManagement = () => {
                 </TabPane>
             </Tabs>
 
-            {/* Modal for viewing requests */}
             <Modal
-                title={selectedRoom ? `Room Rental Requests - ${selectedRoom.name}` : ''}
-                open={isModalVisible}
-                onCancel={handleCancel}
-                footer={null}
-                width={700}
-                className="requests-modal"
-            >
-                {selectedRoom && roomRequests[selectedRoom.id] && (
-                    <List
-                        className="request-list"
-                        itemLayout="horizontal"
-                        dataSource={roomRequests[selectedRoom.id]}
-                        renderItem={request => (
-                            <List.Item
-                                actions={[
-                                    <Button
-                                        type="primary"
-                                        onClick={() => showDrawer(request)}
-                                        style={{ background: '#262926' }}
-                                    >
-                                        Details
-                                    </Button>
-                                ]}
-                            >
-                                <List.Item.Meta
-                                    avatar={<Avatar src={request.avatar} size={74} />}
-                                    title={<Text strong>{request.customerName}</Text>}
-                                    description={
-                                        <div className="request-brief">
-                                            <div style={{ color: '#000970' }}><PhoneOutlined className="detail-icon" /> {request.phone}</div>
-                                            <div><CalendarOutlined className="detail-icon" /> Request Date: {request.requestDate}</div>
-                                        </div>
-                                    }
-                                />
-                                <Tag color={request.status === 'Pending' ? 'green' : (request.status === 'Rejected' ? 'red' : 'blue')}>
-                                    {request.status}
-                                </Tag>
-                            </List.Item>
-                        )}
-                    />
-                )}
-            </Modal>
+                    title={selectedRoom ? `Room Rental Requests - ${selectedRoom.name}` : ''}
+                    open={isModalVisible}
+                    onCancel={handleCancel}
+                    footer={null}
+                    width={700}
+                    className="requests-modal"
+                >
+                    {selectedRoom && roomRequests[selectedRoom.id] && (
+                        <List
+                            className="request-list"
+                            itemLayout="horizontal"
+                            dataSource={roomRequests[selectedRoom.id]}
+                            renderItem={request => (
+                                <List.Item
+                                    actions={[
+                                        <Button
+                                            type="primary"
+                                            onClick={() => showDrawer(request)}
+                                            style={{ background: '#262926' }}
+                                        >
+                                            Details
+                                        </Button>
+                                    ]}
+                                >
+                                    <List.Item.Meta
+                                        avatar={<Avatar src={request.avatar} size={74} />}
+                                        title={<Text strong>{request.customerName}</Text>}
+                                        description={
+                                            <div className="request-brief">
+                                                <div style={{ color: '#000970' }}><PhoneOutlined className="detail-icon" /> {request.phone}</div>
+                                                <div><CalendarOutlined className="detail-icon" /> Request Date: {formatDate(request.requestDate)}</div>
+                                                <div><CalendarOutlined className="detail-icon" /> Want to Rent Date: {formatDate(request.dateWantToRent)}</div> {/* Format the date */}
+                                            </div>
+                                        }
+                                    />
+                                    <Tag color={request.status === 'Pending' ? 'green' : (request.status === 'Rejected' ? 'red' : 'blue')}>
+                                        {request.status}
+                                    </Tag>
+                                </List.Item>
+                            )}
+                        />
+                    )}
+                </Modal>
+
+
 
             {/* RequestDetailsDrawer component */}
             <RequestDetailsDrawer
