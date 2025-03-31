@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Form, Input, Button, InputNumber, Upload, Select, Spin, Typography, Space, Divider, Card, message } from "antd";
+import { Form, Input, Button, InputNumber, Upload, Select, Spin, Typography, Space, Divider, Card, message, DatePicker } from "antd";
 import { 
   UploadOutlined, 
   ArrowLeftOutlined, 
@@ -8,8 +8,10 @@ import {
   DollarOutlined, 
   EnvironmentOutlined,
   FileTextOutlined,
-  TagOutlined
+  TagOutlined,
+  CalendarOutlined
 } from "@ant-design/icons";
+import moment from "moment";  // Import moment for date validation
 import roomRentalService from "../../../Services/Landlord/roomAPI";
 import { getAllAmenities } from "../../../Services/Landlord/amenityAPI";
 import "./RoomCreate.scss";
@@ -25,6 +27,12 @@ const RoomCreate = () => {
   const [amenities, setAmenities] = useState([]);
   const [fileList, setFileList] = useState([]);
   const navigate = useNavigate();
+
+  // Define the disabledDate function to disable past dates
+  const disabledDate = (current) => {
+    // Disable all dates before today (inclusive of today)
+    return current && current < moment().startOf('day');
+  };
 
   // Fetch amenities when component loads
   useEffect(() => {
@@ -68,6 +76,12 @@ const RoomCreate = () => {
       formData.append("roomtypeId", values.roomtypeId);
       formData.append("price", values.price);
       formData.append("Location", values.location || '');
+      
+      // Append the new AvailableDateToRent field if it exists
+      if (values.availableDateToRent) {
+        // Format date as ISO string for backend consumption
+        formData.append("AvailableDateToRent", values.availableDateToRent.toISOString());
+      }
   
       // Append images to FormData
       if (fileList && fileList.length > 0) {
@@ -207,6 +221,40 @@ const RoomCreate = () => {
                   placeholder="Enter room location" 
                   className="custom-input"
                   size="large"
+                />
+              </Form.Item>
+
+              {/* Updated DatePicker with validation */}
+              <Form.Item 
+                label="Available Date To Rent" 
+                name="availableDateToRent"
+                className="full-width"
+                rules={[
+                  { 
+                    required: true, 
+                    message: "Available date is required" 
+                  },
+                  { 
+                    validator: (_, value) => {
+                      if (!value) {
+                        return Promise.reject("Please select an available date");
+                      }
+                      if (value && value < moment().startOf('day')) {
+                        return Promise.reject("Available date cannot be in the past");
+                      }
+                      return Promise.resolve();
+                    }
+                  }
+                ]}
+              >
+                <DatePicker 
+                  style={{ width: "100%" }}
+                  placeholder="Select available date"
+                  format="YYYY-MM-DD"
+                  className="custom-input"
+                  size="large"
+                  suffixIcon={<CalendarOutlined />}
+                  disabledDate={disabledDate}
                 />
               </Form.Item>
 
