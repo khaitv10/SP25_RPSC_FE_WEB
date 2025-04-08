@@ -8,10 +8,12 @@ import "react-toastify/dist/ReactToastify.css";
 import imageLogin from "../../assets/image-login.png";
 import logo from "../../assets/logoEasyRommie.png";
 
+
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -73,70 +75,75 @@ const Login = () => {
 
   return (
     <div className="login-container">
-
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <img src={logo} alt="EasyRoomie Logo" className="otp-logo" />
 
       <div className="login-box">
         <div className="login-left">
-          <h1 className="logo">EasyRoomie</h1>
-          <h2>Login</h2>
-          <p>Welcome back to website</p>
-
+          <img src={imageLogin} alt="Login" />
+          <div className="welcome-text">
+            <h2>Welcome Back</h2>
+            <p>We're glad to see you again. Access your account to continue your journey</p>
+          </div>
+        </div>
+        
+        <div className="login-right">
+          <div className="login-header">
+            <h3>Sign In</h3>
+            <p>Please sign in to continue to EasyRoomie</p>
+          </div>
+          
           <form onSubmit={handleSubmit}>
-            {/* Phone Number Input */}
-            <label>Phone or email</label>
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Enter your phone number"
-              required
-            />
-
-            {/* Password Input */}
-            <label>Password</label>
-            <div className="password-input">
+            <div className="input-field">
+              <label>Phone or Email</label>
               <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Enter your phone number or email"
                 required
               />
-              <span
-                className="eye-icon"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            <div className="input-field">
+              <label>Password</label>
+              <div className="password-input">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                />
+                <span
+                  className="eye-icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+            </div>
+
             <div className="options">
-              <label>
-                <input type="checkbox" /> Remember me
+              <label className="remember-me">
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                />
+                <span>Remember me</span>
               </label>
               <Link to="/forgot-password" className="forgot-password">
                 Forgot Password?
               </Link>
             </div>
 
-            {/* Login Button */}
-            <button type="submit" className="login-btn">Login</button>
+            <button type="submit" className="login-btn">Sign In</button>
           </form>
-
-          {/* Sign Up Link */}
+          
           <p className="signup-text">
-            Do not have an account? <Link to="/register">Sign up</Link>
+            Don't have an account yet? <Link to="/register">Sign Up</Link>
           </p>
-
-
-        </div>
-
-        {/* Illustration Image */}
-        <div className="login-right">
-          <img src={imageLogin} alt="Login" />
         </div>
       </div>
     </div>

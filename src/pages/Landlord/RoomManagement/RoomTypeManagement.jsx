@@ -15,7 +15,7 @@ const RoomTypeManagement = () => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
-    total: 0
+    total: 0,
   });
   const navigate = useNavigate();
 
@@ -26,23 +26,26 @@ const RoomTypeManagement = () => {
   const fetchRoomTypes = async () => {
     setLoading(true);
     try {
-      const data = await getRoomTypesByLandlordId();
+      // Nếu activeTab là "All", truyền "" cho status, ngược lại truyền giá trị của activeTab
+      const statusParam = activeTab === "All" ? "" : activeTab;
+      
+      const data = await getRoomTypesByLandlordId(searchText, pagination.current, pagination.pageSize, statusParam);
+      
       if (data?.roomTypes && Array.isArray(data.roomTypes)) {
-        const filteredRoomTypes = activeTab === "All" 
-          ? data.roomTypes 
-          : data.roomTypes.filter(type => type.status === activeTab);
-
+        const filteredRoomTypes = data.roomTypes;
+  
+        // Lọc theo searchText nếu có
         const searchFilteredRoomTypes = searchText 
           ? filteredRoomTypes.filter(type => 
               type.roomTypeName.toLowerCase().includes(searchText.toLowerCase()) ||
               type.description.toLowerCase().includes(searchText.toLowerCase())
             )
           : filteredRoomTypes;
-
+  
         setRoomTypes(searchFilteredRoomTypes);
         setPagination(prev => ({
           ...prev,
-          total: searchFilteredRoomTypes.length || 0
+          total: data.totalRoomTypes || 0
         }));
       } else {
         message.error("Invalid data format: Expected 'roomTypes' array");
@@ -54,6 +57,9 @@ const RoomTypeManagement = () => {
       setLoading(false);
     }
   };
+  
+  
+  
 
   useEffect(() => {
     fetchRoomTypes();
@@ -101,7 +107,7 @@ const RoomTypeManagement = () => {
       title: "Deposit",
       dataIndex: "deposite",
       key: "deposite",
-      render: (amount) => <span className="cell-content deposit">{typeof amount === 'number' ? amount.toLocaleString() : amount}</span>
+      render: (amount) => <span className="cell-content deposit">{typeof amount === 'number' ? amount.toLocaleString() : amount} VNĐ</span>
     },
     {
       title: "Max Occupancy",
@@ -114,7 +120,7 @@ const RoomTypeManagement = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => {
-        const colorMap = { "Available": "green", "Inactive": "red", "Renting": "blue" };
+        const colorMap = { "Available": "green", "Inactive": "red"};
         return <Tag className={`status-tag ${status?.toLowerCase()}`} color={colorMap[status] || "default"}>{status}</Tag>;
       }
     },
@@ -132,7 +138,7 @@ const RoomTypeManagement = () => {
   return (
     <div className="room-type-management">
       <Card className="room-type-card">
-      <div className="title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Title level={2} className="title">
             <span className="title-icon">🏡</span> My Room Types
           </Title>
@@ -143,7 +149,7 @@ const RoomTypeManagement = () => {
         </div>
 
         <div className="room-type-tabs">
-          {["Available", "Renting", "Inactive", "All"].map((status) => (
+          {["Available", "Inactive", "All"].map((status) => (
             <button key={status} className={`tab ${activeTab === status ? "active" : ""}`} onClick={() => setActiveTab(status)}>
               {status}
             </button>

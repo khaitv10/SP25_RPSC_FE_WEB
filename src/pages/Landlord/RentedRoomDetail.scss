@@ -2,22 +2,24 @@
     display: flex;
     justify-content: center;
     padding: 40px;
-    background-color: #f5f7fa;
+    background-color: #f9fafb;
     min-height: 100vh;
-}
-
-.rented-room-card-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .rented-room-card-container {
     width: 90%;
     max-width: 1200px;
     background: white;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    padding: 40px;
     position: relative;
     overflow: hidden;
-}
-
-.back-button {
+    border: none;
+  }
+  
+  .back-button {
     position: absolute;
     top: 25px;
     left: 25px;
@@ -25,92 +27,190 @@
     display: flex;
     align-items: center;
     font-weight: 500;
-    transition: all 0.2s ease;
-    border: 1px solid #e0e0e0;
-}
-
-.back-button:hover {
-    background-color: #f5f5f5;
-    transform: translateX(-3px);
-}
-
-.rented-room-title {
-    color: #1a365d;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    color: #4b5563;
+    
+    &:hover {
+      background-color: #f3f4f6;
+      transform: translateX(-3px);
+      color: #1f2937;
+    }
+  }
+  
+  .room-header {
+    margin-top: 30px;
+    margin-bottom: 40px;
+  }
+  
+  .room-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .rented-room-title {
+    color: #1e40af;
     text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    margin: 20px 0 30px;
-    padding-bottom: 15px;
+    font-size: 32px;
+    font-weight: 700;
     position: relative;
-}
-
-.rented-room-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 3px;
-    background: linear-gradient(90deg, #4299e1, #3182ce);
-    border-radius: 3px;
-}
-
-.rented-room-content {
+    padding-bottom: 15px;
+    margin-bottom: 8px;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+      border-radius: 3px;
+    }
+    
+    .title-icon {
+      margin-right: 12px;
+      color: #3b82f6;
+    }
+  }
+  
+  .status-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .status-tag {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 5px 15px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .rented-room-content {
     display: flex;
     gap: 40px;
     margin-top: 25px;
     flex-direction: row;
-}
-
-@media (max-width: 992px) {
-    .rented-room-content {
-        flex-direction: column-reverse;
+    
+    @media (max-width: 992px) {
+      flex-direction: column-reverse;
     }
-}
-
-.rented-room-left {
+  }
+  
+  .rented-room-left {
     flex: 1;
     padding: 0;
     border-radius: 12px;
-}
-
-.rented-room-right {
+  }
+  
+  .room-descriptions {
+    .ant-descriptions-row {
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: #f8fafc;
+      }
+    }
+    
+    .description-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #4b5563;
+      font-size: 15px;
+    }
+    
+    .ant-descriptions-item-content {
+      font-size: 16px;
+    }
+    
+    .price-text, .deposit-text {
+      color: #0f766e;
+      font-weight: 600;
+      font-size: 17px;
+    }
+    
+    .date-text {
+      color: #1e40af;
+      font-weight: 600;
+    }
+    
+    .area-text, .occupancy-text {
+      font-weight: 500;
+    }
+    
+    .description-text {
+      line-height: 1.6;
+    }
+  }
+  
+  .details-section-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+  }
+  
+  .rented-room-right {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.rented-room-image-container {
+  }
+  
+  .rented-room-image-container {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 450px;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.rented-room-image {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  .image-counter {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .rented-room-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
-}
-
-.rented-room-image:hover {
-    transform: scale(1.02);
-}
-
-.rented-room-image-nav {
+    
+    &:hover {
+      transform: scale(1.04);
+    }
+  }
+  
+  .rented-room-image-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     background-color: rgba(255, 255, 255, 0.9);
-    color: #333;
+    color: #374151;
     border: none;
     cursor: pointer;
     padding: 12px;
@@ -121,96 +221,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     z-index: 10;
-}
-
-.rented-room-image-nav:hover {
-    background-color: #fff;
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.rented-room-image-nav.left {
-    left: 15px;
-}
-
-.rented-room-image-nav.right {
-    right: 15px;
-}
-
-.details-card {
-    margin-top: 25px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.details-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-
-.details-card .ant-card-head {
-    background-color: #f8fafc;
-    border-bottom: 1px solid #edf2f7;
-}
-
-.details-card .ant-card-head-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #2d3748;
-}
-
-.rented-room-tenant-item {
-    padding: 12px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: 1px solid transparent;
-    margin-bottom: 8px;
-}
-
-.rented-room-tenant-item:hover {
-    background: #f9fafb;
-    border-color: #e2e8f0;
-    transform: translateX(5px);
-}
-
-.rented-room-tenant-name {
-    font-weight: 600;
-    font-size: 16px;
-    color: #2d3748;
-}
-
-/* Enhance Descriptions component styles */
-.ant-descriptions-bordered .ant-descriptions-item-label {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #4a5568;
-}
-
-.ant-descriptions-bordered .ant-descriptions-item-content {
-    padding: 12px 16px;
-}
-
-.ant-descriptions-bordered .ant-descriptions-item-content strong {
-    color: #2d3748;
-}
-
-.ant-list-item {
-    padding: 12px 16px;
-    transition: background-color 0.2s ease;
-}
-
-.ant-list-item:hover {
-    background-color: #f8fafc;
-}
-
-.loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+    
+    &:hover {
+      background-color: white;
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    
+    &.left {
+      left: 15px;
+    }
+    
+    &.right {
+      right: 15px;
+    }
+  }
+  
+  .content-divider {
+    margin: 40px 0 30px;
+    
+    .divider-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #4b5563;
+      padding: 0 15px;
+    }
+  }
+  

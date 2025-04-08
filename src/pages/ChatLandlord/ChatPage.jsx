@@ -31,7 +31,7 @@ const ChatPage = () => {
         if (hubConnection) return;
 
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7159/chatHub")
+        .withUrl("http://localhost:5262/chatHub")
             .withAutomaticReconnect()
             .build();
 

@@ -190,7 +190,7 @@ const RoomDetail = () => {
               <div className="summary-text">
                 <div className="summary-label">Price</div>
                 <div className="summary-value price-value">
-                  {roomDetail.price ? roomDetail.price.toLocaleString() : "N/A"} VND
+                  {roomDetail.price ? roomDetail.price.toLocaleString() : "N/A"} VNĐ
                 </div>
               </div>
             </div>
@@ -236,7 +236,7 @@ const RoomDetail = () => {
                         <div className="amenity-name">{item.name}</div>
                         {item.compensation && (
                           <div className="amenity-compensation">
-                            {item.compensation.toLocaleString()} VND
+                            {item.compensation.toLocaleString()} VNĐ
                           </div>
                         )}
                       </div>

@@ -94,7 +94,7 @@ const RoomRequestManagement = () => {
                     name: room.title || `Room ${room.roomNumber}`,
                     roomNumber: room.roomNumber,
                     address: room.location || 'Address not updated',
-                    price: room.price ? `${room.price.toLocaleString()} VND` : 'Contact for price',
+                    price: room.price ? `${room.price.toLocaleString()} VNĐ` : 'Contact for price',
                     area: room.area ? `${room.area}m²` : 'Not specified',
                     square: room.square ? `${room.square}m²` : (room.area ? `${room.area}m²` : 'Not specified'),
                     image: room.roomImages && room.roomImages.length > 0 ? room.roomImages[0] : pic,

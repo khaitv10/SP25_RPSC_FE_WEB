@@ -18,7 +18,7 @@ const Sidebar = () => {
     { name: "Package", path: "/admin/service", icon: ArchiveIcon },
     { name: "Contract", path: "/admin/contract", icon: ClipboardListIcon },
     { name: "Register", path: "/admin/regis", icon: ChatIcon },
-    { name: "Request", path: "/admin/request", icon: DocumentTextIcon },
+    //{ name: "Request", path: "/admin/request", icon: DocumentTextIcon },
   ];
 
   return (

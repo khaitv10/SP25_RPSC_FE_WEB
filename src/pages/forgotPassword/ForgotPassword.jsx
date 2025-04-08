@@ -1,120 +1,215 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./ForgotPassword.scss";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { forgotPassword, verifyForgotPasswordOTP, resetPassword } from "../../Services/userAPI";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./ForgotPassword.scss";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import imageLogin from "../../assets/image-login.png";
+import logo from "../../assets/logoEasyRommie.png";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
-  // Xử lý gửi yêu cầu OTP
+  // Handle sending OTP request
   const handleForgotPassword = async (e) => {
     e.preventDefault();
+    
     if (!email.trim()) {
-      toast.error("Vui lòng nhập email!");
+      toast.error("Email is required!");
       return;
     }
 
     try {
       await forgotPassword(email);
+      toast.success("OTP sent to your email!");
       setStep(2);
-    } catch (error) {
-      console.error("Error sending OTP:", error);
+    } catch (err) {
+      console.error("Error sending OTP:", err);
+      const errorMessage = 
+        err.response?.data?.message || 
+        err.response?.message ||
+        err.message ||
+        "Failed to send OTP. Please try again.";
+      
+      toast.error(errorMessage);
     }
   };
 
-  // Xử lý xác minh OTP
+  // Handle OTP verification
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
+    
     if (!otp.trim()) {
-      toast.error("Vui lòng nhập OTP!");
+      toast.error("OTP is required!");
       return;
     }
 
     try {
       await verifyForgotPasswordOTP(email, otp);
+      toast.success("OTP verified successfully!");
       setStep(3);
-    } catch (error) {
-      console.error("OTP verification error:", error);
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      const errorMessage = 
+        err.response?.data?.message || 
+        err.response?.message ||
+        err.message ||
+        "OTP verification failed. Please check your OTP and try again.";
+      
+      toast.error(errorMessage);
     }
   };
 
-  // Xử lý đặt lại mật khẩu
+  // Handle password reset
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    
     if (!newPassword.trim()) {
-      toast.error("Vui lòng nhập mật khẩu mới!");
+      toast.error("New password is required!");
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords don't match!");
       return;
     }
 
     try {
       await resetPassword(email, newPassword);
-      toast.success("Mật khẩu đã được đặt lại thành công!");
-      navigate("/login");
-    } catch (error) {
-      console.error("Reset password error:", error);
+      toast.success("Password reset successful!");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (err) {
+      console.error("Reset password error:", err);
+      const errorMessage = 
+        err.response?.data?.message || 
+        err.response?.message ||
+        err.message ||
+        "Password reset failed. Please try again.";
+      
+      toast.error(errorMessage);
     }
   };
 
   return (
-    <div className="forgot-password-container">
+    <div className="login-container forgot-password-container">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-      <div className="forgot-password-box">
-        <h2>Quên mật khẩu</h2>
+      <img src={logo} alt="EasyRoomie Logo" className="otp-logo" />
+
+      <div className="login-box">
+        <div className="login-left">
+          <img src={imageLogin} alt="Forgot Password" />
+          <div className="welcome-text">
+            <h2>Password Recovery</h2>
+            <p>We'll help you reset your password and get back access to your EasyRoomie account</p>
+          </div>
+        </div>
         
-        {step === 1 && (
-          <form onSubmit={handleForgotPassword}>
-            <label>Email</label>
-            <input
-              type="email"
-              placeholder="Nhập email của bạn"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button type="submit">Gửi OTP</button>
-          </form>
-        )}
+        <div className="login-right">
+          <div className="login-header">
+            <h3>Forgot Password</h3>
+            <p>
+              {step === 1 && "Enter your email to receive a reset code"}
+              {step === 2 && "Enter the verification code sent to your email"}
+              {step === 3 && "Create your new password"}
+            </p>
+          </div>
 
-        {step === 2 && (
-          <form onSubmit={handleVerifyOTP}>
-            <label>Nhập OTP</label>
-            <input
-              type="text"
-              placeholder="Nhập mã OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-            />
-            <button type="submit">Xác minh OTP</button>
-          </form>
-        )}
+          {step === 1 && (
+            <form onSubmit={handleForgotPassword}>
+              <div className="input-field">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  required
+                />
+              </div>
 
-        {step === 3 && (
-          <form onSubmit={handleResetPassword}>
-            <label>Mật khẩu mới</label>
-            <div className="password-input">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Nhập mật khẩu mới"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <span className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
-            </div>
-            <button type="submit">Đặt lại mật khẩu</button>
-          </form>
-        )}
+              <button type="submit" className="login-btn">Send Reset Code</button>
+              
+              <p className="signup-text">
+                Remember your password? <Link to="/login">Sign In</Link>
+              </p>
+            </form>
+          )}
+
+          {step === 2 && (
+            <form onSubmit={handleVerifyOTP}>
+              <div className="input-field">
+                <label>Verification Code</label>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter the OTP code"
+                  required
+                />
+              </div>
+
+              <button type="submit" className="login-btn">Verify Code</button>
+              
+              <p className="resend-text">
+                Didn't receive the code? <span onClick={() => handleForgotPassword({ preventDefault: () => {} })}>Resend</span>
+              </p>
+            </form>
+          )}
+
+          {step === 3 && (
+            <form onSubmit={handleResetPassword}>
+              <div className="input-field">
+                <label>New Password</label>
+                <div className="password-input">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter your new password"
+                    required
+                  />
+                  <span
+                    className="eye-icon"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </div>
+              </div>
+
+              <div className="input-field">
+                <label>Confirm Password</label>
+                <div className="password-input">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm your new password"
+                    required
+                  />
+                  <span
+                    className="eye-icon"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </div>
+              </div>
+
+              <button type="submit" className="login-btn">Reset Password</button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

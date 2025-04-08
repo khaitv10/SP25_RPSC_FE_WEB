@@ -37,6 +37,17 @@ const ContractLandDetail = () => {
         })
       : 'N/A';
   };
+const formatPrice = (price) => {
+  if (!price && price !== 0) return 'N/A';
+  
+  // Handle both number and string inputs
+  const numericPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.-]+/g, '')) : price;
+  
+  // Check if it's a valid number after conversion
+  if (isNaN(numericPrice)) return 'N/A';
+  
+  return `${numericPrice.toLocaleString()} VNĐ`;
+};
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -186,7 +197,7 @@ const ContractLandDetail = () => {
               { label: 'Room Number', value: contract.room.roomNumber, icon: <Home className="h-5 w-5 text-green-500" /> },
               { label: 'Room Type', value: contract.room.roomTypeName, icon: <Tag className="h-5 w-5 text-blue-500" /> },
               { label: 'Location', value: contract.room.location, icon: <MapPin className="h-5 w-5 text-red-500" /> },
-              { label: 'Deposit', value: `$${contract.room.deposite || 0}`, icon: <CreditCard className="h-5 w-5 text-purple-500" /> },
+              { label: 'Deposit', value: formatPrice(contract.room.deposite), icon: <CreditCard className="h-5 w-5 text-purple-500" /> },
               { label: 'Max Occupancy', value: contract.room.maxOccupancy, icon: <Users className="h-5 w-5 text-orange-500" /> },
               { label: 'Room Type Status', value: contract.room.roomTypeStatus, icon: <Home className="h-5 w-5 text-green-500" /> }
             ].map(({ label, value, icon }) => (
@@ -239,7 +250,7 @@ const ContractLandDetail = () => {
             {[
               { label: 'Preferences', value: contract.customer.preferences },
               { label: 'Life Style', value: contract.customer.lifeStyle },
-              { label: 'Budget Range', value: contract.customer.budgetRange },
+              { label: 'Budget Range', value: formatPrice(contract.customer.budgetRange) },
               { label: 'Requirements', value: contract.customer.requirement }
             ].map(({ label, value }) => (
               <div key={label} className="bg-gray-50 p-3 rounded-lg">

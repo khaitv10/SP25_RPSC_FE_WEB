@@ -12,6 +12,7 @@ import backgroundImg from "../../assets/1.jpg";
 import { register } from "../../Services/userAPI";
 import "./Register.scss";
 
+
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -50,6 +51,8 @@ const Register = () => {
   
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    if (!validateForm()) return;
 
     try {
         console.log("Sending request to register API...");
@@ -80,8 +83,7 @@ const Register = () => {
             toast.error(error.title || "An error occurred during registration.");
         }
     }
-};
-
+  };
   
   return (
     <Box className="register-container">
@@ -89,50 +91,85 @@ const Register = () => {
       <Paper elevation={3} className="register-box">
         <Box className="left">
           <img src={backgroundImg} alt="Signup Illustration" />
+          <Box className="welcome-text">
+            <Typography variant="h2">Welcome to EasyRoomie</Typography>
+            <Typography variant="body1">Find your perfect roommate with just a few clicks</Typography>
+          </Box>
         </Box>
         <Box className="right">
-          <Typography variant="h4" fontWeight="bold">Sign Up</Typography>
-          <Typography variant="body2" color="textSecondary">Let's sign up to manage your own room</Typography>
+          <Box className="register-header">
+            <Typography variant="h4">Create Account</Typography>
+            <Typography variant="body2">Join our community and find your ideal living space</Typography>
+          </Box>
+          
           <form onSubmit={handleSubmit}>
-            {["fullName", "email", "phoneNumber"].map((field, index) => (
-              <TextField
-                key={index}
-                name={field}
-                label={field.charAt(0).toUpperCase() + field.slice(1)}
-                fullWidth
-                variant="outlined"
-                margin="normal"
-                value={formData[field]}
-                onChange={handleChange}
-                error={!!errors[field]}
-                helperText={errors[field]}
-              />
-            ))}
-
-            {/* Password Field */}
             <TextField
-              name="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
+              name="fullName"
+              label="Full Name"
               fullWidth
               variant="outlined"
               margin="normal"
-              value={formData.password}
+              value={formData.fullName}
               onChange={handleChange}
-              error={!!errors.password}
-              helperText={errors.password}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              error={!!errors.fullName}
+              helperText={errors.fullName}
             />
+            
+            <div className="form-row">
+              <TextField
+                name="email"
+                label="Email Address"
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
+              />
+              
+              <TextField
+                name="phoneNumber"
+                label="Phone Number"
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                error={!!errors.phoneNumber}
+                helperText={errors.phoneNumber}
+              />
+            </div>
 
-            {/* Confirm Password Field */}
+            <div className="password-fields">
+              <TextField
+                name="password"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                value={formData.password}
+                onChange={handleChange}
+                error={!!errors.password}
+                helperText={errors.password}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              {formData.password && (
+                <span className="password-strength">
+                  Password strength: {formData.password.length > 8 ? "Strong" : "Weak"}
+                </span>
+              )}
+            </div>
+
             <TextField
               name="confirmPassword"
               label="Confirm Password"
@@ -155,7 +192,6 @@ const Register = () => {
               }}
             />
 
-            {/* Gender Field */}
             <TextField
               select
               name="gender"
@@ -173,17 +209,22 @@ const Register = () => {
               ))}
             </TextField>
 
-            <FormControlLabel
-              control={<Checkbox color="primary" />}
-              label="I agree to the Terms and Policies"
-            />
+            <div className="checkbox-area">
+              <FormControlLabel
+                control={<Checkbox color="primary" />}
+                label="I agree to the"
+              />
+              <Link to="/terms" className="terms-link">Terms and Policies</Link>
+            </div>
 
-            <Button type="submit" variant="contained" color="success" fullWidth>
+            <Button type="submit" variant="contained" fullWidth>
               Create account
             </Button>
           </form>
+          
+          
           <Typography className="login-text">
-            Already have an account? <Link to="/login">Login</Link>
+            Already have an account?<Link to="/login">Sign in</Link>
           </Typography>
         </Box>
       </Paper>

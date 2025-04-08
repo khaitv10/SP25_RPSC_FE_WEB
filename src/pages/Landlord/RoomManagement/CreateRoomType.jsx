@@ -10,6 +10,7 @@ import {
   AreaChartOutlined, AppstoreOutlined, BarsOutlined
 } from "@ant-design/icons";
 import { createRoomTypeAPI } from "../../../Services/Lanlord/RoomApi";
+import { toast } from 'react-toastify'; // Import toastify
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -75,46 +76,65 @@ const CreateRoomType = () => {
     setRoomServices(updatedRoomServices);
   };
 
-  const handleSubmit = async (values) => {
-    // Get coordinates from state if not in form values
-    const lat = form.getFieldValue('lat') || (coordinates ? coordinates.lat : null);
-    const long = form.getFieldValue('long') || (coordinates ? coordinates.lng : null);
-    
-    // Include coordinates in form data
-    const data = {
-      ...values,
-      lat,
-      long,
-      location: {
-        long,
-        lat,
-        houseNumber: values.houseNumber,
-        street: values.street,
-        district: values.district,
-        city: values.city,
-      },
-      listRoomServices: roomServices.map((service) => ({
-        roomServiceName: service.roomServiceName,
-        description: service.description,
-        price: { price: parseFloat(service.price) || 0 },
-      })),
-    };
 
-    setLoading(true);
-    try {
-      const response = await createRoomTypeAPI(data);
-      message.success({
-        content: "Room Type Created Successfully!",
-        icon: <HomeOutlined style={{ color: '#52c41a' }} />
-      });
-      navigate("/landlord/roomtypes");
-    } catch (error) {
-      message.error("Error creating Room Type");
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+const handleSubmit = async (values) => {
+  // Get coordinates from state if not in form values
+  const lat = form.getFieldValue('lat') || (coordinates ? coordinates.lat : null);
+  const long = form.getFieldValue('long') || (coordinates ? coordinates.lng : null);
+
+  // Include coordinates in form data
+  const data = {
+    ...values,
+    lat,
+    long,
+    location: {
+      long,
+      lat,
+      houseNumber: values.houseNumber,
+      street: values.street,
+      district: values.district,
+      city: values.city,
+    },
+    listRoomServices: roomServices.map((service) => ({
+      roomServiceName: service.roomServiceName,
+      description: service.description,
+      price: { price: parseFloat(service.price) || 0 },
+    })),
   };
+
+  setLoading(true);
+  try {
+    const response = await createRoomTypeAPI(data);
+    
+    // Show success toast
+    toast.success("Room Type Created Successfully!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+
+    // Navigate to the room type list page
+    navigate("/landlord/roomtype");
+  } catch (error) {
+    // Show error toast
+    toast.error("Error creating Room Type", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+    console.error("Error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleMapUpdate = async () => {
     // Get current address values from the form
@@ -301,20 +321,21 @@ const CreateRoomType = () => {
 
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Form.Item 
-                      label="Deposit ($)" 
+                  <Form.Item 
+                      label="Deposit (VND)" 
                       name="deposite" 
                       rules={[{ required: true, message: "Deposit is required" }]}
                     >
                       <InputNumber 
                         min={0} 
-                        placeholder="Enter deposit" 
+                        placeholder="Enter deposit" Price 
                         style={{ width: "100%" }}
-                        formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                        prefix={<DollarOutlined />}
+                        formatter={value => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/₫\s?|(,*)/g, '')}
+                        prefix={<DollarOutlined />} // Có thể thay thế bằng một icon khác nếu muốn
                       />
                     </Form.Item>
+
                   </Col>
                   <Col span={12}>
                     <Form.Item 
@@ -495,13 +516,10 @@ const CreateRoomType = () => {
                     </Form.Item>
                   </Col>
                   <Col span={24} md={8}>
-                    <Form.Item 
-                      label="Price ($)" 
-                      rules={[
-                        { required: true, message: "Price is required" },
-                        { validator: validatePrice }
-                      ]}
-                    >
+                  <Form.Item 
+                      label="Price (VND)" 
+                      name="price" 
+                      rules={[{ required: true, message: "Price is required" }]}>
                       <InputNumber
                         name="price"
                         value={roomService.price}
@@ -509,11 +527,12 @@ const CreateRoomType = () => {
                         placeholder="Enter service price"
                         min={0.01}
                         style={{ width: "100%" }}
-                        formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                        formatter={value => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/₫\s?|(,*)/g, '')}
                         prefix={<DollarOutlined />}
                       />
                     </Form.Item>
+
                   </Col>
                 </Row>
               </Card>
