@@ -38,7 +38,10 @@
 
     acceptCustomerRentRoom: async (roomRentRequestsId, selectedCustomerId) => {
       if (!roomRentRequestsId || !selectedCustomerId) {
-        throw new Error("Missing required parameters");
+        return {
+          isSuccess: false,
+          message: "Missing required parameters"
+        };
       }
     
       console.log("Calling API with parameters:", { roomRentRequestsId, selectedCustomerId });
@@ -49,10 +52,11 @@
           selectedCustomerId
         });
     
+        // Fix the URL construction - removed an errant /
         const url = `/api/roomrentrequest/accept-customer-and-reject-others?${params.toString()}`;
         console.log("Generated API URL:", url);
     
-        // Gọi API với POST và không cần body (vì tham số đã được gửi qua query string)
+        // Call API with POST and without a body (parameters sent via query string)
         const response = await axiosClient.post(url);
     
         console.log("API Response:", response);
@@ -60,12 +64,23 @@
         if (response && response.data) {
           return response.data;
         } else {
-          throw new Error("Invalid API response");
+          return {
+            isSuccess: false,
+            message: "Invalid API response"
+          };
         }
       } catch (error) {
         console.error("Error accepting customer for room rental:", error);
         console.error("Error details:", error.response?.data);
-        throw error;
+    
+        // Return a structured error response instead of throwing
+        return {
+          isSuccess: false,
+          message: error.response?.data?.message || 
+                   error.response?.data?.error || 
+                   error.message || 
+                   "Failed to approve room rental request"
+        };
       }
     },
 
