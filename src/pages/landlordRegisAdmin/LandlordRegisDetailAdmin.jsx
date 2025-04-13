@@ -71,78 +71,80 @@ const LandlordRegisDetailAdmin = () => {
   if (loading) return <Spin size="large" className="loading-spinner" />;
 
   return (
-    <div className="landlord-detail-container">
-      <Card className="landlord-card">
-        <Button type="default" className="back-button" onClick={() => navigate("/admin/regis")}>
-          <LeftOutlined /> Back
-        </Button>
+    <div className="landlord-regis-detail-admin-container">
+      <div className="landlord-detail-container">
+        <Card className="landlord-card">
+          <Button type="default" className="back-button" onClick={() => navigate("/admin/regis")}>
+            <LeftOutlined /> Back
+          </Button>
 
-        <Title level={2} className="title">Landlord Registration Detail</Title>
+          <Title level={2} className="title">Landlord Registration Detail</Title>
 
-        <div className="content-wrapper">
-          {/* Left Section - Details */}
-          <div className="left-section">
-            <Descriptions bordered column={1} className="details">
-              <Descriptions.Item label={<strong>Company Name</strong>}>{landlord.companyName}</Descriptions.Item>
-              <Descriptions.Item label={<strong>Number of Rooms</strong>}>{landlord.numberRoom}</Descriptions.Item>
-              <Descriptions.Item label={<strong>License Number</strong>}>{landlord.licenseNumber}</Descriptions.Item>
-              <Descriptions.Item label={<strong>Landlord Name</strong>}>{landlord.fullName}</Descriptions.Item>
-              <Descriptions.Item label={<strong>Phone</strong>}>{landlord.phoneNumber}</Descriptions.Item>
-              <Descriptions.Item label={<strong>Email</strong>}>{landlord.email}</Descriptions.Item>
-              <Descriptions.Item label={<strong>Gender</strong>}>{landlord.gender}</Descriptions.Item>
-              <Descriptions.Item label={<strong>Created Date</strong>}>
-                {new Date(landlord.createdDate).toLocaleString()}
-              </Descriptions.Item>
-              <Descriptions.Item label={<strong>Status</strong>} className={`status ${landlord.status.toLowerCase()}`}>
-                {landlord.status}
-              </Descriptions.Item>
-            </Descriptions>
+          <div className="content-wrapper">
+            {/* Left Section - Details */}
+            <div className="left-section">
+              <Descriptions bordered column={1} className="details">
+                <Descriptions.Item label={<strong>Company Name</strong>}>{landlord.companyName}</Descriptions.Item>
+                <Descriptions.Item label={<strong>Number of Rooms</strong>}>{landlord.numberRoom}</Descriptions.Item>
+                <Descriptions.Item label={<strong>License Number</strong>}>{landlord.licenseNumber}</Descriptions.Item>
+                <Descriptions.Item label={<strong>Landlord Name</strong>}>{landlord.fullName}</Descriptions.Item>
+                <Descriptions.Item label={<strong>Phone</strong>}>{landlord.phoneNumber}</Descriptions.Item>
+                <Descriptions.Item label={<strong>Email</strong>}>{landlord.email}</Descriptions.Item>
+                <Descriptions.Item label={<strong>Gender</strong>}>{landlord.gender}</Descriptions.Item>
+                <Descriptions.Item label={<strong>Created Date</strong>}>
+                  {new Date(landlord.createdDate).toLocaleString()}
+                </Descriptions.Item>
+                <Descriptions.Item label={<strong>Status</strong>} className={`status ${landlord.status.toLowerCase()}`}>
+                  {landlord.status}
+                </Descriptions.Item>
+              </Descriptions>
+            </div>
+
+            {/* Right Section - Image Gallery */}
+            <div className="right-section">
+              <Title level={4} className="image-title">Business License Images</Title>
+              {landlord?.businessImageUrls?.length > 0 ? (
+                <div className="image-container">
+                  <Button
+                    icon={<LeftOutlined />}
+                    onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? landlord.businessImageUrls.length - 1 : prev - 1))}
+                    className="image-nav-button left"
+                  />
+                  <Image
+                    src={landlord.businessImageUrls[currentImageIndex]}
+                    width={350}
+                    className="business-image"
+                    preview={false}
+                  />
+                  <Button
+                    icon={<RightOutlined />}
+                    onClick={() => setCurrentImageIndex((prev) => (prev === landlord.businessImageUrls.length - 1 ? 0 : prev + 1))}
+                    className="image-nav-button right"
+                  />
+                </div>
+              ) : (
+                <span className="no-image">No image available</span>
+              )}
+            </div>
           </div>
 
-          {/* Right Section - Image Gallery */}
-          <div className="right-section">
-            <Title level={4} className="image-title">Business License Images</Title>
-            {landlord?.businessImageUrls?.length > 0 ? (
-              <div className="image-container">
-                <Button
-                  icon={<LeftOutlined />}
-                  onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? landlord.businessImageUrls.length - 1 : prev - 1))}
-                  className="image-nav-button left"
-                />
-                <Image
-                  src={landlord.businessImageUrls[currentImageIndex]}
-                  width={350}
-                  className="business-image"
-                  preview={false}
-                />
-                <Button
-                  icon={<RightOutlined />}
-                  onClick={() => setCurrentImageIndex((prev) => (prev === landlord.businessImageUrls.length - 1 ? 0 : prev + 1))}
-                  className="image-nav-button right"
-                />
-              </div>
-            ) : (
-              <span className="no-image">No image available</span>
-            )}
+          {/* Approve / Reject Buttons */}
+          <div className="button-group">
+            <Button
+              className="approve"
+              onClick={() => handleUpdateStatus(landlordId, true)}
+            >
+              <CheckCircleOutlined /> Approve
+            </Button>
+            <Button
+              className="reject"
+              onClick={() => setIsRejectModalOpen(true)}
+            >
+              <CloseCircleOutlined /> Reject
+            </Button>
           </div>
-        </div>
-
-        {/* Approve / Reject Buttons */}
-        <div className="button-group">
-          <Button
-            className="approve"
-            onClick={() => handleUpdateStatus(landlordId, true)}
-          >
-            <CheckCircleOutlined /> Approve
-          </Button>
-          <Button
-            className="reject"
-            onClick={() => setIsRejectModalOpen(true)}
-          >
-            <CloseCircleOutlined /> Reject
-          </Button>
-        </div>
-      </Card>
+        </Card>
+      </div>
 
       {/* Rejection Modal */}
       <Modal

@@ -143,6 +143,9 @@ const AdminPackage = () => {
           <Form.Item name="highLightTime" label="🌟 HighLight Time" rules={[{ required: true, message: "Please enter highlight time" }]}>
             <Input />
           </Form.Item>
+          <Form.Item name="priorityTime" label="📏 Priority Time">
+            <Input type="number" placeholder="Enter priority time " />
+          </Form.Item>
           <Form.Item name="maxPost" label="📏 Max Post">
             <Input type="number" placeholder="Enter max post (leave blank for No Limit)" />
           </Form.Item>

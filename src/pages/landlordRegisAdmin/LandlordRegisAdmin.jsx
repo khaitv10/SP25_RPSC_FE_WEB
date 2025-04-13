@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { getLandlordRegistrations } from "../../Services/userAPI";
 import { useNavigate } from "react-router-dom";
-import { Table, Button, Tag, Input, Card, Space, Typography } from "antd";
-import { EyeOutlined } from "@ant-design/icons";
+import { Table, Button, Tag, Input, Card, Pagination, Typography, Row, Col } from "antd";
+import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import "./LandlordRegisAdmin.scss";
 import dayjs from "dayjs";
 
 const { Title } = Typography;
+const { Search } = Input;
 
 const LandlordRegisAdmin = () => {
   const [landlords, setLandlords] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalUser, setTotalUser] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchLandlords();
-  }, [search]);
+  }, [search, currentPage, pageSize]);
 
   const fetchLandlords = async () => {
     setLoading(true);
     try {
-      const data = await getLandlordRegistrations(1, 10, search);
+      const data = await getLandlordRegistrations(currentPage, pageSize, search);
       if (data?.isSuccess) {
         setLandlords(data.data.landlords);
         setTotalUser(data.data.totalUser);
@@ -60,37 +63,70 @@ const LandlordRegisAdmin = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "Pending" ? "orange" : "green"}>{status}</Tag>
+        <Tag className={`status-tag ${status}`}>{status}</Tag>
       ),
     },
     {
       title: "Action",
       key: "action",
       render: (record) => (
-        <Space>
-          <Button
-            className="view-button"
-            icon={<EyeOutlined />}
-            onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
-          >
-          </Button>
-        </Space>
+        <Button
+          className="view-button"
+          icon={<EyeOutlined />}
+          onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
+        >
+          View Details
+        </Button>
       ),
     },
   ];
 
+  const handlePageChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+  };
+
   return (
     <div className="landlord-admin">
       <Card className="landlord-card">
-        <Title level={2} style={{ color: "black", fontWeight: "bold"}}>🏠 Landlord Registrations</Title>
-        <p style={{ fontSize: "16px", fontWeight: "bold" }}>Total New Registration: {totalUser}</p>
-        <Table
-          dataSource={landlords}
-          columns={columns}
-          rowKey="landlordId"
-          loading={loading}
-          pagination={{ pageSize: 10 }}
-        />
+        <div className="admin-header">
+          <div className="header-title">
+            <Title level={2}>🏠 Landlord Registrations</Title>
+            <p className="header-subtitle">Manage and review landlord registration requests</p>
+          </div>
+          <Search
+            placeholder="Search landlords..."
+            allowClear
+            enterButton={<SearchOutlined />}
+            className="search-input"
+            onSearch={(value) => {
+              setSearch(value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+
+        <div className="table-container">
+          <Table
+            dataSource={landlords}
+            columns={columns}
+            rowKey="landlordId"
+            loading={loading}
+            pagination={false}
+          />
+        </div>
+        
+        <div className="table-footer">
+          <div className="total-count">Total {totalUser} registrations</div>
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={totalUser}
+            onChange={handlePageChange}
+            showSizeChanger
+            pageSizeOptions={['10', '20', '50']}
+          />
+        </div>
       </Card>
     </div>
   );

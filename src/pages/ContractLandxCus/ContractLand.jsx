@@ -37,7 +37,6 @@ const ContractLand = () => {
     }
   };
 
-  // Fetch contract data from API
   const fetchContracts = async () => {
     setLoading(true);
     try {
@@ -47,33 +46,26 @@ const ContractLand = () => {
         searchText,
         activeTab === "All" ? "" : activeTab
       );
-
+  
       if (response && response.contracts) {
         const transformedContracts = response.contracts.map(contract => {
-            let timeRemainingInDays = "N/A"; // Giá trị mặc định nếu không có
-          
-            if (contract.timeRemaining) {
-              const match = contract.timeRemaining.match(/^(\d+)\./); // Lấy số nguyên trước dấu chấm
-              if (match) {
-                timeRemainingInDays = `${match[1]} days`; // Chỉ lấy số ngày
-              }
-            }
-          
-            return {
-              contractId: contract.contractId,
-              customer: contract.customer.fullName,
-              customerPhone: contract.customer.phoneNumber,
-              room: `${contract.room.roomNumber} - ${contract.room.title}`,
-              roomType: contract.room.roomType,
-              startDate: formatDate(contract.startDate),
-              endDate: formatDate(contract.endDate),
-              status: contract.status,
-              timeRemaining: timeRemainingInDays, // ✅ Đã chuyển đổi
-              id: `${contract.contractId}-${contract.customer.fullName}`
-            };
-          });
-
-
+          // Nếu không có durationOfRental, đặt giá trị mặc định
+          const durationInMonths = contract.durationOfRental ? `${contract.durationOfRental} months` : "N/A";
+  
+          return {
+            contractId: contract.contractId,
+            customer: contract.customer.fullName,
+            customerPhone: contract.customer.phoneNumber,
+            room: `${contract.room.roomNumber} - ${contract.room.title}`,
+            roomType: contract.room.roomType,
+            startDate: formatDate(contract.startDate),
+            endDate: formatDate(contract.endDate),
+            status: contract.status,
+            durationOfRental: durationInMonths, // ✅ Đã thay thế
+            id: `${contract.contractId}-${contract.customer.fullName}`
+          };
+        });
+  
         setContracts(transformedContracts);
         setPagination(prev => ({
           ...prev,
@@ -90,6 +82,7 @@ const ContractLand = () => {
       setLoading(false);
     }
   };
+  
 
   // Initial load and reload when filters change
   useEffect(() => {
@@ -175,9 +168,9 @@ const ContractLand = () => {
       )
     },
     {
-        title: "Time Remaining",
-        dataIndex: "timeRemaining",
-        key: "timeRemaining",
+        title: "Duration Rental",
+        dataIndex: "durationOfRental",
+        key: "durationOfRental",
         render: (text) => (
             <span className="cell-content time-remaining">
             {text}

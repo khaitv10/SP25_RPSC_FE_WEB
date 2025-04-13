@@ -20,7 +20,6 @@ const ChatPage = () => {
         timestamp: 0
     });
 
-
     // Memoized function to setup SignalR connection
     const setupSignalR = useCallback(async () => {
         if (!userId) {
@@ -31,7 +30,7 @@ const ChatPage = () => {
         if (hubConnection) return;
 
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7159/chatHub")
+            .withUrl("http://localhost:5262/chatHub")
             .withAutomaticReconnect()
             .build();
 
@@ -123,24 +122,55 @@ const ChatPage = () => {
         }
     }, [hubConnection]);
 
-    // Fetch chat list
     const fetchChatList = async () => {
         try {
             const history = await getHistoryByUserId();
-            setChatList(history);
+            
+            // Transform the chat list to show the other person in each conversation
+            const processedChats = history.map(chat => {
+                // Check if current user is the sender
+                const isCurrentUserSender = chat.sender.id === userId;
+                
+                // Create a new chat object with the correct person to display
+                return {
+                    ...chat,
+                    // If current user is the sender, display the receiver as the chat partner
+                    // If current user is the receiver, display the sender as the chat partner
+                    chatPartner: isCurrentUserSender ? chat.receiver : chat.sender
+                };
+            });
+            
+            // Filter out self-chats (optional) and deduplicate chats by unique partner
+            const uniqueChats = [];
+            const chatPartnerIds = new Set();
+            
+            for (const chat of processedChats) {
+                // Skip self-chats if desired
+                if (chat.sender.id === chat.receiver.id) {
+                    continue; // Uncomment to skip self-chats
+                }
+                
+                // Only add this chat if we haven't seen this partner before
+                if (!chatPartnerIds.has(chat.chatPartner.id)) {
+                    chatPartnerIds.add(chat.chatPartner.id);
+                    uniqueChats.push(chat);
+                }
+            }
+            
+            setChatList(uniqueChats);
         } catch (error) {
-            antMessage.error("Failed to fetch chat list");
+            antMessage.error("Không thể tải danh sách trò chuyện");
         }
     };
 
     // Open a specific chat
-    const openChat = async (receiver) => {
-        if (!receiver?.id) return;
+    const openChat = async (chatPartner) => {
+        if (!chatPartner?.id) return;
 
-        setActiveChat(receiver);
+        setActiveChat(chatPartner);
 
         try {
-            const data = await getChatHistory(receiver.id);
+            const data = await getChatHistory(chatPartner.id);
             setMessages(data);
         } catch (error) {
             antMessage.error("Failed to load chat history");
@@ -189,9 +219,6 @@ const ChatPage = () => {
         setMessage("");
     };
     
-    
-    
-    
     return (
         <div className="chat-wrapper bg-gradient-to-br from-gray-100 to-gray-200 h-screen flex">
             {/* Sidebar with chat list */}
@@ -204,10 +231,10 @@ const ChatPage = () => {
                     dataSource={chatList}
                     renderItem={(chat) => (
                         <List.Item
-                            onClick={() => chat.receiver && openChat(chat.receiver)}
+                            onClick={() => openChat(chat.chatPartner)}
                             className={`
                                 cursor-pointer hover:bg-blue-50 p-3 rounded-lg transition-all duration-200 
-                                ${activeChat?.id === chat.receiver?.id 
+                                ${activeChat?.id === chat.chatPartner?.id 
                                     ? "bg-blue-100 shadow-md" 
                                     : "hover:shadow-sm"
                                 }
@@ -215,12 +242,12 @@ const ChatPage = () => {
                         >
                             <Avatar 
                                 icon={<UserOutlined />} 
-                                src={chat.receiver?.avatar} 
+                                src={chat.chatPartner?.avatar} 
                                 className="mr-4 border-2 border-blue-200" 
                                 size="large"
                             />
                             <div className="flex-grow">
-                                <div className="font-bold text-gray-800">{chat.receiver?.username || "Unknown"}</div>
+                                <div className="font-bold text-gray-800">{chat.chatPartner?.username || "Unknown"}</div>
                                 <div className="text-gray-500 text-sm truncate">
                                     {chat.latestMessage || "No recent messages"}
                                 </div>
@@ -254,7 +281,6 @@ const ChatPage = () => {
                     )}
                 </div>
 
-                {/* In the chat-messages section, replace the existing messages rendering with this: */}
                 <div className="chat-messages flex-grow overflow-y-auto p-6 bg-gray-50 space-y-4">
                     {messages.map((msg, index) => {
                         // Determine if the current user is the sender
@@ -308,8 +334,6 @@ const ChatPage = () => {
                             placeholder="Nhập tin nhắn..."
                             className="flex-grow border rounded-lg p-2 focus:outline-none"
                         />
-
-
                             <Button 
                                 type="primary" 
                                 icon={<SendOutlined />} 

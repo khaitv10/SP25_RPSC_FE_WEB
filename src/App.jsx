@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Layout from "./components/Layout.jsx";
@@ -8,27 +8,36 @@ import RegisterLandlord from "./pages/Regis/RegisterLandlord";
 import OtpRegis from "./pages/Regis/OtpRegis";
 import AppRoutes from "./routes/routes";
 import ForgotPassword from "./pages/forgotPassword/ForgotPassword.jsx";
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.jsx";
 
-
+// In App.js - Modify your routes
 function App() {
   return (
     <Router>
       <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
-        {/* Trang không cần Layout */}
+        {/* Authentication pages that don't need Layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/otpRegister" element={<OtpRegis />} />
         <Route path="/register-landlord" element={<RegisterLandlord />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        
+        {/* Root redirect */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        
+        {/* Application routes with Layout */}
+        <Route path="/*" element={
+          <Layout>
+            <AppRoutes />
+          </Layout>
+        } />
 
-
-        {/* Các trang cần Layout */}
-        <Route path="/*" element={<Layout><AppRoutes /></Layout>} />
+        {/* NotFoundPage - for truly non-existent routes */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );
 }
-
 
 export default App;
