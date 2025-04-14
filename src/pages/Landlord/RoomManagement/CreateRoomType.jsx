@@ -63,7 +63,16 @@ const CreateRoomType = () => {
 
   const handleRoomServiceChange = (index, event) => {
     const updatedRoomServices = [...roomServices];
-    updatedRoomServices[index][event.target.name] = event.target.value;
+    
+    // Check if this is a direct event or a value from InputNumber
+    if (event.target) {
+      // This is a regular input event
+      updatedRoomServices[index][event.target.name] = event.target.value;
+    } else {
+      // This is a value from InputNumber component
+      updatedRoomServices[index].price = event;
+    }
+    
     setRoomServices(updatedRoomServices);
   };
 
@@ -451,104 +460,114 @@ const handleSubmit = async (values) => {
             </Col>
           </Row>
 
-          <Card 
-            title={
-              <Space>
-                <BarsOutlined className="card-icon" />
-                <span>Room Services</span>
-              </Space>
-            } 
-            className="section-card" 
-            style={{ marginTop: '24px' }}
-            extra={
-              <Tooltip title="Add services that are included with this room type">
-                <InfoCircleOutlined />
-              </Tooltip>
-            }
+<Card 
+  title={
+    <Space>
+      <BarsOutlined className="card-icon" />
+      <span>Room Services</span>
+    </Space>
+  } 
+  className="section-card" 
+  style={{ marginTop: '24px' }}
+  extra={
+    <Tooltip title="Add services that are included with this room type">
+      <InfoCircleOutlined />
+    </Tooltip>
+  }
+>
+  {roomServices.map((roomService, index) => (
+    <Card 
+      key={index}
+      className="room-service-card"
+      size="small"
+      title={
+        <Space>
+          <span className="service-number">{index + 1}</span>
+          <span>Room Service</span>
+        </Space>
+      }
+      extra={
+        <Button 
+          type="text" 
+          danger 
+          icon={<MinusCircleOutlined />} 
+          onClick={() => removeRoomService(index)}
+        >
+          Remove
+        </Button>
+      }
+    >
+      <Row gutter={16}>
+        <Col span={24} md={8}>
+          <Form.Item 
+            label="Service Name" 
+            rules={[{ required: true, message: "Service name is required" }]}
           >
-            {roomServices.map((roomService, index) => (
-              <Card 
-                key={index}
-                className="room-service-card"
-                size="small"
-                title={
-                  <Space>
-                    <span className="service-number">{index + 1}</span>
-                    <span>Room Service</span>
-                  </Space>
-                }
-                extra={
-                  <Button 
-                    type="text" 
-                    danger 
-                    icon={<MinusCircleOutlined />} 
-                    onClick={() => removeRoomService(index)}
-                  >
-                    Remove
-                  </Button>
-                }
-              >
-                <Row gutter={16}>
-                  <Col span={24} md={8}>
-                    <Form.Item 
-                      label="Service Name" 
-                      rules={[{ required: true, message: "Service name is required" }]}
-                    >
-                      <Input
-                        name="roomServiceName"
-                        value={roomService.roomServiceName}
-                        onChange={(e) => handleRoomServiceChange(index, e)}
-                        placeholder="Enter service name"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24} md={8}>
-                    <Form.Item 
-                      label="Description" 
-                      rules={[{ required: true, message: "Description is required" }]}
-                    >
-                      <Input
-                        name="description"
-                        value={roomService.description}
-                        onChange={(e) => handleRoomServiceChange(index, e)}
-                        placeholder="Enter service description"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24} md={8}>
-                  <Form.Item 
-                      label="Price (VND)" 
-                      name="price" 
-                      rules={[{ required: true, message: "Price is required" }]}>
-                      <InputNumber
-                        name="price"
-                        value={roomService.price}
-                        onChange={(value) => handleRoomServiceChange(index, { target: { name: "price", value } })}
-                        placeholder="Enter service price"
-                        min={0.01}
-                        style={{ width: "100%" }}
-                        formatter={value => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        parser={value => value.replace(/₫\s?|(,*)/g, '')}
-                        prefix={<DollarOutlined />}
-                      />
-                    </Form.Item>
+            <Input
+              name="roomServiceName"
+              value={roomService.roomServiceName}
+              onChange={(e) => {
+                const updatedServices = [...roomServices];
+                updatedServices[index].roomServiceName = e.target.value;
+                setRoomServices(updatedServices);
+              }}
+              placeholder="Enter service name"
+            />
+          </Form.Item>
+        </Col>
+        <Col span={24} md={8}>
+          <Form.Item 
+            label="Description" 
+            rules={[{ required: true, message: "Description is required" }]}
+          >
+            <Input
+              name="description"
+              value={roomService.description}
+              onChange={(e) => {
+                const updatedServices = [...roomServices];
+                updatedServices[index].description = e.target.value;
+                setRoomServices(updatedServices);
+              }}
+              placeholder="Enter service description"
+            />
+          </Form.Item>
+        </Col>
+        <Col span={24} md={8}>
+          <Form.Item 
+            label="Price (VND)" 
+            rules={[{ required: true, message: "Price is required" }]}
+          >
+            <InputNumber
+              min={0.01}
+              value={roomService.price}
+              onChange={(value) => {
+                const updatedServices = [...roomServices];
+                updatedServices[index].price = value;
+                setRoomServices(updatedServices);
+              }}
+              placeholder="Enter service price"
+              style={{ width: "100%" }}
+              formatter={value => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/₫\s?|(,*)/g, '')}
+              prefix={<DollarOutlined />}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+    </Card>
+  ))}
 
-                  </Col>
-                </Row>
-              </Card>
-            ))}
-
-            <Button 
-              type="dashed" 
-              onClick={addRoomService} 
-              block 
-              icon={<PlusOutlined />}
-              style={{ marginTop: '16px' }}
-              className="add-service-button"
-            >
-              Add Room Service
-            </Button>
-          </Card>
+  <Button 
+    type="dashed" 
+    onClick={addRoomService} 
+    block 
+    icon={<PlusOutlined />}
+    style={{ marginTop: '16px' }}
+    className="add-service-button"
+  >
+    Add Room Service
+  </Button>
+</Card>
 
           <Form.Item style={{ marginTop: '24px' }}>
             <Button 

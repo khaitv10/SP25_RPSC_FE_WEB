@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { Form, Input, Button, InputNumber, Upload, Select, Spin, Typography, Space, Divider, Card, message, DatePicker } from "antd";
+import { useParams, useNavigate } from "react-router-dom";
+import { Form, Input, Button, InputNumber, Upload, Select, Spin, Typography, Space, Card, DatePicker } from "antd";
 import { 
   UploadOutlined, 
   ArrowLeftOutlined, 
@@ -11,9 +11,11 @@ import {
   TagOutlined,
   CalendarOutlined
 } from "@ant-design/icons";
-import moment from "moment";  // Import moment for date validation
+import moment from "moment";
 import roomRentalService from "../../../Services/Landlord/roomAPI";
 import { getAllAmenities } from "../../../Services/Landlord/amenityAPI";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./RoomCreate.scss";
 
 const { Option } = Select;
@@ -42,7 +44,7 @@ const RoomCreate = () => {
         const data = await getAllAmenities();
         setAmenities(data.amenties);
       } catch (error) {
-        message.error("Error fetching amenities");
+        toast.error("Error fetching amenities");
         console.error("Error:", error);
       } finally {
         setLoadingAmenities(false);
@@ -91,8 +93,9 @@ const RoomCreate = () => {
           }
         });
       } else {
-        message.error("Images field is required.");
-        throw new Error("Images field is required.");
+        toast.error("Images field is required.");
+        setLoading(false);
+        return;
       }
   
       // Append amenities to FormData
@@ -101,24 +104,35 @@ const RoomCreate = () => {
           formData.append("AmentyId", amentyId);
         });
       } else {
-        message.error("At least one amenity is required.");
-        throw new Error("AmentyId field is required.");
+        toast.error("At least one amenity is required.");
+        setLoading(false);
+        return;
       }
   
       // Submit the form data
       const response = await roomRentalService.createRoom(formData);
       if (response?.isSuccess) {
-        message.success("Room created successfully!");
+        toast.success("Room created successfully!");
         form.resetFields();
         setFileList([]);
         // Navigate back after a short delay WITH roomTypeId preserved
         setTimeout(() => navigate(`/landlord/roomtype/room?roomType=${roomTypeId}`), 2000);
       } else {
-        message.error(response?.message || "Failed to create room!");
+        // Show more specific error message from the API if available
+        toast.error(response?.message || "Failed to create room!");
       }
     } catch (error) {
-      message.error("Error creating room");
-      console.error("Error:", error);
+      console.error("Error creating room:", error);
+      
+      // Handle API error response
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        toast.error(errorData.message || "Error creating room");
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     } finally {
       setLoading(false);
     }
@@ -131,6 +145,19 @@ const RoomCreate = () => {
 
   return (
     <div className="room-create-container">
+      {/* Add ToastContainer to render toasts */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      
       <div className="room-create-header">
         <div className="header-left">
           <Button 
@@ -224,7 +251,6 @@ const RoomCreate = () => {
                 />
               </Form.Item>
 
-              {/* Updated DatePicker with validation */}
               <Form.Item 
                 label="Available Date To Rent" 
                 name="availableDateToRent"

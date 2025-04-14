@@ -6,7 +6,7 @@ import OtpRegis from "../pages/Regis/OtpRegis";
 import Dashboard from "../pages/homePage/Dashboard";
 import AccountManagement from "../pages/Admin/AccountManagement/AccountManagement";
 import RequestManagement from "../pages/Admin/RequestManagement/RequestManagement";
-import RoomTypeDetail  from "../pages/Admin/RequestManagement/RoomTypeDetail";
+import RoomTypeDetail from "../pages/Admin/RequestManagement/RoomTypeDetail";
 import LandlordDashboard from "../pages/homePage/LandlordDashboard";
 import AdminPackage from "../pages/packageAdmin/adminPackage";
 import RegisterLandlord from "../pages/Regis/RegisterLandlord";
@@ -33,8 +33,59 @@ import RoomTypeDetailLandLord from "../pages/Landlord/RoomManagement/RoomTypeDet
 import CreateRoomType from "../pages/Landlord/RoomManagement/CreateRoomType";
 import RoomDetail from "../pages/Landlord/RoomManagement/RoomDetail";
 import RoomCreate from "../pages/Landlord/RoomManagement/RoomCreate";
+import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 
 const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Admin routes */}
+      <Route path="account" element={<PrivateRoute allowedRoles={["Admin"]}><AccountManagement /></PrivateRoute>} />
+      <Route path="request" element={<PrivateRoute allowedRoles={["Admin"]}><RequestManagement /></PrivateRoute>} />
+      <Route path="request/room-type/:roomTypeId" element={<PrivateRoute allowedRoles={["Admin"]}><RoomTypeDetail /></PrivateRoute>} />
+      <Route path="package/:packageId" element={<PrivateRoute allowedRoles={["Admin"]}><AdminPackageDetail /></PrivateRoute>} />
+      <Route path="service" element={<PrivateRoute allowedRoles={["Admin"]}><AdminPackage /></PrivateRoute>} />
+      <Route path="contract" element={<PrivateRoute allowedRoles={["Admin"]}><ContractManagement /></PrivateRoute>} />
+      <Route path="regis" element={<PrivateRoute allowedRoles={["Admin"]}><LandlordRegisAdmin /></PrivateRoute>} />
+      <Route path="dashboard" element={<PrivateRoute allowedRoles={["Admin"]}><Dashboard /></PrivateRoute>} />
+      <Route path="landlord-detail/:landlordId" element={<PrivateRoute allowedRoles={["Admin"]}><LandlordRegisDetailAdmin /></PrivateRoute>} />
+
+      {/* Fallback route for /admin/* */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+};
+
+export const LandlordRoutes = () => {
+  return (
+    <Routes>
+      {/* Landlord routes */}
+      <Route path="dashboard" element={<PrivateRoute allowedRoles={["Landlord"]}><LandlordDashboard /></PrivateRoute>} />
+      <Route path="roomtype/room" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomManagement /></PrivateRoute>} />
+      <Route path="room/amentities" element={<PrivateRoute allowedRoles={["Landlord"]}><AmenityManagement /></PrivateRoute>} />
+      <Route path="roomtype" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomTypeManagement /></PrivateRoute>} />
+      <Route path="roomtype/:id" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomTypeDetailLandLord /></PrivateRoute>} />
+      <Route path="roomtype/create" element={<PrivateRoute allowedRoles={["Landlord"]}><CreateRoomType /></PrivateRoute>} />
+      <Route path="roomtype/room/roomdetail/:roomId" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomDetail /></PrivateRoute>} />
+      <Route path="roomtype/:roomTypeId/add-room" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomCreate /></PrivateRoute>} />
+      <Route path="service" element={<PrivateRoute allowedRoles={["Landlord"]}><PricingTable1 /></PrivateRoute>} />
+      <Route path="confirmpayment" element={<PrivateRoute allowedRoles={["Landlord"]}><ConfirmPayment /></PrivateRoute>} />
+      <Route path="manage" element={<PrivateRoute allowedRoles={["Landlord"]}><RentedRoomManagement /></PrivateRoute>} />
+      <Route path="rented-room/:roomStayId" element={<PrivateRoute allowedRoles={["Landlord"]}><RentedRoomDetail /></PrivateRoute>} />
+      <Route path="request" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomRequestManagement /></PrivateRoute>} />
+      <Route path="packagecontract" element={<PrivateRoute allowedRoles={["Landlord"]}><PackageContract /></PrivateRoute>} />
+      <Route path="feedback" element={<PrivateRoute allowedRoles={["Landlord"]}><FeedbackRoom /></PrivateRoute>} />
+      <Route path="feedback/:id" element={<PrivateRoute allowedRoles={["Landlord"]}><FeedbackDetail /></PrivateRoute>} />
+      <Route path="contract" element={<PrivateRoute allowedRoles={["Landlord"]}><ContractLand /></PrivateRoute>} />
+      <Route path="contract/contract-detail/:contractId" element={<PrivateRoute allowedRoles={["Landlord"]}><ContractLandDetail /></PrivateRoute>} />
+      <Route path="chat" element={<PrivateRoute allowedRoles={["Landlord"]}><ChatPage /></PrivateRoute>} />
+
+      {/* Fallback route for /landlord/* */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+};
+
+export const PublicRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
@@ -44,40 +95,9 @@ const AppRoutes = () => {
       <Route path="/otpRegister" element={<OtpRegis />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/register-landlord" element={<RegisterLandlord />} />
-
-      {/* Admin routes */}
-      <Route path="/admin/account" element={<PrivateRoute allowedRoles={["Admin"]}><AccountManagement /></PrivateRoute>} />
-      <Route path="/admin/request" element={<PrivateRoute allowedRoles={["Admin"]}><RequestManagement /></PrivateRoute>} />
-      <Route path="/admin/request/room-type/:roomTypeId" element={<PrivateRoute allowedRoles={["Admin"]}><RoomTypeDetail /></PrivateRoute>} />
-      <Route path="/admin/package/:packageId" element={<PrivateRoute allowedRoles={["Admin"]}><AdminPackageDetail /></PrivateRoute>} />
-      <Route path="/admin/service" element={<PrivateRoute allowedRoles={["Admin"]}><AdminPackage /></PrivateRoute>} />
-      <Route path="/admin/contract" element={<PrivateRoute allowedRoles={["Admin"]}><ContractManagement /></PrivateRoute>} />
-      <Route path="/admin/regis" element={<PrivateRoute allowedRoles={["Admin"]}><LandlordRegisAdmin /></PrivateRoute>} />
-      <Route path="/admin/dashboard" element={<PrivateRoute allowedRoles={["Admin"]}><Dashboard /></PrivateRoute>} />
-
-      {/* Admin sub-routes for landlord registration */}
-      <Route path="/landlord-detail/:landlordId" element={<PrivateRoute allowedRoles={["Admin"]}><LandlordRegisDetailAdmin /></PrivateRoute>} />
-
-      {/* Landlord routes */}
-      <Route path="/landlord/dashboard" element={<PrivateRoute allowedRoles={["Landlord"]}><LandlordDashboard /></PrivateRoute>} />
-      <Route path="/landlord/roomtype/room" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomManagement /></PrivateRoute>} />
-      <Route path="/landlord/room/amentities" element={<PrivateRoute allowedRoles={["Landlord"]}><AmenityManagement /></PrivateRoute>} />
-      <Route path="/landlord/roomtype" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomTypeManagement /></PrivateRoute>} />
-      <Route path="/landlord/roomtype/:id" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomTypeDetailLandLord /></PrivateRoute>} />
-      <Route path="/landlord/roomtype/create" element={<PrivateRoute allowedRoles={["Landlord"]}><CreateRoomType /></PrivateRoute>} />
-      <Route path="/landlord/roomtype/room/roomdetail/:roomId" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomDetail /></PrivateRoute>} />
-      <Route path="/landlord/roomtype/:roomTypeId/add-room" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomCreate /></PrivateRoute>} />
-      <Route path="/landlord/service" element={<PrivateRoute allowedRoles={["Landlord"]}><PricingTable1 /></PrivateRoute>} />
-      <Route path="/landlord/confirmpayment" element={<PrivateRoute allowedRoles={["Landlord"]}><ConfirmPayment /></PrivateRoute>} />
-      <Route path="/landlord/manage" element={<PrivateRoute allowedRoles={["Landlord"]}><RentedRoomManagement /></PrivateRoute>} />
-      <Route path="/landlord/rented-room/:roomStayId" element={<PrivateRoute allowedRoles={["Landlord"]}><RentedRoomDetail /></PrivateRoute>} />
-      <Route path="/landlord/request" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomRequestManagement /></PrivateRoute>} />
-      <Route path="/landlord/packagecontract" element={<PrivateRoute allowedRoles={["Landlord"]}><PackageContract /></PrivateRoute>} />
-      <Route path="/landlord/feedback" element={<PrivateRoute allowedRoles={["Landlord"]}><FeedbackRoom /></PrivateRoute>} />
-      <Route path="/landlord/feedback/:id" element={<PrivateRoute allowedRoles={["Landlord"]}><FeedbackDetail /></PrivateRoute>} />
-      <Route path="/landlord/contract" element={<PrivateRoute allowedRoles={["Landlord"]}><ContractLand /></PrivateRoute>} />
-      <Route path="/landlord/contract/contract-detail/:contractId" element={<PrivateRoute allowedRoles={["Landlord"]}><ContractLandDetail /></PrivateRoute>} />
-      <Route path="/landlord/chat" element={<PrivateRoute allowedRoles={["Landlord"]}><ChatPage /></PrivateRoute>} />
+      
+      {/* Fallback route for all other paths */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

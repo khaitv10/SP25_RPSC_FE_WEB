@@ -6,11 +6,10 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Regis/Register";
 import RegisterLandlord from "./pages/Regis/RegisterLandlord";
 import OtpRegis from "./pages/Regis/OtpRegis";
-import AppRoutes from "./routes/routes";
+import AppRoutes, { LandlordRoutes, PublicRoutes } from "./routes/routes";
 import ForgotPassword from "./pages/forgotPassword/ForgotPassword.jsx";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.jsx";
 
-// In App.js - Modify your routes
 function App() {
   return (
     <Router>
@@ -26,9 +25,9 @@ function App() {
         {/* Root redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         
-        {/* Application routes with Layout - Limited to specific paths */}
+        {/* Application routes with Layout */}
         <Route path="/admin/*" element={<Layout><AppRoutes /></Layout>} />
-        <Route path="/landlord/*" element={<Layout><AppRoutes /></Layout>} />
+        <Route path="/landlord/*" element={<Layout><LandlordRoutes /></Layout>} />
         
         {/* NotFoundPage - for any other routes */}
         <Route path="*" element={<NotFoundPage />} />

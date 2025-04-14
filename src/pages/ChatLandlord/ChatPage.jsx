@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { sendMessageToUser, getChatHistory, getHistoryByUserId } from "../../Services/Landlord/chatAPI";
-import { Input, Button, Avatar, List, message as antMessage } from "antd";
-import { SendOutlined, MessageOutlined, UserOutlined } from "@ant-design/icons";
+import { Input, Button, Avatar, List, Badge, Tooltip, Spin } from "antd";
+import { 
+  SendOutlined, 
+  UserOutlined, 
+  EllipsisOutlined, 
+  PictureOutlined, 
+  SmileOutlined,
+  PhoneOutlined,
+  VideoCameraOutlined,
+  InfoCircleOutlined
+} from "@ant-design/icons";
 import * as signalR from "@microsoft/signalr";
+import { sendMessageToUser, getChatHistory, getHistoryByUserId } from "../../Services/Landlord/chatAPI";
+import axiosClient from "../../Services/axios/config";
 import "./ChatPage.scss";
 
 const ChatPage = () => {
@@ -11,26 +21,32 @@ const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [hubConnection, setHubConnection] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
     const messagesEndRef = useRef(null);
 
     const userId = localStorage.getItem("userId") || "";
 
-    const lastMessageRef = useRef({
-        message: null,
-        timestamp: 0
-    });
+    // Get the hub URL from axiosClient baseURL
+    const getHubUrl = () => {
+        const baseURL = axiosClient.defaults.baseURL;
+        // Extract the domain and protocol
+        const url = new URL(baseURL);
+        return `${url.protocol}//${url.hostname}:5262/chatHub`;
+    };
 
     // Memoized function to setup SignalR connection
     const setupSignalR = useCallback(async () => {
         if (!userId) {
-            antMessage.error("User ID not found!");
+            console.error("User ID not found!");
             return;
         }
 
         if (hubConnection) return;
 
+        const hubUrl = getHubUrl();
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("http://localhost:5262/chatHub")
+            .withUrl(hubUrl)
             .withAutomaticReconnect()
             .build();
 
@@ -49,13 +65,20 @@ const ChatPage = () => {
                     );
 
                     if (!isDuplicate) {
+                        // If this is a message from someone we're not currently chatting with,
+                        // update the chat list to show a new message indicator
+                        if (activeChat?.id !== senderId && senderId !== userId) {
+                            fetchChatList();
+                        }
+                        
                         return [
                             ...prevMessages,
                             { 
                                 senderId, 
                                 receiverId, 
                                 message,
-                                clientTimestamp
+                                clientTimestamp,
+                                createdAt: new Date().toISOString()
                             }
                         ];
                     }
@@ -65,7 +88,7 @@ const ChatPage = () => {
             });
             
         } catch (error) {
-            antMessage.error("Connection failed!");
+            console.error("Connection failed:", error);
         }
 
         return () => {
@@ -73,7 +96,7 @@ const ChatPage = () => {
                 connection.stop();
             }
         };
-    }, [userId]);
+    }, [userId, activeChat, hubConnection]);
 
     // Initial setup effect
     useEffect(() => {
@@ -88,41 +111,8 @@ const ChatPage = () => {
         }
     }, [messages]);
 
-    useEffect(() => {
-        if (hubConnection) {
-            const messageHandler = (senderId, receiverId, message) => {
-                setMessages((prevMessages) => {
-                    // Prevent duplicate messages
-                    const isDuplicate = prevMessages.some(
-                        m => m.message === message && 
-                             m.senderId === senderId && 
-                             m.receiverId === receiverId
-                    );
-                    
-                    if (!isDuplicate) {
-                        return [
-                            ...prevMessages,
-                            { 
-                                senderId, 
-                                receiverId, 
-                                message 
-                            }
-                        ];
-                    }
-                    
-                    return prevMessages;
-                });
-            };
-    
-            hubConnection.on("ReceiveMessage", messageHandler);
-    
-            return () => {
-                hubConnection.off("ReceiveMessage", messageHandler);
-            };
-        }
-    }, [hubConnection]);
-
     const fetchChatList = async () => {
+        setLoading(true);
         try {
             const history = await getHistoryByUserId();
             
@@ -136,18 +126,20 @@ const ChatPage = () => {
                     ...chat,
                     // If current user is the sender, display the receiver as the chat partner
                     // If current user is the receiver, display the sender as the chat partner
-                    chatPartner: isCurrentUserSender ? chat.receiver : chat.sender
+                    chatPartner: isCurrentUserSender ? chat.receiver : chat.sender,
+                    hasUnread: chat.unreadCount > 0 && !isCurrentUserSender,
+                    lastMessageTime: new Date(chat.lastMessageTime || Date.now())
                 };
             });
             
-            // Filter out self-chats (optional) and deduplicate chats by unique partner
+            // Filter out self-chats and deduplicate chats by unique partner
             const uniqueChats = [];
             const chatPartnerIds = new Set();
             
             for (const chat of processedChats) {
-                // Skip self-chats if desired
+                // Skip self-chats
                 if (chat.sender.id === chat.receiver.id) {
-                    continue; // Uncomment to skip self-chats
+                    continue;
                 }
                 
                 // Only add this chat if we haven't seen this partner before
@@ -157,9 +149,14 @@ const ChatPage = () => {
                 }
             }
             
+            // Sort by latest message time
+            uniqueChats.sort((a, b) => b.lastMessageTime - a.lastMessageTime);
+            
             setChatList(uniqueChats);
         } catch (error) {
-            antMessage.error("Không thể tải danh sách trò chuyện");
+            console.error("Failed to load chat list:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -168,33 +165,38 @@ const ChatPage = () => {
         if (!chatPartner?.id) return;
 
         setActiveChat(chatPartner);
+        setLoading(true);
 
         try {
             const data = await getChatHistory(chatPartner.id);
             setMessages(data);
         } catch (error) {
-            antMessage.error("Failed to load chat history");
+            console.error("Failed to load chat history:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleSendMessage = async () => {
         const trimmedMessage = message.trim();
         if (!trimmedMessage || !activeChat?.id) {
-            antMessage.warning("Không thể gửi tin nhắn trống");
             return;
         }
     
         const currentTime = Date.now();
     
         try {
-            await sendMessageToUser(userId, activeChat.id, message);
+            // Clear the input field immediately for better UX
+            setMessage("");
+            
+            await sendMessageToUser(userId, activeChat.id, trimmedMessage);
     
             const newMessage = { 
-                message,
+                message: trimmedMessage,
                 sender: {
                     senderId: userId,
                     senderUsername: "Current User",
-                    senderProfileUrl: "your-avatar-url"
+                    senderProfileUrl: localStorage.getItem("userAvatar") || ""
                 },
                 receiver: {
                     receiverId: activeChat.id,
@@ -208,140 +210,210 @@ const ChatPage = () => {
             setMessages((prev) => [...prev, newMessage]);
     
             if (hubConnection) {
-                await hubConnection.invoke("SendMessageToUser", userId, activeChat.id, message, currentTime);
+                await hubConnection.invoke("SendMessageToUser", userId, activeChat.id, trimmedMessage, currentTime);
             }
     
         } catch (error) {
-            antMessage.error("Gửi tin nhắn thất bại");
+            console.error("Failed to send message:", error);
         }
-    
-        // Đảm bảo ô nhập liệu được đặt lại
-        setMessage("");
     };
-    
+
+    // Format time for messages
+    const formatMessageTime = (dateString) => {
+        if (!dateString) return "";
+        
+        const date = new Date(dateString);
+        const now = new Date();
+        const isToday = date.toDateString() === now.toDateString();
+        
+        if (isToday) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else {
+            return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + 
+                   ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+    };
+
+    const filteredChatList = chatList.filter(chat => 
+        chat.chatPartner?.username?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const getMessageDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    };
+
+    // Group messages by date
+    const groupedMessages = messages.reduce((groups, message) => {
+        const date = getMessageDate(message.createdAt);
+        if (!groups[date]) {
+            groups[date] = [];
+        }
+        groups[date].push(message);
+        return groups;
+    }, {});
+
     return (
-        <div className="chat-wrapper bg-gradient-to-br from-gray-100 to-gray-200 h-screen flex">
+        <div className="chat-app">
             {/* Sidebar with chat list */}
-            <div className="chat-sidebar w-1/4 bg-white border-r border-gray-200 shadow-2xl p-4">
-                <h3 className="text-2xl font-extrabold mb-6 flex items-center text-gray-800">
-                    <MessageOutlined className="mr-3 text-blue-600" />
-                    Chats
-                </h3>
-                <List
-                    dataSource={chatList}
-                    renderItem={(chat) => (
-                        <List.Item
-                            onClick={() => openChat(chat.chatPartner)}
-                            className={`
-                                cursor-pointer hover:bg-blue-50 p-3 rounded-lg transition-all duration-200 
-                                ${activeChat?.id === chat.chatPartner?.id 
-                                    ? "bg-blue-100 shadow-md" 
-                                    : "hover:shadow-sm"
-                                }
-                            `}
-                        >
-                            <Avatar 
-                                icon={<UserOutlined />} 
-                                src={chat.chatPartner?.avatar} 
-                                className="mr-4 border-2 border-blue-200" 
-                                size="large"
-                            />
-                            <div className="flex-grow">
-                                <div className="font-bold text-gray-800">{chat.chatPartner?.username || "Unknown"}</div>
-                                <div className="text-gray-500 text-sm truncate">
-                                    {chat.latestMessage || "No recent messages"}
+            <div className="sidebar">
+                <div className="sidebar-header">
+                    <h2>Messages</h2>
+                    <div className="search-container">
+                        <Input
+                            placeholder="Search conversations..."
+                            prefix={<i className="fas fa-search" />}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
+                </div>
+
+                <div className="conversations-list">
+                    {loading && !activeChat ? (
+                        <div className="loading-container">
+                            <Spin size="large" />
+                        </div>
+                    ) : (
+                        <List
+                            dataSource={filteredChatList}
+                            renderItem={(chat) => (
+                                <div 
+                                    className={`conversation-item ${activeChat?.id === chat.chatPartner?.id ? 'active' : ''}`}
+                                    onClick={() => openChat(chat.chatPartner)}
+                                >
+                                    <div className="avatar-container">
+                                        <Avatar 
+                                            src={chat.chatPartner?.avatar}
+                                            icon={!chat.chatPartner?.avatar && <UserOutlined />}
+                                            size={50}
+                                            className="user-avatar"
+                                        />
+                                        {chat.chatPartner?.isOnline && (
+                                            <Badge status="success" className="online-badge" />
+                                        )}
+                                    </div>
+                                    <div className="conversation-info">
+                                        <div className="conversation-meta">
+                                            <h4>{chat.chatPartner?.username || "Unknown"}</h4>
+                                            <span className="time">
+                                                {formatMessageTime(chat.lastMessageTime)}
+                                            </span>
+                                        </div>
+                                        <div className="conversation-preview">
+                                            <p>{chat.latestMessage || "No messages yet"}</p>
+                                            {chat.hasUnread && <Badge count={chat.unreadCount} />}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </List.Item>
+                            )}
+                            locale={{ emptyText: "No conversations found" }}
+                        />
                     )}
-                />
+                </div>
             </div>
 
             {/* Main chat container */}
-            <div className="chat-container w-3/4 flex flex-col">
-                <div className="chat-header bg-white border-b border-gray-200 p-4 shadow-md">
-                    {activeChat ? (
-                        <div className="flex items-center">
-                            <Avatar 
-                                icon={<UserOutlined />} 
-                                src={activeChat.avatar} 
-                                className="mr-4 border-2 border-green-200" 
-                                size="large"
-                            />
-                            <div>
-                                <div className="font-bold text-xl text-gray-800">{activeChat.username}</div>
-                                <div className="text-green-600 text-xs font-semibold">
-                                    <span className="animate-pulse mr-2 inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                                    Online
+            <div className="chat-container">
+                {activeChat ? (
+                    <>
+                        <div className="chat-header">
+                            <div className="chat-user-info">
+                                <Avatar 
+                                    src={activeChat.avatar}
+                                    icon={!activeChat.avatar && <UserOutlined />}
+                                    size={40}
+                                />
+                                <div className="user-details">
+                                    <h3>{activeChat.username}</h3>
+                                    <span className="status">
+                                        {activeChat.isOnline ? "Online" : "Offline"}
+                                    </span>
                                 </div>
+                            </div>
+                            
+                        </div>
+
+                        <div className="messages-container">
+                            {loading ? (
+                                <div className="loading-container">
+                                    <Spin size="large" />
+                                </div>
+                            ) : (
+                                <>
+                                    {Object.entries(groupedMessages).map(([date, messagesForDate]) => (
+                                        <div key={date} className="message-group">
+                                            <div className="date-divider">
+                                                <span>{date}</span>
+                                            </div>
+                                            {messagesForDate.map((msg, index) => {
+                                                const isCurrentUserSender = msg.sender?.senderId === userId;
+                                                return (
+                                                    <div 
+                                                        key={index} 
+                                                        className={`message ${isCurrentUserSender ? "sent" : "received"}`}
+                                                    >
+                                                        {!isCurrentUserSender && (
+                                                            <Avatar 
+                                                                src={msg.sender?.senderProfileUrl}
+                                                                icon={!msg.sender?.senderProfileUrl && <UserOutlined />}
+                                                                size={32}
+                                                            />
+                                                        )}
+                                                        <div className="message-bubble">
+                                                            <p>{msg.message}</p>
+                                                            <span className="timestamp">
+                                                                {formatMessageTime(msg.createdAt)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ))}
+                                    <div ref={messagesEndRef} />
+                                </>
+                            )}
+                        </div>
+
+                        <div className="chat-input-area">
+                            <div className="input-container">
+                                
+                                <Input
+                                    placeholder="Type a message..."
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onPressEnter={handleSendMessage}
+                                    suffix={
+                                        <Tooltip title="Emoji">
+                                            <Button 
+                                                icon={<SmileOutlined />} 
+                                                shape="circle" 
+                                                className="emoji-button"
+                                                type="text"
+                                            />
+                                        </Tooltip>
+                                    }
+                                />
+                                
+                                <Button
+                                    icon={<SendOutlined />}
+                                    onClick={handleSendMessage}
+                                    type="primary"
+                                    shape="circle"
+                                    className="send-button"
+                                    disabled={!message.trim()}
+                                />
                             </div>
                         </div>
-                    ) : (
-                        <div className="text-gray-500 text-lg">Select a conversation</div>
-                    )}
-                </div>
-
-                <div className="chat-messages flex-grow overflow-y-auto p-6 bg-gray-50 space-y-4">
-                    {messages.map((msg, index) => {
-                        // Determine if the current user is the sender
-                        const isCurrentUserSender = msg.sender?.senderId === userId;
-                        
-                        return (
-                            <div 
-                                key={index} 
-                                className={`flex items-end ${isCurrentUserSender ? "justify-end" : "justify-start"}`}
-                            >
-                                {!isCurrentUserSender && (
-                                    <Avatar 
-                                        icon={<UserOutlined />} 
-                                        src={msg.sender?.senderProfileUrl}
-                                        className="mr-3 mb-2" 
-                                        size="small"
-                                    />
-                                )}
-                                <div 
-                                    className={`
-                                        max-w-[70%] p-3 rounded-2xl 
-                                        ${isCurrentUserSender 
-                                            ? "bg-blue-500 text-white rounded-br-none" 
-                                            : "bg-white text-gray-800 rounded-bl-none shadow-md"}
-                                        transition-all duration-200 ease-in-out
-                                    `}
-                                >
-                                    {msg.message}
-                                </div>
-                                {isCurrentUserSender && (
-                                    <Avatar 
-                                        icon={<UserOutlined />} 
-                                        src={msg.sender?.senderProfileUrl}
-                                        className="ml-3 mb-2" 
-                                        size="small"
-                                    />
-                                )}
-                            </div>
-                        );
-                    })}
-                    <div ref={messagesEndRef} />
-                </div>
-
-                {activeChat && (
-                    <div className="chat-input p-5 bg-white border-t border-gray-200">
-                        <div className="flex items-center space-x-2">
-                        <Input
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            onPressEnter={handleSendMessage}
-                            placeholder="Nhập tin nhắn..."
-                            className="flex-grow border rounded-lg p-2 focus:outline-none"
-                        />
-                            <Button 
-                                type="primary" 
-                                icon={<SendOutlined />} 
-                                onClick={handleSendMessage}
-                                className="bg-blue-500 hover:bg-blue-600 rounded-full p-2 flex items-center justify-center"
-                            >
-                                Send
-                            </Button>
+                    </>
+                ) : (
+                    <div className="no-chat-selected">
+                        <div className="welcome-message">
+                            <i className="fas fa-comments welcome-icon"></i>
+                            <h2>Welcome to your messages</h2>
+                            <p>Select a conversation to start chatting</p>
                         </div>
                     </div>
                 )}

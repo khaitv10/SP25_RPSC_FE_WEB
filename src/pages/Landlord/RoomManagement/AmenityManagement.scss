@@ -117,6 +117,32 @@
     }
   }
   
+  // Search Container
+  .search-container {
+    margin-bottom: 24px;
+    
+    .search-input {
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      
+      .search-icon {
+        color: #6b7280;
+      }
+      
+      .ant-input {
+        font-size: 16px;
+      }
+      
+      .ant-input-suffix {
+        .ant-btn {
+          margin-left: 8px;
+          border-radius: 6px;
+        }
+      }
+    }
+  }
+  
   // Amenity Container
   .amenity-container {
     &.grid-view {
@@ -149,6 +175,42 @@
       padding: 40px;
       border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  // Pagination Container
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+    margin-bottom: 24px;
+    
+    .ant-pagination {
+      .ant-pagination-item {
+        border-radius: 8px;
+        
+        &-active {
+          background: linear-gradient(135deg, #4f46e5, #2563eb);
+          border: none;
+          
+          a {
+            color: white;
+          }
+        }
+      }
+      
+      .ant-pagination-prev,
+      .ant-pagination-next,
+      .ant-pagination-jump-prev,
+      .ant-pagination-jump-next {
+        .ant-pagination-item-link {
+          border-radius: 8px;
+        }
+      }
+      
+      .ant-select-selector {
+        border-radius: 8px !important;
+      }
     }
   }
   
@@ -262,6 +324,20 @@
   }
 }
 
+// Toast styling
+.Toastify__toast {
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  
+  &--success {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+  
+  &--error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+  }
+}
+
 // Ant Design Modal Override
 .ant-modal-content {
   border-radius: 12px;
@@ -314,6 +390,12 @@
     
     .amenity-container.grid-view {
       grid-template-columns: 1fr;
+    }
+    
+    .pagination-container {
+      .ant-pagination-options {
+        display: none;
+      }
     }
   }
 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { 
-  message, 
   Card, 
   Button, 
   Spin, 
@@ -11,7 +10,10 @@ import {
   Modal,
   Form,
   Input,
-  InputNumber
+  InputNumber,
+  Pagination,
+  Space,
+  Tooltip
 } from "antd";
 import { 
   PlusOutlined, 
@@ -19,9 +21,13 @@ import {
   DollarOutlined, 
   CheckCircleOutlined,
   CloseCircleOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  SearchOutlined,
+  ReloadOutlined
 } from "@ant-design/icons";
-import { getAllAmenities, createAmenity } from "../../../Services/Landlord/amenityAPI";  
+import { getAllAmenities, createAmenity } from "../../../Services/Landlord/amenityAPI";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./AmenityManagement.scss";
 
 const { Title, Text } = Typography;
@@ -33,24 +39,32 @@ const AmenityManagement = () => {
   const [submitting, setSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "list"
   const [form] = Form.useForm();
+  
+  // Pagination and search states
+  const [totalItems, setTotalItems] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    fetchAmenities();
-  }, []);
+    fetchAmenities(searchQuery, currentPage, pageSize);
+  }, [currentPage, pageSize, searchQuery]);
 
-  const fetchAmenities = async (searchQuery = "", pageIndex = 1, pageSize = 10) => {
+  const fetchAmenities = async (search = "", page = 1, size = 6) => {
     setLoading(true);
     try {
-      const response = await getAllAmenities(searchQuery, pageIndex, pageSize);
+      const response = await getAllAmenities(search, page, size);
       console.log("Fetched Amenities Data: ", response);
 
       if (response?.amenties && Array.isArray(response.amenties)) {
         setAmenities(response.amenties);
+        setTotalItems(response.totalAmenties || 0);
       } else {
-        message.error("Invalid data format: Expected 'amenties' array");
+        toast.error("Invalid data format: Expected 'amenties' array");
       }
     } catch (error) {
-      message.error("Error fetching amenities");
+      toast.error("Error fetching amenities");
       console.error(error);
     } finally {
       setLoading(false);
@@ -73,14 +87,14 @@ const AmenityManagement = () => {
       const response = await createAmenity(amenityData);
       
       // Show success message
-      message.success("Amenity created successfully!");
+      toast.success("Amenity created successfully!");
       
       // Close modal and reset form
       setIsAmenityModalOpen(false);
       form.resetFields();
       
       // Refresh the amenities list
-      fetchAmenities();
+      fetchAmenities(searchQuery, currentPage, pageSize);
       
     } catch (error) {
       if (error.errorInfo) {
@@ -88,7 +102,7 @@ const AmenityManagement = () => {
         console.log("Form validation failed:", error);
       } else {
         // This is an API error
-        message.error("Failed to create amenity: " + (error.message || "Unknown error"));
+        toast.error("Failed to create amenity: " + (error.message || "Unknown error"));
         console.error("API Error:", error);
       }
     } finally {
@@ -99,6 +113,22 @@ const AmenityManagement = () => {
   const handleCancel = () => {
     setIsAmenityModalOpen(false);
     form.resetFields();
+  };
+
+  const handleSearch = () => {
+    setCurrentPage(1); // Reset to first page when searching
+    setSearchQuery(searchValue);
+  };
+
+  const handleReset = () => {
+    setSearchValue("");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
   };
 
   const getStatusTag = (status) => {
@@ -119,7 +149,7 @@ const AmenityManagement = () => {
 
   // Loading skeletons
   const renderSkeletons = () => {
-    return Array(6).fill(null).map((_, index) => (
+    return Array(pageSize).fill(null).map((_, index) => (
       <Card key={`skeleton-${index}`} className="amenity-card">
         <Skeleton active avatar paragraph={{ rows: 2 }} />
       </Card>
@@ -128,6 +158,8 @@ const AmenityManagement = () => {
 
   return (
     <div className="amenity-management">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
       {/* Dashboard Header */}
       <div className="dashboard-header">
         <div className="dashboard-title">
@@ -168,7 +200,7 @@ const AmenityManagement = () => {
           </div>
           <div className="stat-content">
             <Text type="secondary">Total Amenities</Text>
-            <Title level={3}>{amenities.length}</Title>
+            <Title level={3}>{totalItems}</Title>
           </div>
         </Card>
         <Card className="stat-card">
@@ -195,13 +227,40 @@ const AmenityManagement = () => {
         </Card>
       </div>
 
+      {/* Search Bar */}
+      <div className="search-container">
+        <Input
+          placeholder="Search amenities..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onPressEnter={handleSearch}
+          prefix={<SearchOutlined className="search-icon" />}
+          suffix={
+            <Space>
+              {searchValue && (
+                <Button type="text" size="small" onClick={() => setSearchValue("")}>
+                  Clear
+                </Button>
+              )}
+              <Button type="primary" onClick={handleSearch}>
+                Search
+              </Button>
+              <Tooltip title="Reset filters">
+                <Button icon={<ReloadOutlined />} onClick={handleReset} />
+              </Tooltip>
+            </Space>
+          }
+          className="search-input"
+        />
+      </div>
+
       {/* Amenities List */}
       <div className={`amenity-container ${viewMode}-view`}>
         {loading ? (
           renderSkeletons()
         ) : amenities.length === 0 ? (
           <Empty 
-            description="No amenities found" 
+            description={searchQuery ? "No amenities match your search" : "No amenities found"} 
             className="empty-state"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
@@ -241,6 +300,21 @@ const AmenityManagement = () => {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {!loading && amenities.length > 0 && (
+        <div className="pagination-container">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={totalItems}
+            onChange={handlePageChange}
+            showSizeChanger
+            pageSizeOptions={['6', '12', '24', '48']}
+            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+          />
+        </div>
+      )}
 
       {/* Create Amenity Modal */}
       <Modal
