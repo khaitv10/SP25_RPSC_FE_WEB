@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./NotFoundPage.scss"; // You'll need to create this file
 import logo from "../../assets/logoEasyRommie.png";
-import notFoundImage from "../../assets/404-image.jpg"; // You'll need this image
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
@@ -38,7 +37,22 @@ const NotFoundPage = () => {
 
       <div className="not-found-box">
         <div className="not-found-left">
-          <img src={notFoundImage} alt="Page Not Found" />
+          <div className="animation-container">
+            <div className="cow">
+              <div className="head">
+                <div className="face"></div>
+              </div>
+              <div className="leg b l"></div>
+              <div className="leg b r"></div>
+              <div className="leg f l"></div>
+              <div className="leg f r"></div>
+              <div className="tail"></div>
+            </div>
+            <div className="well"></div>
+            <div className="error-text">
+              <h2>404</h2>
+            </div>
+          </div>
           <div className="message-text">
             <h2>Oops! Lost in Space</h2>
             <p>The page you're looking for seems to have wandered off. Let's help you find your way back.</p>
@@ -95,7 +109,7 @@ const NotFoundPage = () => {
           </div>
 
           <div className="support-info">
-            <p>Need help? Contact our support team at <a href="mailto:easyroomie.RPSC@gmail.com">support@easyroomie.com</a></p>
+            <p>Need help? Contact our support team at <a href="mailto:easyroomie.RPSC@gmail.com">easyroomie.RPSC@gmail.com</a></p>
           </div>
         </div>
       </div>

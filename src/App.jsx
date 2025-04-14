@@ -26,14 +26,11 @@ function App() {
         {/* Root redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         
-        {/* Application routes with Layout */}
-        <Route path="/*" element={
-          <Layout>
-            <AppRoutes />
-          </Layout>
-        } />
-
-        {/* NotFoundPage - for truly non-existent routes */}
+        {/* Application routes with Layout - Limited to specific paths */}
+        <Route path="/admin/*" element={<Layout><AppRoutes /></Layout>} />
+        <Route path="/landlord/*" element={<Layout><AppRoutes /></Layout>} />
+        
+        {/* NotFoundPage - for any other routes */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
