@@ -1,102 +1,239 @@
 .admin-package {
-  padding: 24px;
-  background-color: #f9f9f9;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  background-color: #f4f6f9;
+  min-height: auto; /* Change from 100vh to auto */
 
   .package-card {
-    padding: 24px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    width: 100%;
+    max-width: 1600px;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
     background: white;
-  }
+    border: none;
 
-  .package-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
+    .package-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
 
-  .search-container {
-    display: flex;
-    justify-content: flex-end; /* Đẩy Input.Search về bên phải */
-    align-items: center;
-    width: 100%; /* Chiếm toàn bộ chiều rộng */
-    margin-bottom: 10px;
-  }
-  
-  .search-input {
-    width: 200px; /* Giữ thanh search nhỏ lại */
-    height: 36px; /* Đảm bảo chiều cao phù hợp */
-  }
-  
-  .search-input .ant-input {
-    height: 36px !important;
-  }
-  
-  .search-input .ant-input-search-button {
-    height: 36px !important;
-    min-width: 40px !important;
-    font-size: 14px !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 12px !important;
-  }
-  
-  
-  .search-container .ant-input-search-button {
-    height: 32px !important; /* Giảm chiều cao */
-    font-size: 14px !important; /* Giảm kích thước chữ */
-    padding: 4px 10px !important;
-  }
-  
-  
-  .search-create-container {
-    display: flex;
-    justify-content: space-between; /* Dàn đều 2 nút */
-    align-items: center;
-    margin-bottom: 16px; /* Tạo khoảng cách với bảng */
-    gap: 10px;
-  }
-  
-  
-  .ant-btn {
-    height: 38px; /* Đảm bảo chiều cao đồng đều */
-    font-size: 16px;
-  }
-    
-  
+      .page-title {
+        margin: 0;
+        font-weight: 700;
+        color: #111827;
+      }
 
-  .ant-table {
-    border-radius: 10px;
-    font-size: 16px; // Chữ to hơn
-    background: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  }
+      .create-package-button {
+        display: flex;
+        align-items: center;
+        background: #3b82f6;
+        border: none;
+        font-weight: 600;
+        height: 44px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.18);
 
-  .ant-table-thead > tr > th {
-    background: #4a5568;
-    color: white;
-    font-size: 17px;
-    text-align: center;
-  }
+        &:hover {
+          background: #2563eb;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 10px rgba(59, 130, 246, 0.25);
+        }
 
-  .ant-table-tbody > tr > td {
-    font-size: 18px;
-    vertical-align: middle;
-    text-align: center;
-  }
+        .add-icon {
+          margin-right: 6px;
+          font-size: 18px;
+          font-weight: bold;
+        }
+      }
+    }
 
-  .ant-tag {
-    font-size: 14px;
-    padding: 4px 10px;
-    font-weight: bold;
-  }
+    .search-container {
+      margin-bottom: 30px;
+      
+      .search-input {
+        width: 100%;
+        max-width: 400px;
+        
+        .ant-input {
+          height: 44px;
+          border-radius: 10px 0 0 10px;
+          border: 1px solid #e5e7eb;
+          padding: 0 16px;
+          font-size: 15px;
+          
+          &:hover, &:focus {
+            border-color: #3b82f6;
+          }
+        }
+        
+        .ant-input-search-button {
+          height: 44px;
+          border-radius: 0 10px 10px 0;
+          background: #3b82f6;
+          border: none;
+          
+          &:hover {
+            background: #2563eb;
+          }
+        }
+      }
+    }
 
-  .ant-btn {
-    font-size: 16px;
-    height: 40px;
-    display: flex;
-    align-items: center;
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 300px;
+    }
+
+    .packages-table {
+      .ant-table {
+        border-radius: 12px;
+        overflow: hidden;
+
+        .ant-table-thead > tr > th {
+          background-color: #f9fafb;
+          color: #4b5563;
+          font-weight: 600;
+          padding: 16px;
+          font-size: 14px;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .ant-table-tbody > tr > td {
+          padding: 16px;
+          font-size: 14px;
+          border-bottom: 1px solid #f3f4f6;
+        }
+
+        .ant-table-tbody > tr:hover > td {
+          background-color: #f9fafb;
+        }
+
+        .package-type {
+          font-weight: 600;
+          color: #111827;
+        }
+
+        .highlight-time {
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        .max-post {
+          color: #4b5563;
+        }
+
+        .package-label {
+          color: #6b7280;
+        }
+
+        .package-status {
+          text-align: center;
+          border-radius: 30px;
+          padding: 6px 12px;
+          font-weight: 500;
+          display: inline-block;
+          min-width: 80px;
+        }
+
+        .view-button {
+          border-radius: 8px;
+          background-color: #3b82f6;
+          border: none;
+          color: white;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 38px;
+          width: 38px;
+          padding: 0;
+          
+          &:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+          }
+        }
+
+        .no-limit-tag {
+          background-color: #dbeafe;
+          color: #2563eb;
+          border: none;
+          font-weight: 600;
+          padding: 2px 10px;
+          border-radius: 6px;
+        }
+      }
+    }
+
+    .create-modal {
+      .ant-modal-content {
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .ant-modal-header {
+        padding: 20px 24px;
+        background-color: #f9fafb;
+        border-bottom: 1px solid #f3f4f6;
+
+        .ant-modal-title {
+          font-weight: 700;
+          font-size: 18px;
+          color: #111827;
+        }
+      }
+
+      .modal-form {
+        padding: 10px 0;
+
+        .ant-form-item-label > label {
+          font-size: 14px;
+          font-weight: 500;
+          color: #4b5563;
+        }
+
+        .ant-input {
+          border-radius: 8px;
+          padding: 10px 16px;
+          border: 1px solid #e5e7eb;
+          transition: all 0.2s ease;
+          height: 42px;
+
+          &:hover, &:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+          }
+        }
+      }
+
+      .ant-modal-footer {
+        border-top: 1px solid #f3f4f6;
+        padding: 16px 24px;
+
+        .ant-btn {
+          border-radius: 8px;
+          height: 42px;
+          font-weight: 500;
+          padding: 0 20px;
+        }
+
+        .ant-btn-primary {
+          background-color: #3b82f6;
+          border: none;
+
+          &:hover {
+            background-color: #2563eb;
+          }
+        }
+      }
+    }
   }
 }

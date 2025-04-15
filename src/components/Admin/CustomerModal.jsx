@@ -1,9 +1,11 @@
 import { FaTimes } from "react-icons/fa";
 import PropTypes from "prop-types";
-import profilePic from "../../assets/avatar.jpg";
 
 const CustomerModal = ({ isOpen, customer, onClose }) => {
   if (!isOpen || !customer) return null;
+
+  // Use a default avatar in case the customer.avatar is null or undefined
+  const defaultAvatar = "https://res.cloudinary.com/dzoxs1sd7/image/upload/v1744566485/ztszkoqjhamvi56rqnwj.jpg";
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
@@ -19,26 +21,25 @@ const CustomerModal = ({ isOpen, customer, onClose }) => {
 
         <div className="flex flex-col items-center mb-6">
           <img
-            //src={customer.avatar || profilePic}
-            src={profilePic}
+            src={customer.avatar || defaultAvatar}
             alt="Avatar"
             className="w-28 h-28 rounded-full border-4 border-gray-300 shadow-lg transition-transform transform hover:scale-105"
           />
 
           <div className="mt-4 text-center">
             <p className="text-2xl font-bold text-black">{customer.fullName}</p>
-            <p className="text-gray-500 font-semibold  text-lg">{customer.email}</p>
-            <p className="text-gray-500 font-semibold  text-lg">{customer.phoneNumber}</p>
-            <p className="text-gray-500 font-semibold  text-lg">{customer.gender}</p>
+            <p className="text-gray-500 font-semibold text-lg">{customer.email}</p>
+            <p className="text-gray-500 font-semibold text-lg">{customer.phoneNumber}</p>
+            <p className="text-gray-500 font-semibold text-lg">{customer.gender}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-6 text-md bg-gray-100 p-4 rounded-lg shadow-inner">
-          <div className="info-item"><strong>Address:</strong> {customer.address}</div>
+          <div className="info-item"><strong>Address:</strong> {customer.address || 'Not provided'}</div>
           <div className="info-item"><strong>Preferences:</strong> {customer.preferences}</div>
           <div className="info-item"><strong>Life Style:</strong> {customer.lifeStyle}</div>
           <div className="info-item"><strong>Budget Range:</strong> {customer.budgetRange}</div>
-          <div className="info-item"><strong>Preferred Location:</strong> {customer.preferredLocation}</div>
+          <div className="info-item"><strong>Preferred Location:</strong> {customer.preferredLocation || 'Not specified'}</div>
           <div className="info-item"><strong>Requirement:</strong> {customer.requirement}</div>
         </div>
       </div>

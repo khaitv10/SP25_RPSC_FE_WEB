@@ -5,7 +5,6 @@ export const login = async (phoneNumber, password) => {
   try {
     const response = await axiosClient.post('/api/authentication/login', { phoneNumber, password });  
     if (!response.data || !response.data.data) {
-      console.error("❌ API không trả về dữ liệu hợp lệ!");
       toast.error("Đăng nhập thất bại: Dữ liệu không hợp lệ");
       return;
     }  
@@ -21,7 +20,6 @@ export const login = async (phoneNumber, password) => {
       roleUserId
     } = response.data.data;  
     if (!token || !userId) {
-      console.error("❌ API trả về thiếu thông tin:", { token, userId });
       toast.error("Đăng nhập thất bại: Thiếu thông tin cần thiết");
       return;
     }
@@ -37,7 +35,6 @@ export const login = async (phoneNumber, password) => {
     toast.success("Đăng nhập thành công!");
     return response.data;
   } catch (error) {
-    console.error("❌ Lỗi đăng nhập:", error.response ? error.response.data : error);
     toast.error(error.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại!");
     throw error.response ? error.response.data : new Error('An error occurred');
   }

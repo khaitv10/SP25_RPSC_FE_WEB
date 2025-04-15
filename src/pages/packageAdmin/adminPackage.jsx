@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { getAllServicePackage, createService } from "../../Services/serviceApi";
-import { Table, Button, Tag, Input, Card, Space, Typography, Modal, Form, message } from "antd";
-import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
+import { Table, Button, Card, Typography, Modal, Form, Input, Spin, Tag } from "antd";
+import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "./adminPackage.scss";
-
 
 const { Title } = Typography;
 
@@ -18,7 +17,7 @@ const AdminPackage = () => {
 
   useEffect(() => {
     fetchPackages();
-  }, [search]);
+  }, []);
 
   const fetchPackages = async () => {
     setLoading(true);
@@ -31,6 +30,10 @@ const AdminPackage = () => {
     setLoading(false);
   };
 
+  const handleSearch = () => {
+    fetchPackages();
+  };
+
   const handleViewDetails = (packageId) => {
     navigate(`/admin/package/${packageId}`);
   };
@@ -38,14 +41,30 @@ const AdminPackage = () => {
   const handleCreateService = async () => {
     try {
       const values = await form.validateFields();
-      const response = await createService(values);
-      message.success("Service package created successfully!");
+      await createService(values);
+      Modal.success({
+        title: "Success",
+        content: "🎉 Service package created successfully!",
+        okText: "Got it",
+        okButtonProps: { style: { background: "#3b82f6", borderRadius: "8px" } }
+      });
       setIsModalOpen(false);
       form.resetFields();
-      fetchPackages(); // Refresh danh sách sau khi tạo
+      fetchPackages();
     } catch (error) {
-      message.error(error || "Failed to create service package.");
+      Modal.error({
+        title: "Error",
+        content: "❌ Failed to create service package.",
+        okText: "Try Again",
+        okButtonProps: { style: { borderRadius: "8px" } }
+      });
     }
+  };
+
+  const getStatusColor = (status) => {
+    return status === "Active" 
+      ? { color: "#10B981", bg: "#ECFDF5" } 
+      : { color: "#F43F5E", bg: "#FFF1F2" };
   };
 
   const columns = [
@@ -53,104 +72,149 @@ const AdminPackage = () => {
       title: "📌 Package Type",
       dataIndex: "type",
       key: "type",
+      render: (text) => <div className="package-type">{text}</div>
     },
     {
       title: "🌟 HighLight Time",
       dataIndex: "highLightTime",
       key: "highLightTime",
+      render: (text) => <div className="highlight-time">{text}</div>
     },
     {
       title: "📏 Max Post",
       dataIndex: "maxPost",
       key: "maxPost",
-      render: (maxPost) => (maxPost ? maxPost : "No Limit"),
+      render: (maxPost) => (
+        <div className="max-post">
+          {maxPost ? maxPost : <Tag className="no-limit-tag">No Limit</Tag>}
+        </div>
+      )
     },
     {
       title: "🏷️ Label",
       dataIndex: "label",
       key: "label",
+      render: (text) => <div className="package-label">{text}</div>
     },
     {
-      title: "Service Status",
+      title: "🔄 Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => (
-        <Tag color={status === "Active" ? "green" : "red"}>
-          {status === "Active" ? "Active" : "Inactive"}
-        </Tag>
-      ),
+      render: (status) => {
+        const style = getStatusColor(status);
+        return (
+          <div 
+            className="package-status"
+            style={{ 
+              backgroundColor: style.bg,
+              color: style.color
+            }}
+          >
+            {status}
+          </div>
+        );
+      }
     },
     {
-      title: "Action",
+      title: "✏️ Action",
       key: "action",
-      render: (record) => (
-        <Space>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => handleViewDetails(record.packageId)}
-          />
-        </Space>
-      ),
-    },
+      render: (_, record) => (
+        <Button
+          className="view-button"
+          icon={<EyeOutlined />}
+          onClick={() => handleViewDetails(record.packageId)}
+          title="View details"
+        />
+      )
+    }
   ];
 
   return (
     <div className="admin-package">
       <Card className="package-card">
-        <Title level={2}>📦 Service Package</Title>
+        <div className="package-header">
+          <Title level={2} className="page-title">📦 Service Packages</Title>
+          <Button 
+            type="primary" 
+            icon={<PlusOutlined className="add-icon" />}
+            className="create-package-button"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Create Package
+          </Button>
+        </div>
 
-        <div className="search-create-container">
-            <Input.Search
-              className="search-input"
-              placeholder="🔍 Search by type..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onSearch={fetchPackages}
-              enterButton
-            />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setIsModalOpen(true)}
-            >
-              Create Package
-            </Button>
+        <div className="search-container">
+          <Input.Search
+            className="search-input"
+            placeholder="🔍 Search by package type..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onSearch={handleSearch}
+            enterButton={<SearchOutlined />}
+          />
+        </div>
+
+        {loading ? (
+          <div className="loading-container">
+            <Spin size="large" tip="Loading packages data..." />
           </div>
-
-        <Table
-          dataSource={packages}
-          columns={columns}
-          rowKey="packageId"
-          loading={loading}
-          bordered
-          size="middle"
-          pagination={false} 
-        />
+        ) : (
+          <Table
+            dataSource={packages}
+            columns={columns}
+            rowKey="packageId"
+            className="packages-table"
+            pagination={false}
+          />
+        )}
       </Card>
 
-      {/* Modal Tạo Gói Dịch Vụ */}
       <Modal
         title="➕ Create Service Package"
         open={isModalOpen}
         onOk={handleCreateService}
         onCancel={() => setIsModalOpen(false)}
         okText="Create"
+        className="create-modal"
       >
-        <Form form={form} layout="vertical">
-          <Form.Item name="type" label="📌 Package Type" rules={[{ required: true, message: "Please enter package type" }]}>
-            <Input />
+        <Form form={form} layout="vertical" className="modal-form">
+          <Form.Item 
+            name="type" 
+            label="📌 Package Type" 
+            rules={[{ required: true, message: "Please enter package type" }]}
+          >
+            <Input placeholder="Enter package type" />
           </Form.Item>
-          <Form.Item name="highLightTime" label="🌟 HighLight Time" rules={[{ required: true, message: "Please enter highlight time" }]}>
-            <Input />
+          
+          <Form.Item 
+            name="highLightTime" 
+            label="🌟 HighLight Time" 
+            rules={[{ required: true, message: "Please enter highlight time" }]}
+          >
+            <Input placeholder="Enter highlight time" />
           </Form.Item>
-          <Form.Item name="priorityTime" label="📏 Priority Time">
-            <Input type="number" placeholder="Enter priority time " />
+          
+          <Form.Item 
+            name="priorityTime" 
+            label="⏱️ Priority Time"
+          >
+            <Input type="number" placeholder="Enter priority time" />
           </Form.Item>
-          <Form.Item name="maxPost" label="📏 Max Post">
+          
+          <Form.Item 
+            name="maxPost" 
+            label="📏 Max Post"
+          >
             <Input type="number" placeholder="Enter max post (leave blank for No Limit)" />
           </Form.Item>
-          <Form.Item name="label" label="🏷️ Label" rules={[{ required: true, message: "Please enter label" }]}>
-            <Input />
+          
+          <Form.Item 
+            name="label" 
+            label="🏷️ Label" 
+            rules={[{ required: true, message: "Please enter label" }]}
+          >
+            <Input placeholder="Enter label" />
           </Form.Item>
         </Form>
       </Modal>

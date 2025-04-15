@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
-import { FaEye, FaSearch } from "react-icons/fa";
+import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import { Table, Button, Input, Select, Tag, Spin } from "antd";
 import PropTypes from "prop-types";
 import CustomerModal from "./CustomerModal";
+
+const { Option } = Select;
 
 const CustomerTable = ({
   customers,
@@ -16,6 +19,7 @@ const CustomerTable = ({
 }) => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log("Customers received in CustomerTable:", customers);
@@ -26,135 +30,129 @@ const CustomerTable = ({
     setIsModalOpen(true);
   };
 
-  const totalPages = Math.max(1, Math.ceil(totalCustomers / customersPerPage));
+  const getStatusColor = (status) => {
+    return status === "Active" 
+      ? { color: "#10B981", bg: "#ECFDF5" } 
+      : { color: "#F43F5E", bg: "#FFF1F2" };
+  };
+
+  const columns = [
+    {
+      title: "👤 Full Name",
+      dataIndex: "fullName",
+      key: "fullName",
+      render: (text) => <div className="customer-name">{text}</div>
+    },
+    {
+      title: "🏠 Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text) => <div className="customer-address">{text}</div>
+    },
+    {
+      title: "📱 Phone Number",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      render: (text) => <div className="customer-phone">{text}</div>
+    },
+    {
+      title: "📧 Email",
+      dataIndex: "email",
+      key: "email",
+      render: (text) => <div className="customer-email">{text}</div>
+    },
+    {
+      title: "🔄 Status",
+      dataIndex: "userStatus",
+      key: "userStatus",
+      render: (status) => {
+        const style = getStatusColor(status);
+        return (
+          <div 
+            className="customer-status"
+            style={{ 
+              backgroundColor: style.bg,
+              color: style.color,
+              textAlign: "center",
+              borderRadius: "30px",
+              padding: "6px 12px",
+              fontWeight: 500,
+              display: "inline-block",
+              minWidth: "80px"
+            }}
+          >
+            {status}
+          </div>
+        );
+      }
+    },
+    {
+      title: "✏️ Action",
+      key: "action",
+      render: (_, record) => (
+        <Button
+          className="view-button"
+          icon={<EyeOutlined />}
+          onClick={() => handleViewDetails(record)}
+          title="View details"
+          style={{
+            borderRadius: "8px",
+            backgroundColor: "#3b82f6",
+            border: "none",
+            color: "white",
+            fontWeight: 500,
+            transition: "all 0.2s ease",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "38px",
+            width: "38px",
+            padding: 0
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = "#2563eb";
+            e.currentTarget.style.transform = "translateY(-2px)";
+            e.currentTarget.style.boxShadow = "0 4px 6px rgba(37, 99, 235, 0.2)";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = "#3b82f6";
+            e.currentTarget.style.transform = "none";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        />
+      )
+    }
+  ];
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="p-4 bg-white shadow-md rounded-md">
-        {/* Filters */}
-        <div className="flex justify-between items-center mb-4">
-          {/* Filter Status */}
-          <select
-            className="p-2 border rounded-md"
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            <option value="Status">All</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+    <div className="customers-container">
 
-          {/* Search Phone Number with Icon */}
-          <div className="relative flex items-center w-1/4 border rounded-md overflow-hidden">
-            <input
-              type="text"
-              placeholder="Search Phone Number"
-              className="p-2 pl-10 w-full border-none focus:outline-none"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <FaSearch className="absolute left-3 text-gray-500" />
-          </div>
+
+      {loading ? (
+        <div className="loading-container" style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "300px"
+        }}>
+          <Spin size="large" tip="Loading customers data..." />
         </div>
+      ) : (
+        <Table
+          dataSource={customers}
+          columns={columns}
+          rowKey={(record) => record.userId || record.uniqueKey}
+          className="customers-table"
+          pagination={{
+            current: currentPage,
+            pageSize: customersPerPage,
+            total: totalCustomers,
+            onChange: (page) => setCurrentPage(page),
+            showSizeChanger: false
+          }}
+        />
+      )}
 
-        {/* Customer Table */}
-        <table className="min-w-full bg-white border rounded-md">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-2 text-left">Full Name</th>
-              <th className="p-2 text-left">Address</th>
-              <th className="p-2 text-left">Phone Number</th>
-              <th className="p-2 text-left">Email</th>
-              <th className="p-2 text-left">Status</th>
-              <th className="p-2 text-left"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.length > 0 ? (
-              customers.map((customer, index) => (
-                <tr key={customer.userId || index} className="border-t">
-                  <td className="p-2">{customer.fullName}</td>
-                  <td className="p-2">{customer.address}</td>
-                  <td className="p-2">{customer.phoneNumber}</td>
-                  <td className="p-2">{customer.email}</td>
-                  <td className="p-2">
-                    <span
-                      className={`px-3 py-1 rounded-full ${customer.userStatus === "Active"
-                          ? "bg-green-300 text-green-800"
-                          : "bg-red-200 text-red-800"
-                        }`}
-                    >
-                      {customer.userStatus}
-                    </span>
-                  </td>
-                  <td className="p-2 text-center">
-                    <button
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#2563eb',
-                        transition: 'transform 0.2s ease, color 0.2s ease',
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.2)';
-                        e.currentTarget.style.color = '#1e40af';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'scale(1)';
-                        e.currentTarget.style.color = '#2563eb';
-                      }}
-                      onClick={() => handleViewDetails(customer)}
-                    >
-                      <FaEye size={20} />
-                    </button>
-
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="p-4 text-center text-gray-500">No customers found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-4">
-            <button
-              className="px-3 py-2 rounded-md bg-gray-200 disabled:opacity-50"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            >
-              {"<"}
-            </button>
-
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-              <button
-                key={page}
-                className={`px-3 py-2 rounded-md ${currentPage === page ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ))}
-
-            <button
-              className="px-3 py-2 rounded-md bg-gray-200 disabled:opacity-50"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            >
-              {">"}
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Modal Component */}
       <CustomerModal
         isOpen={isModalOpen}
         customer={selectedCustomer}
