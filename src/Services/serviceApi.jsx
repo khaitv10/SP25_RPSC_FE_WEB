@@ -48,6 +48,7 @@ export const updatePrice = async (
   newName,
   newDuration,
   newDescription,
+  newStatus
 ) => {
   if (!priceId || typeof newPrice !== "number" || newPrice <= 0) {
     throw new Error("Invalid priceId or newPrice must be a positive number.");
@@ -56,7 +57,7 @@ export const updatePrice = async (
   try {
     const { data } = await axiosClient.put(
       `/api/packageservice/update-price/${priceId}`,
-      { newPrice, newName, newDuration, newDescription },
+      { newPrice, newName, newDuration, newDescription, newStatus },
       { headers: { "Content-Type": "application/json" } },
     );
     return data;
@@ -107,6 +108,43 @@ export const createServiceDetail = async (serviceDetailData) => {
     throw (
       error.response?.data?.message ||
       "An error occurred while creating service detail."
+    );
+  }
+};
+
+export const updateServicePackage = async (
+  packageId,
+  newType,
+  newHighLightTime,
+  newPriorityTime,
+  newMaxPost,
+  newLabel,
+  newStatus
+) => {
+  try {
+    // Tạo đối tượng model với các tham số mới
+    const updateData = {
+      NewType: newType,
+      NewHighLightTime: newHighLightTime,
+      NewPriorityTime: newPriorityTime,
+      NewMaxPost: newMaxPost,
+      NewLabel: newLabel,
+      NewStatus: newStatus,
+    };
+
+    // Gửi yêu cầu PUT tới API
+    const response = await axiosClient.put(
+      `/api/packageservice/update-service-package/${packageId}`,
+      updateData,
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    // Trả về dữ liệu phản hồi từ API
+    return response.data;
+  } catch (error) {
+    console.error("Error updating service package:", error);
+    throw (
+      error.response?.data?.message || "An error occurred while updating service package."
     );
   }
 };

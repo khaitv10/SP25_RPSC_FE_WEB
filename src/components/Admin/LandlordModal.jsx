@@ -1,9 +1,11 @@
 import { FaTimes } from "react-icons/fa";
 import PropTypes from "prop-types";
-import profilePic from "../../assets/avatar.jpg";
 
 const LandlordModal = ({ isOpen, landlord, onClose }) => {
   if (!isOpen || !landlord) return null;
+
+  // Default avatar in case landlord.avatar is null or undefined
+  const defaultAvatar = "https://res.cloudinary.com/dzoxs1sd7/image/upload/v1744566485/ztszkoqjhamvi56rqnwj.jpg";
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
@@ -22,7 +24,7 @@ const LandlordModal = ({ isOpen, landlord, onClose }) => {
         <div className="flex flex-col items-center mb-6">
           {/* Avatar */}
           <img
-            src={landlord.avatar || profilePic}
+            src={landlord.avatar || defaultAvatar}
             alt="Avatar"
             className="w-28 h-28 rounded-full border-4 border-gray-300 shadow-md transition-transform transform hover:scale-105"
           />
@@ -38,12 +40,12 @@ const LandlordModal = ({ isOpen, landlord, onClose }) => {
 
         {/* Additional Details */}
         <div className="grid grid-cols-2 gap-6 text-md bg-gray-100 p-4 rounded-lg shadow-inner">
-          <div className="info-item"><strong>Company Name:</strong> {landlord.companyName}</div>
-          <div className="info-item"><strong>License Number:</strong> {landlord.licenseNumber}</div>
-          <div className="info-item"><strong>Number of Rooms:</strong> {landlord.numberRoom}</div>
+          <div className="info-item"><strong>Company Name:</strong> {landlord.companyName || 'Not provided'}</div>
+          <div className="info-item"><strong>License Number:</strong> {landlord.licenseNumber || 'Not provided'}</div>
+          {/* <div className="info-item"><strong>Number of Rooms:</strong> {landlord.numberRoom || 0}</div> */}
           <div className="info-item"><strong>Status:</strong> {landlord.status}</div>
-          <div className="info-item"><strong>Address:</strong> {landlord.address}</div>
-          <div className="info-item"><strong>Created Date:</strong> {new Date(landlord.createdDate).toLocaleString()}</div>
+          <div className="info-item"><strong>Address:</strong> {landlord.address || 'Not provided'}</div>
+          <div className="info-item"><strong>Created Date:</strong> {landlord.createdDate ? new Date(landlord.createdDate).toLocaleString() : 'Not available'}</div>
         </div>
       </div>
     </div>
