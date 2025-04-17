@@ -34,6 +34,7 @@ import CreateRoomType from "../pages/Landlord/RoomManagement/CreateRoomType";
 import RoomDetail from "../pages/Landlord/RoomManagement/RoomDetail";
 import RoomCreate from "../pages/Landlord/RoomManagement/RoomCreate";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
+import LeaveRoomRequestList from "../pages/Landlord/LeaveRoomRequestList";
 
 const AppRoutes = () => {
   return (
@@ -72,6 +73,7 @@ export const LandlordRoutes = () => {
       <Route path="manage" element={<PrivateRoute allowedRoles={["Landlord"]}><RentedRoomManagement /></PrivateRoute>} />
       <Route path="rented-room/:roomStayId" element={<PrivateRoute allowedRoles={["Landlord"]}><RentedRoomDetail /></PrivateRoute>} />
       <Route path="request" element={<PrivateRoute allowedRoles={["Landlord"]}><RoomRequestManagement /></PrivateRoute>} />
+      <Route path="leave-requests" element={<PrivateRoute allowedRoles={["Landlord"]}><LeaveRoomRequestList /></PrivateRoute>} />
       <Route path="packagecontract" element={<PrivateRoute allowedRoles={["Landlord"]}><PackageContract /></PrivateRoute>} />
       <Route path="feedback" element={<PrivateRoute allowedRoles={["Landlord"]}><FeedbackRoom /></PrivateRoute>} />
       <Route path="feedback/:id" element={<PrivateRoute allowedRoles={["Landlord"]}><FeedbackDetail /></PrivateRoute>} />

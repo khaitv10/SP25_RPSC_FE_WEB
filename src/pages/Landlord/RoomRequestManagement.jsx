@@ -36,7 +36,8 @@ import {
     ClockCircleOutlined,
     CheckOutlined,
     LoadingOutlined,
-    QuestionCircleOutlined
+    QuestionCircleOutlined,
+    LogoutOutlined
 } from '@ant-design/icons';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -45,6 +46,7 @@ import pic from '../../assets/room.jpg';
 import ava from '../../assets/avatar.jpg';
 import roomRentalService from "../../Services/Landlord/roomAPI";
 import PropTypes from 'prop-types';
+import LeaveRoomRequestList from './LeaveRoomRequestList';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -377,27 +379,37 @@ const RoomRequestManagement = () => {
 
             <div className="room-request-header">
                 <Title level={2}>
-                    <BellOutlined className="title-icon" /> Requires Room Rental
+                    {activeTab === 'hasRequests' ? (
+                        <>
+                            <BellOutlined className="title-icon" /> Room Requests Management
+                        </>
+                    ) : (
+                        <>
+                            <LogoutOutlined className="title-icon" /> Leave Room Requests
+                        </>
+                    )}
                 </Title>
                 
                 {/* Search bar */}
-                <div className="search-container" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Space>
-                        <Search
-                            placeholder="Search by room name or address"
-                            allowClear
-                            enterButton={<Button type="primary"><SearchOutlined /></Button>}
-                            size="large"
-                            value={searchValue}
-                            onChange={onSearchChange}
-                            onSearch={handleSearch}
-                            style={{ width: 300 }}
-                        />
-                        {searchQuery && (
-                            <Button onClick={clearSearch}>Clear</Button>
-                        )}
-                    </Space>
-                </div>
+                {activeTab === 'hasRequests' && (
+                    <div className="search-container" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Space>
+                            <Search
+                                placeholder="Search by room name or address"
+                                allowClear
+                                enterButton={<Button type="primary"><SearchOutlined /></Button>}
+                                size="large"
+                                value={searchValue}
+                                onChange={onSearchChange}
+                                onSearch={handleSearch}
+                                style={{ width: 300 }}
+                            />
+                            {searchQuery && (
+                                <Button onClick={clearSearch}>Clear</Button>
+                            )}
+                        </Space>
+                    </div>
+                )}
             </div>
 
             <Tabs
@@ -408,7 +420,7 @@ const RoomRequestManagement = () => {
                 <TabPane
                     tab={
                         <Badge count={totalRooms} offset={[10, 0]} className="tab-badge">
-                            <span>Rooms with Requests</span>
+                            <span>Room Rental Requests</span>
                         </Badge>
                     }
                     key="hasRequests"
@@ -490,6 +502,17 @@ const RoomRequestManagement = () => {
                             )}
                         </>
                     )}
+                </TabPane>
+
+                <TabPane
+                    tab={
+                        <span>
+                            <LogoutOutlined /> Leave Room Requests
+                        </span>
+                    }
+                    key="leaveRequests"
+                >
+                    <LeaveRoomRequestList />
                 </TabPane>
             </Tabs>
 
