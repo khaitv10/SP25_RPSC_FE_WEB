@@ -183,3 +183,80 @@ export const getTotalUsers = async () => {
         throw error.response ? error.response.data : new Error("An error occurred while fetching total users");
     }
 };
+
+export const updateUserProfile = async (userData) => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+
+        // Create FormData object
+        const formData = new FormData();
+        
+        // Append all fields to FormData
+        if (userData.fullName) formData.append('FullName', userData.fullName);
+        if (userData.phoneNumber) formData.append('PhoneNumber', userData.phoneNumber);
+        if (userData.address) formData.append('Address', userData.address);
+        if (userData.gender) formData.append('Gender', userData.gender);
+        if (userData.dob) formData.append('Dob', userData.dob);
+        
+        // Append avatar file if it exists
+        if (userData.avatar instanceof File) {
+            formData.append('Avatar', userData.avatar);
+        }
+
+        const response = await axiosClient.put('/api/user/Update-User-Profile', formData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+        
+        toast.success("Cập nhật hồ sơ thành công!");
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            toast.error(error.response.data?.message || "Cập nhật hồ sơ thất bại");
+            throw error.response.data;
+        } else if (error.request) {
+            toast.error("Không thể kết nối đến máy chủ");
+            throw new Error("Server connection failed");
+        } else {
+            toast.error(error.message || "Cập nhật hồ sơ thất bại");
+            throw error;
+        }
+    }
+};
+
+export const getLandlordByUserId = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axiosClient.get('/api/user/Get-Landlord-By-UserId', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Không thể lấy thông tin chủ trọ");
+        throw error.response ? error.response.data : new Error("An error occurred while fetching landlord information");
+    }
+};
+
+export const updateLandlordProfile = async (landlordData) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axiosClient.put('/api/user/Edit-Landlord-Profile', landlordData, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        toast.success("Cập nhật thông tin chủ trọ thành công!");
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Cập nhật thông tin chủ trọ thất bại");
+        throw error.response ? error.response.data : new Error("An error occurred while updating landlord profile");
+    }
+};
+
+

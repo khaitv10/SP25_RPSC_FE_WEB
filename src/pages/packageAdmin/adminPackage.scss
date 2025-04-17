@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   background-color: #f4f6f9;
-  min-height: auto; /* Change from 100vh to auto */
+  min-height: auto;
 
   .package-card {
     width: 100%;
@@ -53,31 +53,34 @@
 
     .search-container {
       margin-bottom: 30px;
+      max-width: 400px;
       
       .search-input {
+        border-radius: 8px;
+        height: 40px;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         width: 100%;
-        max-width: 400px;
         
-        .ant-input {
-          height: 44px;
-          border-radius: 10px 0 0 10px;
-          border: 1px solid #e5e7eb;
-          padding: 0 16px;
-          font-size: 15px;
-          
-          &:hover, &:focus {
-            border-color: #3b82f6;
-          }
+        &:hover, &:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
         
-        .ant-input-search-button {
-          height: 44px;
-          border-radius: 0 10px 10px 0;
-          background: #3b82f6;
-          border: none;
+        .search-icon {
+          color: #6b7280;
+          margin-right: 8px;
+        }
+        
+        .ant-input {
+          font-size: 15px;
+        }
+        
+        .ant-input-clear-icon {
+          color: #6b7280;
           
           &:hover {
-            background: #2563eb;
+            color: #3b82f6;
           }
         }
       }

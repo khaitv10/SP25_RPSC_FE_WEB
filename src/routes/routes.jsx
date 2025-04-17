@@ -34,6 +34,9 @@ import CreateRoomType from "../pages/Landlord/RoomManagement/CreateRoomType";
 import RoomDetail from "../pages/Landlord/RoomManagement/RoomDetail";
 import RoomCreate from "../pages/Landlord/RoomManagement/RoomCreate";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
+import HistoryContract from "../pages/packageLandlord/HistoryContract";
+import HistoryContractDetail from "../pages/packageLandlord/HistoryContractDetail";
+import LandlordProfile from "../pages/Landlord/LandlordProfile/LandlordProfile";
 import LeaveRoomRequestList from "../pages/Landlord/LeaveRoomRequestList";
 
 const AppRoutes = () => {
@@ -80,6 +83,10 @@ export const LandlordRoutes = () => {
       <Route path="contract" element={<PrivateRoute allowedRoles={["Landlord"]}><ContractLand /></PrivateRoute>} />
       <Route path="contract/contract-detail/:contractId" element={<PrivateRoute allowedRoles={["Landlord"]}><ContractLandDetail /></PrivateRoute>} />
       <Route path="chat" element={<PrivateRoute allowedRoles={["Landlord"]}><ChatPage /></PrivateRoute>} />
+      <Route path="history-contract" element={<PrivateRoute allowedRoles={["Landlord"]}><HistoryContract /></PrivateRoute>} />
+      <Route path="/contract-detail/:contractId" element={<PrivateRoute allowedRoles={["Landlord"]}><HistoryContractDetail /></PrivateRoute>} />
+      <Route path="landlord-profile" element={<PrivateRoute allowedRoles={["Landlord"]}><LandlordProfile /></PrivateRoute>} />
+
 
       {/* Fallback route for /landlord/* */}
       <Route path="*" element={<NotFoundPage />} />

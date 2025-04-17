@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getContractDetail, confirmContractAndCreateRoomStay } from "../../Services/Landlord/contractLandlord";
-import { ArrowLeft, FileText, User, Home, Calendar, Clock, Upload, Tag, MapPin, CreditCard, UserCheck } from "lucide-react";
+import { ArrowLeft, FileText, User, Home, Calendar, Clock, Upload, Tag, MapPin, CreditCard, UserCheck, Phone, Mail, Users } from "lucide-react";
 import { toast } from "react-toastify";
-import { Phone, Mail, Users } from 'lucide-react';
+import "./ContractLandDetail.scss";
 
 const ContractLandDetail = () => {
   const { contractId } = useParams();
@@ -37,17 +37,16 @@ const ContractLandDetail = () => {
         })
       : 'N/A';
   };
-const formatPrice = (price) => {
-  if (!price && price !== 0) return 'N/A';
-  
-  // Handle both number and string inputs
-  const numericPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.-]+/g, '')) : price;
-  
-  // Check if it's a valid number after conversion
-  if (isNaN(numericPrice)) return 'N/A';
-  
-  return `${numericPrice.toLocaleString()} VNĐ`;
-};
+
+  const formatPrice = (price) => {
+    if (!price && price !== 0) return 'N/A';
+    
+    const numericPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.-]+/g, '')) : price;
+    
+    if (isNaN(numericPrice)) return 'N/A';
+    
+    return `${numericPrice.toLocaleString()} VNĐ`;
+  };
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -73,10 +72,10 @@ const formatPrice = (price) => {
 
   const getStatusColor = (status) => {
     switch(status?.toLowerCase()) {
-      case 'expired': return 'bg-red-100 text-red-800';
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'expired': return 'status-expired';
+      case 'active': return 'status-active';
+      case 'pending': return 'status-pending';
+      default: return 'status-default';
     }
   };
 
@@ -94,210 +93,229 @@ const formatPrice = (price) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="spinner animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+      <div className="loading-container">
+        <div className="modern-spinner">
+          <div className="spinner-ring"></div>
+          <div className="spinner-ring"></div>
+          <div className="spinner-ring"></div>
+        </div>
       </div>
     );
   }
 
   if (!contract) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center bg-gray-50 min-h-screen">
-        <p className="text-gray-500 text-xl">No contract found.</p>
+      <div className="empty-state">
+        <div className="empty-state-content">
+          <FileText className="icon-large" />
+          <h2>No Contract Found</h2>
+          <p>The requested contract could not be found.</p>
+          <button onClick={() => window.history.back()} className="btn-secondary">
+            Go Back
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="contract-detail bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="detail-card max-w-6xl w-full mx-auto bg-white shadow-xl rounded-2xl overflow-hidden">
+    <div className="contract-detail">
+      <div className="detail-card">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-5 flex items-center justify-between">
+        <div className="contract-header">
           <button 
             onClick={() => window.history.back()}
-            className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+            className="back-button"
           >
-            <ArrowLeft className="h-7 w-7" />
+            <ArrowLeft className="icon" />
           </button>
-          <div className="flex items-center space-x-3 text-white">
-            <FileText className="h-6 w-6" />
-            <h1 className="text-2xl font-bold tracking-wide">Contract Details</h1>
+          <div className="header-content">
+            <div className="header-icon">
+              <FileText className="icon" />
+            </div>
+            <h1 className="header-title">Contract Details</h1>
+          </div>
+          <div className="status-badge">
+            <span className={`status ${getStatusColor(contract.status)}`}>
+              {contract.status}
+            </span>
           </div>
         </div>
 
-        {/* Contract Overview */}
-        <div className="grid md:grid-cols-2 gap-6 p-6 border-b border-gray-200">
-          <div>
-            <div className="flex items-center mb-4">
-              <Tag className="h-5 w-5 mr-3 text-blue-500" />
-              <h2 className="text-lg font-semibold text-gray-700">Contract Overview</h2>
+        {/* Contract Overview Section */}
+        <div className="section-grid">
+          <div className="section contract-overview">
+            <div className="section-header">
+              <Tag className="section-icon" />
+              <h2 className="section-title">Contract Overview</h2>
             </div>
-            <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <p className="text-xs text-gray-500 mb-1">Contract ID</p>
-                <p className="font-medium text-gray-800">{contract.contractId}</p>
+            <div className="info-cards">
+              <div className="info-card">
+                <p className="info-label">Contract ID</p>
+                <p className="info-value">{contract.contractId}</p>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <p className="text-xs text-gray-500 mb-1">Status</p>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(contract.status)}`}>
+              <div className="info-card">
+                <p className="info-label">Status</p>
+                <span className={`status-pill ${getStatusColor(contract.status)}`}>
                   {contract.status}
                 </span>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <p className="text-xs text-gray-500 mb-1">Create Date</p>
-                <p className="font-medium text-gray-800">{formatDate(contract.createDate)}</p>
+              <div className="info-card">
+                <p className="info-label">Create Date</p>
+                <p className="info-value">{formatDate(contract.createDate)}</p>
               </div>
               {contract.status === "Active" && (
-                <div className="mt-4">
-                  <button
-                    onClick={handleTermClick}
-                    className="px-6 py-3 rounded-lg text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                  >
-                    View Contract Term (PDF)
-                  </button>
-                </div>
+                <button 
+                  onClick={handleTermClick}
+                  className="btn-primary term-button"
+                >
+                  <FileText className="icon" />
+                  View Contract Term (PDF)
+                </button>
               )}
             </div>
           </div>
 
-          {/* Contract Dates */}
-          <div>
-            <div className="flex items-center mb-4">
-              <Calendar className="h-5 w-5 mr-3 text-purple-500" />
-              <h2 className="text-lg font-semibold text-gray-700">Contract Dates</h2>
+          {/* Contract Dates Section */}
+          <div className="section contract-dates">
+            <div className="section-header">
+              <Calendar className="section-icon" />
+              <h2 className="section-title">Contract Dates</h2>
             </div>
-            <div className="space-y-2">
-              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <p className="text-xs text-gray-500 mb-1">Start Date</p>
-                <p className="font-medium text-gray-800">{formatDate(contract.startDate)}</p>
+            <div className="dates-grid">
+              <div className="date-card">
+                <Calendar className="date-icon" />
+                <div className="date-content">
+                  <p className="date-label">Start Date</p>
+                  <p className="date-value">{formatDate(contract.startDate)}</p>
+                </div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <p className="text-xs text-gray-500 mb-1">End Date</p>
-                <p className="font-medium text-gray-800">{formatDate(contract.endDate)}</p>
+              <div className="date-card">
+                <Calendar className="date-icon" />
+                <div className="date-content">
+                  <p className="date-label">End Date</p>
+                  <p className="date-value">{formatDate(contract.endDate)}</p>
+                </div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <p className="text-xs text-gray-500 mb-1 flex items-center">
-                  <Clock className="h-4 w-4 mr-2" />
-                  Duration Rental
-                </p>
-                <p className="font-medium text-green-600">{formatDurationRental(contract.durationOfRental)}</p>
+              <div className="date-card duration">
+                <Clock className="date-icon" />
+                <div className="date-content">
+                  <p className="date-label">Duration Rental</p>
+                  <p className="date-value">{formatDurationRental(contract.durationOfRental)}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Room Details */}
-        <div className="px-6 py-5 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-            <Home className="h-5 w-5 mr-3 text-green-500" />
-            Room Information
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4">
+        {/* Room Information Section */}
+        <div className="section room-information">
+          <div className="section-header">
+            <Home className="section-icon" />
+            <h2 className="section-title">Room Information</h2>
+          </div>
+          <div className="grid-layout">
             {[ 
-              { label: 'Room Number', value: contract.room.roomNumber, icon: <Home className="h-5 w-5 text-green-500" /> },
-              { label: 'Room Type', value: contract.room.roomTypeName, icon: <Tag className="h-5 w-5 text-blue-500" /> },
-              { label: 'Location', value: contract.room.location, icon: <MapPin className="h-5 w-5 text-red-500" /> },
-              { label: 'Deposit', value: formatPrice(contract.room.deposite), icon: <CreditCard className="h-5 w-5 text-purple-500" /> },
-              { label: 'Max Occupancy', value: contract.room.maxOccupancy, icon: <Users className="h-5 w-5 text-orange-500" /> },
-              { label: 'Room Type Status', value: contract.room.roomTypeStatus, icon: <Home className="h-5 w-5 text-green-500" /> }
+              { label: 'Room Number', value: contract.room.roomNumber, icon: <Home className="card-icon" /> },
+              { label: 'Room Type', value: contract.room.roomTypeName, icon: <Tag className="card-icon" /> },
+              { label: 'Location', value: contract.room.location, icon: <MapPin className="card-icon" /> },
+              { label: 'Deposit', value: formatPrice(contract.room.deposite), icon: <CreditCard className="card-icon" /> },
+              { label: 'Max Occupancy', value: contract.room.maxOccupancy, icon: <Users className="card-icon" /> },
+              { label: 'Room Type Status', value: contract.room.roomTypeStatus, icon: <Home className="card-icon" /> }
             ].map(({ label, value, icon }) => (
-              <div key={label} className="bg-gray-50 p-3 rounded-lg flex items-center shadow-md">
-                <div className="mr-3">{icon}</div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{label}</p>
-                  <p className="font-medium text-gray-800">{value || 'N/A'}</p>
+              <div key={label} className="info-tile">
+                <div className="tile-icon">
+                  {icon}
+                </div>
+                <div className="tile-content">
+                  <p className="tile-label">{label}</p>
+                  <p className="tile-value">{value || 'N/A'}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Customer Information */}
-        <div className="px-6 py-5 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-            <User className="h-5 w-5 mr-3 text-blue-500" />
-            Customer Information
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4">
+        {/* Customer Information Section */}
+        <div className="section customer-information">
+          <div className="section-header">
+            <User className="section-icon" />
+            <h2 className="section-title">Customer Information</h2>
+          </div>
+          <div className="grid-layout">
             {[ 
-              { label: 'Full Name', value: contract.customer.fullName, icon: <User className="h-5 w-5 text-blue-500" /> },
-              { label: 'Phone Number', value: contract.customer.phoneNumber, icon: <Phone className="h-5 w-5 text-green-500" /> },
-              { label: 'Email', value: contract.customer.email, icon: <Mail className="h-5 w-5 text-red-500" /> },
-              { label: 'Customer Type', value: contract.customer.customerType, icon: <UserCheck className="h-5 w-5 text-purple-500" /> },
-              { label: 'Gender', value: contract.customer.gender, icon: <Users className="h-5 w-5 text-pink-500" /> },
-              { label: 'Preferred Location', value: contract.customer.preferredLocation, icon: <MapPin className="h-5 w-5 text-orange-500" /> }
+              { label: 'Full Name', value: contract.customer.fullName, icon: <User className="card-icon" /> },
+              { label: 'Phone Number', value: contract.customer.phoneNumber, icon: <Phone className="card-icon" /> },
+              { label: 'Email', value: contract.customer.email, icon: <Mail className="card-icon" /> },
+              { label: 'Customer Type', value: contract.customer.customerType, icon: <UserCheck className="card-icon" /> },
+              { label: 'Gender', value: contract.customer.gender, icon: <Users className="card-icon" /> },
+              { label: 'Preferred Location', value: contract.customer.preferredLocation, icon: <MapPin className="card-icon" /> }
             ].map(({ label, value, icon }) => (
-              <div key={label} className="bg-gray-50 p-3 rounded-lg flex items-center">
-                <div className="mr-3">{icon}</div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">{label}</p>
-                  <p className="font-medium text-gray-800">{value || 'N/A'}</p>
+              <div key={label} className="info-tile">
+                <div className="tile-icon">
+                  {icon}
+                </div>
+                <div className="tile-content">
+                  <p className="tile-label">{label}</p>
+                  <p className="tile-value">{value || 'N/A'}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-       
-
-        {/* Additional Customer Details */}
-        <div className="px-6 py-5 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-            <UserCheck className="h-5 w-5 mr-3 text-purple-500" />
-            Additional Customer Details
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4">
+        {/* Additional Customer Details Section */}
+        <div className="section additional-details">
+          <div className="section-header">
+            <UserCheck className="section-icon" />
+            <h2 className="section-title">Additional Customer Details</h2>
+          </div>
+          <div className="details-grid">
             {[
               { label: 'Preferences', value: contract.customer.preferences },
               { label: 'Life Style', value: contract.customer.lifeStyle },
               { label: 'Budget Range', value: formatPrice(contract.customer.budgetRange) },
               { label: 'Requirements', value: contract.customer.requirement }
             ].map(({ label, value }) => (
-              <div key={label} className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-xs text-gray-500 mb-1">{label}</p>
-                <p className="font-medium text-gray-800">{value || 'N/A'}</p>
+              <div key={label} className="detail-card">
+                <p className="detail-label">{label}</p>
+                <p className="detail-value">{value || 'N/A'}</p>
               </div>
             ))}
           </div>
-          
         </div>
 
+        {/* Upload Section */}
         {contract.status === "Pending" && (
-          <div className="px-6 py-5 border-t border-gray-200 flex justify-center">
+          <div className="upload-section">
             <input 
               type="file" 
               accept=".pdf" 
               onChange={handleFileUpload}
-              className="hidden" 
+              className="file-input" 
               id="contract-upload"
               disabled={uploadLoading}
             />
             <label 
               htmlFor="contract-upload" 
-              className={`flex items-center justify-center px-6 py-3 rounded-lg text-white font-semibold transition-colors ${
-                uploadLoading 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 cursor-pointer'
-              }`}
+              className={`upload-button ${uploadLoading ? 'loading' : ''}`}
             >
               {uploadLoading ? (
-                <div className="flex items-center">
-                  <div className="spinner animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                  Uploading...
+                <div className="loading-text">
+                  <div className="upload-spinner"></div>
+                  <span>Uploading...</span>
                 </div>
               ) : (
                 <>
-                  <Upload className="h-5 w-5 mr-2" />
-                  Upload Contract PDF
+                  <Upload className="icon" />
+                  <span>Upload Contract PDF</span>
                 </>
               )}
             </label>
           </div>
-          
         )}
       </div>
     </div>
-    
   );
 };
 

@@ -1,0 +1,522 @@
+// Colors and variables
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$error-color: #f5222d;
+$warning-color: #faad14;
+$border-radius: 8px;
+$box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+$transition: all 0.3s ease;
+
+.contract-detail-container {
+  padding: 20px;
+  
+  // Loading screen
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    
+    .loading-text {
+      margin-top: 16px;
+      color: $primary-color;
+      font-size: 16px;
+    }
+  }
+  
+  // Header actions
+  .header-actions {
+    margin-bottom: 16px;
+    
+    .back-button {
+      border-radius: $border-radius;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      transition: $transition;
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+        transform: translateX(-2px);
+      }
+    }
+  }
+  
+  // Main card
+  .contract-detail-card {
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      
+      .title-container {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        
+        .contract-title {
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .contract-icon {
+            font-size: 24px;
+          }
+        }
+        
+        .contract-status {
+          font-size: 16px;
+          font-weight: 500;
+        }
+      }
+      
+      .contract-actions {
+        display: flex;
+        gap: 12px;
+        
+        .action-button {
+          border-radius: $border-radius;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          height: 38px;
+          transition: $transition;
+          
+          &.view-button {
+            background: $primary-color;
+            
+          }
+          
+          &.download-button:hover {
+            background: rgba(0, 0, 0, 0.02);
+            transform: translateY(-2px);
+          }
+        }
+      }
+    }
+    
+    .contract-body {
+      .info-card {
+        height: 100%;
+        border-radius: $border-radius;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: $transition;
+        
+        &:hover {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+        
+        .section-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 500;
+        }
+        
+        .details-table {
+          margin-bottom: 16px;
+          
+          .ant-descriptions-item-label {
+            background-color: rgba(0, 0, 0, 0.02);
+            font-weight: 500;
+          }
+          
+          .contract-id {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+          
+          .status-tag {
+            font-weight: 500;
+            border-radius: 4px;
+            padding: 0 8px;
+          }
+        }
+        
+        .section-divider {
+          margin: 16px 0;
+        }
+        
+        .dates-section {
+          .subsection-title {
+            margin-bottom: 16px;
+          }
+          
+          .date-cards {
+            .date-card {
+              height: 100%;
+              border-radius: $border-radius;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              transition: $transition;
+              background-color: rgba(0, 0, 0, 0.01);
+              
+              &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+              }
+              
+              .date-icon {
+                font-size: 24px;
+                margin-right: 12px;
+                color: $primary-color;
+              }
+              
+              .date-info {
+                .date-label {
+                  font-weight: 500;
+                  margin-bottom: 4px;
+                  font-size: 14px;
+                  color: rgba(0, 0, 0, 0.45);
+                }
+                
+                .date-value {
+                  font-weight: 500;
+                  font-size: 14px;
+                }
+              }
+              
+              &.signed-date .date-icon {
+                color: $success-color;
+              }
+              
+              &.end-date .date-icon {
+                color: $warning-color;
+              }
+            }
+          }
+        }
+      }
+      
+      .service-info {
+        .service-content {
+          .service-item {
+            margin-bottom: 16px;
+            
+            .item-label {
+              color: rgba(0, 0, 0, 0.45);
+              font-size: 14px;
+              margin-bottom: 4px;
+            }
+            
+            .item-value {
+              font-weight: 500;
+              font-size: 16px;
+              
+              &.package-value {
+                color: $primary-color;
+                font-weight: 600;
+              }
+              
+              &.description-value {
+                font-size: 14px;
+                color: rgba(0, 0, 0, 0.65);
+                line-height: 1.5;
+              }
+            }
+          }
+          
+          .price-section, .duration-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: $border-radius;
+            
+            .price-label, .duration-label {
+              font-weight: 500;
+            }
+            
+            .price-value, .duration-value {
+              font-weight: 600;
+              color: $primary-color;
+            }
+          }
+          
+          .price-section {
+            margin-bottom: 10px;
+          }
+        }
+        
+        .signature-section {
+          margin-top: 24px;
+          
+          .signature-title {
+            margin-bottom: 12px;
+          }
+          
+          .signature-image-container {
+            display: flex;
+            justify-content: center;
+            padding: 16px;
+            border: 1px dashed rgba(0, 0, 0, 0.15);
+            border-radius: $border-radius;
+            background-color: rgba(0, 0, 0, 0.01);
+            
+            .signature-image {
+              max-width: 100%;
+              max-height: 80px;
+              object-fit: contain;
+            }
+          }
+        }
+      }
+      // Add these new styles to your HistoryContractDetail.scss file
+
+.extend-button {
+    background-color: $success-color !important;
+    border-color: $success-color !important;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  .extend-section {
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: $border-radius;
+    background-color: rgba(82, 196, 26, 0.05);
+    border: 1px solid rgba(82, 196, 26, 0.2);
+    
+    .extend-button-large {
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(82, 196, 26, 0.2);
+      }
+    }
+    
+    .extend-note {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.45);
+    }
+  }
+      // New transaction list styling
+      .transaction-section {
+        margin-top: 24px;
+        
+        .transaction-card {
+          border-radius: $border-radius;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+          
+          .transaction-list {
+            padding: 8px 0;
+            
+            .transaction-item {
+              display: flex;
+              padding: 16px 0;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+              
+              &:last-child {
+                border-bottom: none;
+              }
+              
+              .transaction-date {
+                min-width: 200px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding-right: 20px;
+                
+                .date {
+                  font-weight: 500;
+                  color: rgba(0, 0, 0, 0.65);
+                }
+                
+                .status-indicator {
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 50%;
+                }
+              }
+              
+              .transaction-content {
+                flex-grow: 1;
+                background-color: rgba(0, 0, 0, 0.01);
+                padding: 16px;
+                border-radius: $border-radius;
+                border-left: 3px solid $primary-color;
+                transition: $transition;
+                
+                &:hover {
+                  background-color: rgba(0, 0, 0, 0.03);
+                }
+                
+                .transaction-header {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                  
+                  .transaction-number {
+                    font-weight: 600;
+                    font-family: monospace;
+                  }
+                  
+                  .transaction-type {
+                    font-weight: 500;
+                    border-radius: 4px;
+                    padding: 0 8px;
+                  }
+                }
+                
+                .transaction-details-group {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                  
+                  .transaction-details {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 16px;
+                    
+                    > div {
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      flex: 1 1 auto;
+                    }
+                    
+                    .transaction-amount {
+                      font-weight: 500;
+                      color: $primary-color;
+                    }
+                  }
+                  
+                  .transaction-info {
+                    font-size: 14px;
+                    color: rgba(0, 0, 0, 0.45);
+                    font-style: italic;
+                  }
+                }
+              }
+            }
+          }
+          
+          .empty-transactions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 48px 0;
+            color: rgba(0, 0, 0, 0.45);
+            
+            .empty-icon {
+              font-size: 32px;
+              margin-bottom: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Animations
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.7s ease-in-out;
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.6s ease-in-out;
+  }
+  
+  .slide-in-right {
+    animation: slideInRight 0.6s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .contract-detail-card {
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        
+        .title-container {
+          margin-bottom: 16px;
+        }
+      }
+      
+      .contract-body {
+        .transaction-section {
+          .transaction-list {
+            .transaction-item {
+              flex-direction: column;
+              
+              .transaction-date {
+                margin-bottom: 12px;
+                padding-right: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+

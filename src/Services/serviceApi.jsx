@@ -122,7 +122,6 @@ export const updateServicePackage = async (
   newStatus
 ) => {
   try {
-    // Tạo đối tượng model với các tham số mới
     const updateData = {
       NewType: newType,
       NewHighLightTime: newHighLightTime,
@@ -132,14 +131,12 @@ export const updateServicePackage = async (
       NewStatus: newStatus,
     };
 
-    // Gửi yêu cầu PUT tới API
     const response = await axiosClient.put(
       `/api/packageservice/update-service-package/${packageId}`,
       updateData,
       { headers: { "Content-Type": "application/json" } }
     );
 
-    // Trả về dữ liệu phản hồi từ API
     return response.data;
   } catch (error) {
     console.error("Error updating service package:", error);

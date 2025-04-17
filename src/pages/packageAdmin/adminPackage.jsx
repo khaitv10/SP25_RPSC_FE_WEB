@@ -30,8 +30,17 @@ const AdminPackage = () => {
     setLoading(false);
   };
 
-  const handleSearch = () => {
-    fetchPackages();
+  // Add debounce functionality for search like in ContractManagement
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchPackages();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
   };
 
   const handleViewDetails = (packageId) => {
@@ -145,13 +154,13 @@ const AdminPackage = () => {
         </div>
 
         <div className="search-container">
-          <Input.Search
-            className="search-input"
+          <Input
             placeholder="🔍 Search by package type..."
+            prefix={<SearchOutlined className="search-icon" />}
+            onChange={handleSearch}
+            className="search-input"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onSearch={handleSearch}
-            enterButton={<SearchOutlined />}
+            allowClear
           />
         </div>
 

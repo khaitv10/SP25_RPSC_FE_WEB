@@ -18,7 +18,7 @@ const SidebarLandlord = () => {
     { name: "Rent Room", path: "/landlord/manage", icon: UserGroupIcon },
     { name: "Category", path: "/landlord/roomtype", icon: HomeIcon },
     { name: "Feedback", path: "/landlord/feedback", icon: ChatIcon },
-    { name: "Service", path: "/landlord/service", icon: ClipboardIcon },
+    { name: "Service", path: "/landlord/history-contract", icon: ClipboardIcon },
     { name: "Post", path: "/landlord/post", icon: NewspaperIcon },
     { name: "Request", path: "/landlord/request", icon: DocumentTextIcon },
     { name: "Contract", path: "/landlord/contract", icon: DocumentTextIcon },

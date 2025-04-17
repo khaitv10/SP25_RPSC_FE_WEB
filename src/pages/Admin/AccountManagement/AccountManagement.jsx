@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Card, Typography, Spin, Tabs, Input, Select, Badge } from "antd";
-import { SearchOutlined, UserOutlined, HomeOutlined } from "@ant-design/icons";
+import { Card, Typography, Spin, Input, Select } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import CustomerTable from "../../../components/Admin/CustomerTable.jsx";
 import LandlordTable from "../../../components/Admin/LandlordTable.jsx";
 import getAllCustomer from "../../../Services/Admin/customerAPI";
@@ -28,7 +28,20 @@ const AccountManagement = () => {
     } else {
       fetchLandlords();
     }
-  }, [currentPage, selectedStatus, searchTerm, activeTab]);
+  }, [currentPage, selectedStatus, activeTab]);
+
+  // Add debounce functionality for search like in AdminPackage
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (activeTab === "customers") {
+        fetchCustomers();
+      } else {
+        fetchLandlords();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const fetchCustomers = async () => {
     setLoading(true);
@@ -90,13 +103,9 @@ const AccountManagement = () => {
     setLoading(false);
   };
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
     setCurrentPage(1); // Reset to first page on new search
-    if (activeTab === "customers") {
-      fetchCustomers();
-    } else {
-      fetchLandlords();
-    }
   };
 
   const handleStatusChange = (value) => {
@@ -136,13 +145,13 @@ const AccountManagement = () => {
         </div>
 
         <div className="filters-row">
-          <Input.Search
+          <Input
             className="search-input"
             placeholder="🔍 Search by name or email..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onSearch={handleSearch}
-            enterButton={<SearchOutlined />}
+            onChange={handleSearch}
+            prefix={<SearchOutlined className="search-icon" />}
+            allowClear
           />
           <Select
             className="status-select"

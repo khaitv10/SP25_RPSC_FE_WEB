@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import logo from "../assets/logoEasyRommie.png";
-import defaultAvatar from "../assets/avatar.jpg";
+import defaultAvatar from "../assets/default_avatar.jpg";
 
 const HeaderLandlord = () => {
   const navigate = useNavigate();
@@ -25,6 +25,11 @@ const HeaderLandlord = () => {
       avatar
     });
   }, []);
+
+  const handleEditProfile = () => {
+    setIsOpen(false); // Close dropdown after click
+    navigate("/landlord/landlord-profile");
+  };
 
   const handleLogout = () => {
     // Clear all user data from localStorage
@@ -74,9 +79,15 @@ const HeaderLandlord = () => {
           <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-10">
             <button
               className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+              onClick={handleEditProfile}
+            >
+              Edit profile
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
               onClick={handleLogout}
             >
-              Đăng xuất
+              Log out
             </button>
           </div>
         )}

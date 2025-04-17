@@ -73,10 +73,11 @@ const LandlordRegisAdmin = () => {
         <Button
           className="view-button"
           icon={<EyeOutlined />}
-          onClick={() => navigate(`/landlord-detail/${record.landlordId}`)}
+          onClick={() => navigate(`/admin/landlord-detail/${record.landlordId}`)}
         >
           View Details
         </Button>
+
       ),
     },
   ];

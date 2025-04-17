@@ -119,27 +119,31 @@
       .search-input {
         width: 100%;
         max-width: 300px;
+        border-radius: 10px;
+        height: 38px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        
+        &:hover, &:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        .search-icon {
+          color: #6b7280;
+          margin-right: 8px;
+        }
         
         .ant-input {
           height: 38px;
-          border-radius: 10px 0 0 10px;
-          border: 1px solid #e5e7eb;
-          padding: 0 16px;
           font-size: 14px;
-          
-          &:hover, &:focus {
-            border-color: #3b82f6;
-          }
         }
         
-        .ant-input-search-button {
-          height: 38px;
-          border-radius: 0 10px 10px 0;
-          background: #3b82f6;
-          border: none;
+        .ant-input-clear-icon {
+          color: #6b7280;
           
           &:hover {
-            background: #2563eb;
+            color: #3b82f6;
           }
         }
       }
@@ -184,13 +188,13 @@
           padding: 8px 16px;
           font-size: 13px;
           border-bottom: 1px solid #f3f4f6;
-          height: 40px; /* Added fixed height for table cells */
-          max-height: 40px; /* Added max-height for table cells */
+          height: 40px;
+          max-height: 40px;
         }
 
         .ant-table-tbody > tr {
-          height: 40px; /* Added height for table rows */
-          max-height: 40px; /* Added max-height for table rows */
+          height: 40px;
+          max-height: 40px;
         }
 
         .ant-table-tbody > tr:hover > td {
@@ -217,7 +221,7 @@
           font-weight: 500;
           display: inline-block;
           min-width: 80px;
-          font-size: 12px; /* Reduced font size */
+          font-size: 12px;
         }
 
         .action-button {
@@ -226,7 +230,7 @@
           font-weight: 500;
           transition: all 0.2s ease;
           padding: 4px 10px;
-          font-size: 12px; /* Reduced font size */
+          font-size: 12px;
           
           &:hover {
             transform: translateY(-1px);
