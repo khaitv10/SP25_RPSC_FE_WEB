@@ -1,73 +1,55 @@
-import { HomeIcon, ClipboardListIcon, UserGroupIcon, ChatIcon, DocumentTextIcon } from "@heroicons/react/solid";
+import { useLocation } from "react-router-dom";
+import { 
+  HomeIcon,  
+  UserGroupIcon, 
+  ChatIcon, 
+  DocumentTextIcon,
+  ChartBarIcon,
+  ClipboardIcon,
+  NewspaperIcon
+} from "@heroicons/react/solid";
 import { Link } from "react-router-dom";
 
 const SidebarLandlord = () => {
+  const location = useLocation();
+
+  const menuItems = [
+    { name: "Dashboard", path: "/landlord/dashboard", icon: ChartBarIcon },
+    { name: "Rent Room", path: "/landlord/manage", icon: UserGroupIcon },
+    { name: "Category", path: "/landlord/roomtype", icon: HomeIcon },
+    { name: "Feedback", path: "/landlord/feedback", icon: ChatIcon },
+    { name: "Service", path: "/landlord/history-contract", icon: ClipboardIcon },
+    { name: "Post", path: "/landlord/post", icon: NewspaperIcon },
+    { name: "Request", path: "/landlord/request", icon: DocumentTextIcon },
+    { name: "Contract", path: "/landlord/contract", icon: DocumentTextIcon },
+  ];
+
   return (
     <div className="w-64 h-screen bg-white shadow-lg p-4 flex flex-col">
-
-      {/* Menu điều hướng */}
       <nav className="flex flex-col">
         <ul>
-          {/* Dashboard */}
-          <li>
-            <Link
-              to="/landlord/dashboard"
-              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
-            >
-              <HomeIcon className="w-6 h-6 mr-3" />
-              Dashboard
-            </Link>
-          </li>
-          {/* Manage */}
-          <li>
-            <Link
-              to="/landlord/manage"
-              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
-            >
-              <UserGroupIcon className="w-6 h-6 mr-3" />
-              Manage
-            </Link>
-          </li>
-          {/* Room */}
-          <li>
-            <Link
-              to="/landlord/room"
-              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
-            >
-              <ClipboardListIcon className="w-6 h-6 mr-3" />
-              Room
-            </Link>
-          </li>
-          {/* Feedback */}
-          <li>
-            <Link
-              to="/landlord/feedback"
-              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
-            >
-              <ChatIcon className="w-6 h-6 mr-3" />
-              Feedback
-            </Link>
-          </li>
-          {/* Service */}
-          <li>
-            <Link
-              to="/landlord/service"
-              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
-            >
-              <DocumentTextIcon className="w-6 h-6 mr-3" />
-              Service
-            </Link>
-          </li>
-          {/* Request */}
-          <li>
-            <Link
-              to="/landlord/request"
-              className="flex items-center p-3 text-gray-700 hover:bg-indigo-100 rounded-md mb-2"
-            >
-              <DocumentTextIcon className="w-6 h-6 mr-3" />
-              Request
-            </Link>
-          </li>
+          {menuItems.map(({ name, path, icon: Icon }) => (
+            <li key={path}>
+              <Link
+                to={path}
+                className={`flex items-center p-3 rounded-md mb-2 transition duration-200 ease-in-out 
+                  ${
+                    location.pathname === path
+                      ? "bg-green-500 text-white font-semibold shadow-md scale-105"  
+                      : "text-gray-700 hover:bg-green-100 hover:scale-105"
+                  }`}
+              >
+                <Icon 
+                  className={`w-5 h-5 mr-3 ${
+                    location.pathname === path 
+                      ? "text-white" 
+                      : "text-gray-600"
+                  }`} 
+                />
+                {name}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </div>

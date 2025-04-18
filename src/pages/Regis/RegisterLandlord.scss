@@ -1,104 +1,142 @@
-.register-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-    padding: 20px;
-
-    .register-box {
+.register-landlord-container {
+    // Inherits styles from login-container
+    
+    // Specific styles for landlord registration
+    .login-right {
+      overflow-y: auto;
+      max-height: 860px;
+      padding-right: 40px;
+      
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #c5c5c5;
+        border-radius: 10px;
+      }
+      
+      &::-webkit-scrollbar-thumb:hover {
+        background: #a0a0a0;
+      }
+      
+      .error-message {
+        color: #e53e3e;
+        font-size: 12px;
+        margin-top: -10px;
+        margin-bottom: 10px;
+        display: block;
+      }
+      
+      .file-field {
+        margin-bottom: 15px;
+        
+        .file-input-wrapper {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-bottom: 10px;
+          
+          .file-input {
+            display: none;
+          }
+          
+          .file-label {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(90deg, rgba(46, 125, 50, 0.1), rgba(25, 118, 210, 0.1));
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            color: #2e7d32;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              background: linear-gradient(90deg, rgba(46, 125, 50, 0.2), rgba(25, 118, 210, 0.2));
+            }
+          }
+          
+          .file-name {
+            color: #64748b;
+            font-size: 14px;
+            flex-grow: 1;
+          }
+        }
+      }
+      
+      .image-preview {
         display: flex;
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        max-width: 950px; /* Giảm chiều rộng tổng thể */
-        width: 100%;
-        align-items: center;
-
-        .register-left {
-            flex: 1; /* Cho phần nhập form chiếm nhiều diện tích hơn */
-            padding: 40px;
-            display: flex;
-            min-width: 50%;
-            flex-direction: column;
-            justify-content: center;
-
-            h2 {
-                font-size: 30px;
-                color: #2d3748;
-                margin-bottom: 10px;
-            }
-
-            p {
-                color: #718096;
-                margin-bottom: 20px;
-            }
-
-            form {
-                display: flex;
-                flex-direction: column;
-
-                label {
-                    font-weight: 600;
-                    margin-bottom: 5px;
-                    color: #444;
-                }
-
-                input {
-                    width: 100%;
-                    padding: 12px;
-                    margin-bottom: 15px;
-                    border: 2px solid #e2e8f0;
-                    border-radius: 10px;
-                    font-size: 16px;
-                    transition: all 0.3s ease;
-                    height: 45px;
-
-                    &:focus {
-                        border-color: #38b2ac;
-                        box-shadow: 0 0 6px rgba(56, 178, 172, 0.5);
-                    }
-                }
-
-                .register-btn {
-                    padding: 12px;
-                    background: #38b2ac;
-                    color: white;
-                    font-size: 18px;
-                    font-weight: bold;
-                    border: none;
-                    border-radius: 10px;
-                    cursor: pointer;
-                    transition: 0.3s;
-
-                    &:hover {
-                        background: #2c7a7b;
-                        transform: scale(1.05);
-                    }
-                }
-            }
-        }
-
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            width: 100%; /* Đảm bảo chiếm đủ không gian */
-            justify-content: center; 
-            align-items: center;
-            padding: 10px;
-        }
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
         
-        
-        
-        .image-preview img {
-            width: 100px !important; 
-            height: 100px !important;
+        .image-preview-item {
+          width: 80px;
+          height: 80px;
+          position: relative;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          
+          img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 10px;
-            border: 1px solid #ddd;
+          }
+          
+          &:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+          }
         }
-        
+      }
     }
-}
+    
+    // Animation for form transitions
+    .login-right form {
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    // For mobile responsiveness
+    @media (max-width: 992px) {
+      .image-preview {
+        justify-content: center;
+        
+        .image-preview-item {
+          width: 70px;
+          height: 70px;
+        }
+      }
+      
+      .login-right {
+        padding: 30px;
+        
+        .login-header h3 {
+          font-size: 28px;
+        }
+      }
+    }
+  }

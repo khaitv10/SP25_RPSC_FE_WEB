@@ -1,47 +1,167 @@
 .landlord-admin {
-    padding: 20px;
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
   
-    .landlord-card {
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      width: 100%;
-      background: #fff;
+  .landlord-card {
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    width: 100%;
+    background: #fff;
+    border: none;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
     }
-  
-    .landlord-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-  
-    .search-input {
-      width: 300px;
-    }
-  
-    .ant-table {
-      border-radius: 8px;
-      overflow: hidden;
-    }
-  
-    .status-tag {
-      &.Pending {
-        color: #faad14;
-        background-color: #fffbe6;
-        border-color: #ffe58f;
+    
+    .header-title {
+      h2 {
+        margin-bottom: 4px;
+        font-weight: 600;
+        color: #1a202c;
+        font-size: 24px;
       }
-  
-      &.Approved {
-        color: #52c41a;
-        background-color: #f6ffed;
-        border-color: #b7eb8f;
-      }
-  
-      &.Rejected {
-        color: #ff4d4f;
-        background-color: #fff2f0;
-        border-color: #ffccc7;
+      
+      .header-subtitle {
+        font-size: 14px;
+        color: #718096;
+        margin-bottom: 0;
       }
     }
   }
   
+  .search-input {
+    width: 280px;
+    
+    .ant-input {
+      border-radius: 4px 0 0 4px;
+    }
+    
+    .ant-input-search-button {
+      border-radius: 0 4px 4px 0;
+      background: #4a5568;
+      
+      &:hover {
+        background: #2d3748;
+      }
+    }
+  }
+
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .ant-table {
+    width: 100%;
+    
+    .ant-table-thead > tr > th {
+      background: #2d3748;
+      color: white;
+      font-size: 14px;
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 500;
+      
+      &::before {
+        display: none;
+      }
+    }
+
+    .ant-table-tbody > tr > td {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .ant-table-tbody > tr:hover > td {
+      background-color: #f9fafb;
+    }
+  }
+
+  .status-tag {
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 16px;
+    display: inline-block;
+    font-weight: 500;
+    
+    &.Pending {
+      color: #d48806;
+      background-color: #fffbe6;
+      border: 1px solid #ffe58f;
+    }
+
+    &.Approved {
+      color: #389e0d;
+      background-color: #f6ffed;
+      border: 1px solid #b7eb8f;
+    }
+
+    &.Rejected {
+      color: #cf1322;
+      background-color: #fff1f0;
+      border: 1px solid #ffa39e;
+    }
+  }
+
+  .view-button {
+    background: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    height: 32px;
+    font-weight: 500;
+    padding: 0 12px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-transform: none;
+    font-size: 13px;
+    transform: none;
+    box-shadow: none;
+
+    &:hover {
+      background: #2d3748;
+      color: white;
+    }
+
+    .anticon {
+      font-size: 14px;
+    }
+  }
+  
+  .table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    flex-wrap: wrap;
+    gap: 16px;
+    
+    .total-count {
+      font-size: 14px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+    
+    @media (max-width: 576px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+}

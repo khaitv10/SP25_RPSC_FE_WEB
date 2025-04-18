@@ -1,161 +1,106 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye } from "react-feather"; 
-import { FaEye } from "react-icons/fa";
+import { Card, Table, Button, Tag, Typography } from "antd";
+import { EyeOutlined } from "@ant-design/icons";
 import getAllRoomTypePending from "../../../Services/Admin/roomTypeAPI";
-import getAllLandlordRequests from "../../../Services/Admin/landlordAPI";
+import dayjs from "dayjs";
 import "./RequestManagement.scss";
 
+const { Title } = Typography;
+
 const RequestManagement = () => {
-  const [activeTab, setActiveTab] = useState("roomTypes");
   const [pendingRoomTypes, setPendingRoomTypes] = useState([]);
-  const [pendingLandlords, setPendingLandlords] = useState([]);
-  const [loadingRoomTypes, setLoadingRoomTypes] = useState(true);
-  const [loadingLandlords, setLoadingLandlords] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRequests, setTotalRequests] = useState(0);
+  const pageSize = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (activeTab === "roomTypes") {
-      fetchPendingRoomTypes();
-    } else {
-      fetchPendingLandlords();
-    }
-  }, [activeTab]);
+    fetchPendingRoomTypes(currentPage);
+  }, [currentPage]);
 
-  const fetchPendingRoomTypes = async () => {
+  const fetchPendingRoomTypes = async (page) => {
     try {
-      setLoadingRoomTypes(true);
-      const roomTypes = await getAllRoomTypePending.getPendingRoomTypes(1, 10);
-      setPendingRoomTypes(roomTypes || []);
+      setLoading(true);
+      const response = await getAllRoomTypePending.getPendingRoomTypes(page, pageSize);
+      setPendingRoomTypes(response || []);
+      setTotalRequests(response?.length || 0);
     } catch (error) {
       console.error("Failed to fetch pending room types:", error);
     } finally {
-      setLoadingRoomTypes(false);
+      setLoading(false);
     }
   };
 
-  const fetchPendingLandlords = async () => {
-    try {
-      setLoadingLandlords(true);
-      const data = await getAllLandlordRequests.getPendingLandlords(1, 10);
-      setPendingLandlords(data);
-    } catch (error) {
-      console.error("Failed to fetch pending landlord requests:", error);
-    } finally {
-      setLoadingLandlords(false);
-    }
-  };
-
-  const handleViewRoomDetails = (roomTypeId) => {
-    navigate(`/admin/request/room-type/${roomTypeId}`);
-  };
-
-  const handleViewLandlordDetails = (landlordId) => {
-    navigate(`/admin/request-management/landlord/${landlordId}`);
-  };
+  const columns = [
+    {
+      title: "Room Type Name",
+      dataIndex: "roomTypeName",
+      key: "roomTypeName",
+    },
+    {
+      title: "Deposit",
+      dataIndex: "deposite",
+      key: "deposite",
+      render: (amount) => `$${amount}`,
+    },
+    {
+      title: "Square (m²)",
+      dataIndex: "square",
+      key: "square",
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm"),
+    },
+    {
+      title: "Landlord",
+      dataIndex: "landlordName",
+      key: "landlordName",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <Tag color={status === "Pending" ? "orange" : "green"}>{status}</Tag>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (record) => (
+        <Button
+          className="view-button"
+          icon={<EyeOutlined />}
+          onClick={() => navigate(`/admin/request/room-type/${record.roomTypeId}`)}
+        >
+        </Button>
+      ),
+    },
+  ];
 
   return (
-    <div className="request-management-container">
-      <h1 className="title">Request Management</h1>
+    <div className="request-management">
+      <Card className="request-card">
+        <Title level={2} style={{ color: "black", fontWeight: "bold"}}>📋 Request Management</Title>
 
-      {/* Tab Navigation */}
-      <div className="tab-navigation">
-        <button className={activeTab === "roomTypes" ? "active" : ""} onClick={() => setActiveTab("roomTypes")}>
-          Room Type Approvals
-        </button>
-        <button className={activeTab === "landlords" ? "active" : ""} onClick={() => setActiveTab("landlords")}>
-          Landlord Account Approvals
-        </button>
-      </div>
-
-      {/* Room Type Requests */}
-      {activeTab === "roomTypes" && (
-        <div className="section">
-          {loadingRoomTypes ? (
-            <p>Loading pending room types...</p>
-          ) : (
-            <table className="request-table">
-              <thead>
-                <tr>
-                  <th>Room Type Name</th>
-                  <th>Deposit</th>
-                  <th>Square (m²)</th>
-                  <th>Created At</th>
-                  <th>Landlord</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pendingRoomTypes.length > 0 ? (
-                  pendingRoomTypes.map((room) => (
-                    <tr key={room.roomTypeId}>
-                      <td>{room.roomTypeName}</td>
-                      <td>${room.deposite}</td>
-                      <td>{room.square}</td>
-                      <td>{new Date(room.createdAt).toLocaleDateString()}</td>
-                      <td>{room.landlordName}</td>
-                      <td>
-                        <button className="icon-btn" onClick={() => handleViewRoomDetails(room.roomTypeId)}>
-                          <span>Details</span>
-                          <FaEye size={20} /> 
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7">No pending room types.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
-      )}
-
-      {/* Landlord Requests */}
-      {activeTab === "landlords" && (
-        <div className="section">
-          {loadingLandlords ? (
-            <p>Loading pending landlord requests...</p>
-          ) : (
-            <table className="request-table">
-              <thead>
-                <tr>
-                  <th>Company Name</th>
-                  <th>License Number</th>
-                  <th>Number of Rooms</th>
-                  <th>Bank Name</th>
-                  <th>Bank Number</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pendingLandlords.length > 0 ? (
-                  pendingLandlords.map((landlord) => (
-                    <tr key={landlord.landlordId}>
-                      <td>{landlord.companyName}</td>
-                      <td>{landlord.licenseNumber}</td>
-                      <td>{landlord.numberRoom}</td>
-                      <td>{landlord.bankName}</td>
-                      <td>{landlord.bankNumber}</td>
-                      <td>
-                        <button className="icon-btn" onClick={() => handleViewLandlordDetails(landlord.landlordId)}>
-                          <Eye size={18} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6">No pending landlord requests.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
-      )}
+        <Table
+          dataSource={pendingRoomTypes}
+          columns={columns}
+          rowKey="roomTypeId"
+          loading={loading}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: totalRequests,
+            onChange: (page) => setCurrentPage(page),
+          }}
+        />
+      </Card>
     </div>
   );
 };
