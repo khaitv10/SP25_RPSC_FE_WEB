@@ -10,8 +10,8 @@ const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const RoomRequestManagement = () => {
-  const [activeTab, setActiveTab] = useState('hasRequests');
-  const [totalRooms, setTotalRooms] = useState(0);
+    const [activeTab, setActiveTab] = useState('hasRequests');
+    const [totalRooms, setTotalRooms] = useState(0);
   const [totalExtendRequests, setTotalExtendRequests] = useState(0); // State for extend contract requests count
  
   // This function can be passed down to the RoomRentalRequestList component to update the badge count
@@ -52,22 +52,22 @@ const RoomRequestManagement = () => {
     }
   };
 
-  return (
-    <div className="room-request-management">
-      <div className="room-request-header">
-        <Title level={2}>
+    return (
+        <div className="room-request-management">
+            <div className="room-request-header">
+                <Title level={2}>
           {getTitleIcon()} {getTitleText()}
-        </Title>
-      </div>
+                </Title>
+                </div>
       <Tabs activeKey={activeTab} onChange={setActiveTab} className="request-tabs">
-        <TabPane
-          tab={
-            <Badge count={totalRooms} offset={[10, 0]} className="tab-badge">
+                <TabPane
+                    tab={
+                        <Badge count={totalRooms} offset={[10, 0]} className="tab-badge">
               <span>Room Rental Requests</span>
-            </Badge>
-          }
-          key="hasRequests"
-        >
+                        </Badge>
+                    }
+                    key="hasRequests"
+                >
           <RoomRentalRequestList updateTotalRooms={updateTotalRooms} />
         </TabPane>
         <TabPane
@@ -89,10 +89,10 @@ const RoomRequestManagement = () => {
           key="extendRequests"
         >
           <RequestExtendContract updateTotalExtendRequests={updateTotalExtendRequests} />
-        </TabPane>
-      </Tabs>
-    </div>
-  );
+                </TabPane>
+            </Tabs>
+        </div>
+    );
 };
 
 export default RoomRequestManagement;
