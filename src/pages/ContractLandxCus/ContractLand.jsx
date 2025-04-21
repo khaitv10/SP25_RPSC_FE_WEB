@@ -20,7 +20,9 @@ const ContractLand = () => {
   const navigate = useNavigate();
 
   const handleViewDetail = (contractId) => {
-    navigate(`/landlord/contract/contract-detail/${contractId}`);
+    navigate(`/landlord/contract/contract-detail/${contractId}`, {
+      state: { from: "/landlord/contract" }
+    });
   };
 
   // Format date string to dd/mm/yyyy

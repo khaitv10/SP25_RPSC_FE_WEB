@@ -1,273 +1,580 @@
 .room-request-management {
-  padding: 24px;
-  background-color: #f5f7fa;
+  padding: 32px;
+  background: linear-gradient(to bottom, #f9fafc 0%, #f5f7fa 100%);
   min-height: 100vh;
   
   .room-request-header {
-    margin: 20px;
-    color: #2d3748;
-    text-align: left;
-    font-weight: bold;
-    font-size: 1.5em;  /* Increased font size */
+    margin: 0 0 32px;
     
-    .title-icon {
-      color: #032240;
-      margin-right: 8px;
+    h2 {
+      color: #262626;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      
+      .title-icon {
+        color: #032240;
+        margin-right: 12px;
+        font-size: 24px;
+      }
+    }
+    
+    .search-container {
+      margin: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   }
   
   .request-tabs {
     .ant-tabs-nav {
       background-color: #fff;
-      padding: 0 16px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 0 20px;
+      margin-bottom: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       
-      /* Make tab text larger */
       .ant-tabs-tab {
-        font-size: 1.1em;
+        font-size: 16px;
         font-weight: 600;
+        padding: 16px 20px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          color: #1890ff;
+        }
+        
+        &.ant-tabs-tab-active {
+          .ant-tabs-tab-btn {
+            color: #1890ff;
+            font-weight: 700;
+          }
+        }
+      }
+      
+      .ant-tabs-ink-bar {
+        background-color: #1890ff;
+        height: 3px;
+        border-radius: 3px 3px 0 0;
       }
     }
     
-    .tab-badge {
-      .ant-badge-count {
-        background-color: #1890ff;
-        font-size: 1em;  /* Larger badge text */
-      }
+    .tab-badge .ant-badge-count {
+      background-color: #1890ff;
+      font-size: 0.85em;
+      box-shadow: 0 2px 6px rgba(24, 144, 255, 0.4);
     }
   }
   
   .room-grid {
-    margin-top: 10px;
+    margin-top: 16px;
   }
   
-  /* Larger room cards */
-  .room-card {
-    border-radius: 8px;  /* Increased border radius */
-    overflow: hidden;
-    transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /* Enhanced shadow */
-    height: 97%;
-    min-height: 420px;  /* Set minimum height for card */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    gap: 16px;
     
-    &:hover {
-      transform: translateY(-6px);  /* More pronounced hover effect */
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    p {
+      color: #8c8c8c;
+      font-size: 16px;
+    }
+  }
+  
+  .pagination-container {
+    margin-top: 32px;
+    text-align: center;
+    
+    .ant-pagination-item {
+      border-radius: 8px;
+      
+      &-active {
+        border-color: #1890ff;
+        font-weight: 600;
+      }
     }
     
-    /* Larger image container */
+    .ant-pagination-options {
+      .ant-select-selector {
+        border-radius: 8px;
+      }
+    }
+  }
+  
+  // Room Card Styles
+  .room-card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    min-height: 420px;
+    background-color: #fff;
+    border: none;
+    
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+    
+    .ant-card-body {
+      padding: 0;
+    }
+    
     .room-image {
       position: relative;
-      height: 240px;  /* Increased image height */
+      height: 220px;
       overflow: hidden;
       
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
+        transition: transform 0.5s ease;
       }
       
-      .request-count-badge {
+      &:hover img {
+        transform: scale(1.05);
+      }
+      
+      .request-count-badge .ant-badge-count {
         position: absolute;
-        top: 10px;
-        right: 10px;
+        top: 12px;
+        right: 12px;
+        background: linear-gradient(135deg, #05c581 0%, #01d837 100%);
+        box-shadow: 0 4px 10px rgba(1, 216, 55, 0.4);
+        font-size: 14px;
+        font-weight: bold;
+        padding: 4px 12px;
+        height: auto;
+        line-height: normal;
+        border-radius: 20px;
+        min-width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.8);
         
-        .ant-badge-count {
-          background-color: #01d837;
-          box-shadow: 0 4px 10px rgba(0, 255, 72, 0.578);
-          font-size: 1.2rem;  
-          font-weight: bold;
-          padding: 4px 12px;  
-          height: auto;
-          line-height: normal;
-          border-radius: 20px;
-          transition: all 0.3s ease-in-out;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-width: 30px; 
-        
-          &[data-count="99+"] {
-            background-color: #f5222d; 
-            box-shadow: 0 4px 10px rgba(245, 34, 45, 0.5);
-          }
+        &[data-count="99+"] {
+          background: linear-gradient(135deg, #ff4d4f 0%, #f5222d 100%);
+          box-shadow: 0 4px 10px rgba(245, 34, 45, 0.5);
         }
       }
     }
     
     .room-info {
-      padding: 10px 16px;
+      padding: 20px;
       
-      h4.ant-typography {
-        margin-bottom: 14px;
-        font-weight: 700;  
-        font-size: 1.3em;  /* Larger title */
+      h4 {
+        margin-bottom: 16px;
+        font-weight: 700;
+        font-size: 18px;
+        color: #262626;
+        line-height: 1.4;
+        display: -webkit-box;
+        // -webkit-line-clamp: 2;
+        // -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 50px;
       }
       
       .room-details {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
         
         .detail-item {
-          font-weight: 500;
-          margin-bottom: 10px;
+          margin-bottom: 12px;
           display: flex;
           align-items: center;
-          font-size: 1.1em;  
+          font-size: 14px;
+          color: #595959;
           
           .detail-icon {
-            color: #060606;
             margin-right: 10px;
-            font-size: 1em; 
+            font-size: 16px;
           }
         }
       }
       
       .view-requests-btn {
-        border-radius: 6px;
-        font-size: 1.05em;  /* Slightly smaller font */
+        border-radius: 8px;
         font-weight: 500;
-        height: 36px;  /* Shorter button height */
-        background-color: #414141;
-        padding: 0 12px;  /* Reduced horizontal padding */
+        height: 40px;
+        font-size: 15px;
+        background: linear-gradient(135deg, #3a3a3a 0%, #262926 100%);
+        border: none;
+        box-shadow: 0 2px 8px rgba(38, 41, 38, 0.2);
         
-        &:hover {
-          background-color: #2a2a2a;
+        &:hover, &:focus {
+          background: linear-gradient(135deg, #262926 0%, #1a1a1a 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(38, 41, 38, 0.3);
         }
         
-        &:focus {
-          background-color: #414141;
-          border-color: #5b5b5b;
+        &:disabled {
+          background: #f5f5f5;
+          color: #bfbfbf;
+          border: 1px solid #d9d9d9;
+          box-shadow: none;
         }
       }
     }
   }
   
+  // Modal and Drawer Styles
   .requests-modal {
+    .ant-modal-content {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+    
     .ant-modal-header {
-      .ant-modal-title {
-        font-size: 1.5em;  
+      padding: 20px 24px;
+      border-bottom: 1px solid #f0f0f0;
+      background-color: #fafafa;
+    }
+    
+    .modal-title {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 600;
+      
+      .modal-icon {
+        margin-right: 12px;
+        color: #1890ff;
+        font-size: 20px;
       }
     }
     
-    .ant-modal-content {
-      border-radius: 8px;
-      overflow: hidden;
+    .ant-modal-body {
+      padding: 24px;
     }
     
-    .request-list {
-      .ant-list-item {
-        padding: 16px;
-        border-radius: 8px;
-        margin-bottom: 12px;
-        border: 1px solid #f0f0f0;
-        transition: all 0.3s;
+    .request-list .ant-list-item {
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #f0f0f0;
+      background-color: #fafafa;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        background-color: #fff;
+        border-color: #e6f7ff;
+      }
+      
+      .ant-list-item-meta {
+        align-items: center;
         
-        &:hover {
-          background-color: #f9f9f9;
+        .ant-list-item-meta-avatar {
+          margin-right: 16px;
+          
+          .ant-avatar {
+            border: 2px solid #e6f7ff;
+          }
         }
         
         .ant-list-item-meta-title {
           margin-bottom: 8px;
-          font-size: 1.1em;  /* Larger name */
+          font-size: 16px;
+          line-height: 1.5;
         }
         
         .request-brief {
-          div {
-            margin-bottom: 4px;
-            font-size: 1.05em;  /* Larger details */
-            
-            .detail-icon {
-              color: #1890ff;
-              margin-right: 8px;
-            }
+          line-height: 1.6;
+          color: #8c8c8c;
+          
+          .detail-icon {
+            margin-right: 6px;
+            color: #1890ff;
           }
         }
+      }
+      
+      .details-button {
+        border-radius: 8px;
+        background-color: #1890ff;
+        border: none;
+        box-shadow: 0 2px 6px rgba(24, 144, 255, 0.25);
         
-        .ant-tag {
-          margin-right: 16px;
-          font-size: 0.95em;  /* Larger tag text */
+        &:hover {
+          background-color: #40a9ff;
+          box-shadow: 0 4px 8px rgba(24, 144, 255, 0.35);
         }
       }
     }
   }
   
   .request-details-drawer {
-    .ant-drawer-header {
-      .ant-drawer-title {
-        font-size: 1.3em;  /* Larger drawer title */
+    .drawer-title {
+      display: flex;
+      align-items: center;
+      
+      .drawer-icon {
+        margin-right: 12px;
+        color: #1890ff;
+        font-size: 20px;
       }
-    }
-    
-    .ant-drawer-content-wrapper {
-      box-shadow: -4px 0 12px rgba(0, 0, 0, 0.12);
-    }
-    
-    .ant-drawer-body {
-      padding: 24px;
     }
     
     .customer-avatar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 24px;
+      text-align: center;
+      padding: 20px 0;
       
-      .ant-avatar {
-        margin-bottom: 12px;
-      }
-      
-      h4.ant-typography {
-        margin: 0;
-        font-size: 1.2em;  /* Larger name */
+      .profile-avatar {
+        border: 4px solid #e6f7ff;
+        box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
       }
     }
     
+    .section-divider {
+      margin: 24px 0;
+    }
+    
+    .section-title {
+      color: #262626;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    
     .detail-section {
-      .section-title {
-        font-size: 1.2em;  /* Larger section titles */
-        font-weight: 600;
-      }
+      margin-bottom: 24px;
       
       .detail-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 16px;
-        font-size: 1.05em;  /* Larger detail text */
+        &:hover {
+          background-color: #f0f7ff;
+          box-shadow: 0 2px 6px rgba(24, 144, 255, 0.1);
+        }
         
-        .anticon {
+        .icon-wrapper {
           color: #1890ff;
-          margin-right: 6px;
+          font-size: 18px;
+        }
+        
+        .status-tag {
+          font-weight: 500;
+          padding: 4px 8px;
+          border-radius: 4px;
         }
       }
     }
     
     .message-section {
-      .section-title {
-        font-size: 1.2em;  /* Larger section titles */
-        font-weight: 600;
-      }
-      
       .message-card {
-        margin-top: 12px;
-        background-color: #f5f7fa;
-        border-radius: 8px;
-        font-size: 1.05em;  /* Larger message text */
+        background-color: #f9fafc;
+        border: 1px solid #e6f7ff;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 15px;
+        color: #595959;
+        margin-bottom: 24px;
       }
     }
     
     .drawer-footer {
       display: flex;
       justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 0;
       
-      button {
-        margin-left: 8px;
-        font-size: 1.05em;  /* Larger button text */
+      .cancel-button {
+        border-radius: 8px;
+      }
+      
+      .approve-button {
+        border-radius: 8px;
+        background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+        border: none;
+        box-shadow: 0 2px 8px rgba(24, 144, 255, 0.25);
+        
+        &:hover {
+          background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          box-shadow: 0 4px 12px rgba(24, 144, 255, 0.35);
+        }
+      }
+    }
+  }
+  
+  .confirm-modal {
+    .ant-modal-content {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .confirm-modal-title {
+      display: flex;
+      align-items: center;
+      
+      .confirm-icon {
+        color: #faad14;
+        font-size: 20px;
+        margin-right: 12px;
       }
     }
     
+    .confirm-message {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    
+    .confirm-note {
+      color: #8c8c8c;
+      font-size: 14px;
+    }
+    
+    .cancel-button {
+      border-radius: 8px;
+    }
+    
+    .confirm-button {
+      border-radius: 8px;
+      background-color: #1890ff;
+      border: none;
+      
+      &:hover {
+        background-color: #40a9ff;
+      }
+    }
+  }
+  
+  // Leave Room Request Styling
+  .leave-room-section {
+    .leave-request-card {
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s;
+      overflow: hidden;
+      border: none;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      }
+      
+      .card-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid #f0f0f0;
+        
+        .tenant-info {
+          display: flex;
+          align-items: center;
+          
+          .tenant-avatar {
+            margin-right: 16px;
+            border: 2px solid #e6f7ff;
+          }
+          
+          .tenant-details {
+            h4 {
+              margin-bottom: 4px;
+              font-weight: 600;
+            }
+          }
+        }
+        
+        .request-meta {
+          text-align: right;
+          
+          .status-tag {
+            margin-bottom: 8px;
+            padding: 4px 10px;
+            font-weight: 500;
+          }
+          
+          .request-date {
+            color: #8c8c8c;
+            font-size: 14px;
+          }
+          
+          .accept-button {
+            margin-top: 10px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.25);
+            
+            &:hover {
+              background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+              box-shadow: 0 4px 12px rgba(24, 144, 255, 0.35);
+            }
+          }
+        }
+      }
+      
+      .info-cards {
+        padding: 20px;
+        
+        .info-card {
+          height: 100%;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          
+          .ant-card-head {
+            border-bottom: 1px solid #f0f0f0;
+            background-color: #fafafa;
+            border-radius: 8px 8px 0 0;
+            
+            .ant-card-head-title {
+              font-weight: 600;
+              font-size: 16px;
+            }
+          }
+          
+          .info-item {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            
+            .info-icon {
+              color: #1890ff;
+              margin-right: 8px;
+              font-size: 16px;
+            }
+            
+            .info-label {
+              margin-right: 6px;
+            }
+          }
+          
+          .designated-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            
+            .designated-avatar {
+              margin-right: 12px;
+              border: 2px solid #e6f7ff;
+            }
+          }
+        }
+      }
+      
+      .room-description {
+        padding: 0 20px 20px;
+        
+        .description-title {
+          font-weight: 600;
+          margin-right: 8px;
+        }
+        
+        .description-text {
+          color: #595959;
+          font-size: 15px;
+          line-height: 1.6;
+        }
+      }
+    }
   }
 }

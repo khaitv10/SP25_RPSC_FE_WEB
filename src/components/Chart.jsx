@@ -28,7 +28,13 @@ const getMonthName = (month) => {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
-  return months[parseInt(month) - 1] || month;
+  // Convert to integer to handle both '4' and '04' formats
+  return months[parseInt(month, 10) - 1] || month;
+};
+
+// Normalize month format (handles both '4' and '04')
+const normalizeMonth = (month) => {
+  return parseInt(month, 10).toString();
 };
 
 const Chart = ({ data }) => {
@@ -38,39 +44,64 @@ const Chart = ({ data }) => {
 
   // Process data for chart
   useEffect(() => {
+    // Create a base array with all 12 months initialized with zero values
+    const allMonths = Array.from({ length: 12 }, (_, i) => {
+      const monthNum = (i + 1).toString();
+      return {
+        month: monthNum,
+        actualValue: 0,
+        name: getMonthName(monthNum)
+      };
+    });
+    
+    // Merge provided data with the base array
     if (data && data.length > 0) {
-      // Sort data by month first
-      const sortedData = [...data].sort((a, b) => parseInt(a.month) - parseInt(b.month));
+      console.log("Original data:", data);
       
-      // Format month names and find max value for scaling
-      const processedData = sortedData.map(item => ({
-        ...item,
-        month: getMonthName(item.month),
-        displayValue: item.actualValue // Keep original for animation
-      }));
+      // Create a map of existing data by month (normalized)
+      const dataMap = {};
+      data.forEach(item => {
+        const normalizedMonth = normalizeMonth(item.month);
+        dataMap[normalizedMonth] = item.actualValue;
+        console.log(`Mapping month ${item.month} (normalized: ${normalizedMonth}) to value ${item.actualValue}`);
+      });
       
-      setChartData(processedData);
+      // Update the base array with actual values where they exist
+      allMonths.forEach((item) => {
+        const normalizedMonth = normalizeMonth(item.month);
+        if (dataMap[normalizedMonth]) {
+          item.actualValue = dataMap[normalizedMonth];
+          console.log(`Set month ${item.month} (${item.name}) to value ${item.actualValue}`);
+        }
+      });
       
       // Find max value for proper scaling
-      const max = Math.max(...processedData.map(item => item.actualValue));
+      const max = Math.max(...allMonths.map(item => item.actualValue), 1000);
       setMaxValue(max);
+      
+      console.log("Processed chart data:", allMonths);
+      setChartData(allMonths);
       
       // Trigger animation after data is set
       setTimeout(() => {
         setAnimateChart(true);
       }, 100);
+    } else {
+      // If no data, still show all months with zero values
+      setChartData(allMonths);
+      setMaxValue(1000); // Default max for empty chart
     }
   }, [data]);
 
   return (
-    <ResponsiveContainer width="100%" height={320}>
+    <ResponsiveContainer width="100%" height={350}>
       <BarChart 
         data={chartData} 
         margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
         <XAxis 
-          dataKey="month" 
+          dataKey="name" 
           axisLine={false}
           tickLine={false}
           tick={{ fill: '#6B7280', fontSize: 12 }}
@@ -92,39 +123,27 @@ const Chart = ({ data }) => {
           isAnimationActive={animateChart}
           animationDuration={1500}
           animationEasing="ease-out"
-          className="transition-all duration-300"
         >
-          {chartData.map((entry, index) => (
-            <rect 
-              key={`bar-${index}`} 
-              fill={`url(#barGradient-${index})`} 
-              className="hover:opacity-80 transition-opacity cursor-pointer"
-            />
-          ))}
-          
-          {/* Dynamic gradients based on value */}
           {chartData.map((entry, index) => {
             const ratio = entry.actualValue / (maxValue || 1);
-            let startColor, endColor;
+            let barColor;
             
-            if (ratio > 0.7) {
-              startColor = "#3B82F6"; // blue-500
-              endColor = "#1E40AF"; // blue-800
+            if (entry.actualValue === 0) {
+              barColor = "#F3F4F6"; // Lighter gray for zero values
+            } else if (ratio > 0.7) {
+              barColor = "#60A5FA"; // Brighter blue for high values
             } else if (ratio > 0.4) {
-              startColor = "#10B981"; // green-500
-              endColor = "#065F46"; // green-800
+              barColor = "#34D399"; // Brighter green for medium values
             } else {
-              startColor = "#F59E0B"; // amber-500
-              endColor = "#92400E"; // amber-800
+              barColor = "#FBBF24"; // Brighter amber for low values
             }
             
             return (
-              <defs key={`gradient-${index}`}>
-                <linearGradient id={`barGradient-${index}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={startColor} />
-                  <stop offset="100%" stopColor={endColor} />
-                </linearGradient>
-              </defs>
+              <cell 
+                key={`cell-${index}`} 
+                fill={barColor}
+                style={{ filter: entry.actualValue > 0 ? "drop-shadow(0px 2px 3px rgba(0,0,0,0.1))" : "none" }}
+              />
             );
           })}
         </Bar>

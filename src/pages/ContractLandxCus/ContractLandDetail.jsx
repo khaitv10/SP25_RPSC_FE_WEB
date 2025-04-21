@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getContractDetail, confirmContractAndCreateRoomStay } from "../../Services/Landlord/contractLandlord";
 import { ArrowLeft, FileText, User, Home, Calendar, Clock, Upload, Tag, MapPin, CreditCard, UserCheck, Phone, Mail, Users } from "lucide-react";
 import { toast } from "react-toastify";
@@ -7,9 +7,14 @@ import "./ContractLandDetail.scss";
 
 const ContractLandDetail = () => {
   const { contractId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [contract, setContract] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploadLoading, setUploadLoading] = useState(false);
+
+  // Get the referring page from location state, default to contracts list
+  const referringPage = location.state?.from || "c";
 
   useEffect(() => {
     const fetchContractDetail = async () => {
@@ -27,6 +32,11 @@ const ContractLandDetail = () => {
 
     fetchContractDetail();
   }, [contractId]);
+
+  const handleGoBack = () => {
+    navigate(referringPage);
+  };
+
 
   const formatDate = (dateString) => {
     return dateString 
@@ -119,28 +129,32 @@ const ContractLandDetail = () => {
   }
 
   return (
-    <div className="contract-detail">
+<div className="contract-detail">
       <div className="detail-card">
         {/* Header */}
         <div className="contract-header">
-          <button 
-            onClick={() => window.history.back()}
-            className="back-button"
-          >
-            <ArrowLeft className="icon" />
-          </button>
-          <div className="header-content">
-            <div className="header-icon">
-              <FileText className="icon" />
-            </div>
-            <h1 className="header-title">Contract Details</h1>
-          </div>
-          <div className="status-badge">
-            <span className={`status ${getStatusColor(contract.status)}`}>
-              {contract.status}
-            </span>
-          </div>
-        </div>
+  <div className="back-button-container">
+    <button 
+      onClick={handleGoBack}
+      className="back-button"
+      aria-label="Go Back"
+    >
+      <ArrowLeft className="icon" />
+    </button>
+  </div>
+  <div className="header-content">
+    <div className="header-icon">
+      <FileText className="icon" />
+    </div>
+    <h1 className="header-title">Contract Details</h1>
+  </div>
+  <div className="status-badge">
+    <span className={`status ${getStatusColor(contract?.status)}`}>
+      {contract?.status}
+    </span>
+  </div>
+</div>
+
 
         {/* Contract Overview Section */}
         <div className="section-grid">
