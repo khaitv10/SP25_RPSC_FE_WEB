@@ -1,0 +1,436 @@
+.post-room-detail {
+  padding: 24px;
+  background: #f8f9fa;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    .back-button {
+      margin-left: auto;
+    }
+  }
+
+  .loading-container, .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    padding: 40px;
+    
+    p {
+      margin-top: 16px;
+      color: #888;
+    }
+  }
+
+  .room-detail-card {
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+  }
+
+  .room-header {
+    margin-bottom: 24px;
+
+    .room-title-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+
+      h2 {
+        margin-right: 12px;
+        margin-bottom: 8px;
+        font-size: 28px;
+        font-weight: 600;
+      }
+
+      .title-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .package-label {
+          margin-top: 4px;
+          font-size: 14px;
+          padding: 4px 12px;
+        }
+
+        .action-buttons {
+          display: flex;
+          gap: 8px;
+        }
+      }
+    }
+
+    .room-location {
+      color: #666;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+  }
+
+  .room-carousel-container {
+    margin-bottom: 24px;
+
+    .room-carousel {
+      margin-bottom: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      .carousel-item {
+        height: 500px;
+        background: #f5f5f5;
+        overflow: hidden;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+
+          &:hover {
+            transform: scale(1.02);
+          }
+        }
+      }
+    }
+
+    .thumbnail-gallery {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      
+      &::-webkit-scrollbar {
+        height: 6px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background-color: #d9d9d9;
+        border-radius: 3px;
+      }
+
+      .thumbnail-item {
+        flex: 0 0 auto;
+        width: 100px;
+        height: 70px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 2px solid #eee;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          border-color: #1890ff;
+          transform: translateY(-2px);
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+
+  .quick-info {
+    margin: 24px 0;
+
+    .info-card {
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      height: 100%;
+      background: #f9f9f9;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+
+    .amenity-tag {
+      padding: 8px 14px;
+      font-size: 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .detail-side-card {
+    margin-bottom: 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border: none;
+
+    .ant-card-head {
+      border-bottom: 1px solid #f0f0f0;
+      background-color: #fafafa;
+      font-weight: 600;
+    }
+  }
+
+  .price-card {
+    margin-bottom: 24px;
+    background: linear-gradient(to right bottom, #f6ffed, #e6f7ff);
+    border: none;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+
+    .price-statistic {
+      .ant-statistic-title {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 12px;
+      }
+      
+      .ant-statistic-content {
+        color: #389e0d;
+        font-size: 32px;
+        font-weight: 700;
+      }
+    }
+
+    .available-date {
+      margin: 20px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 15px;
+    }
+
+    .price-card-actions {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .contact-btn {
+        height: 48px;
+        font-size: 16px;
+        background: #1890ff;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(24, 144, 255, 0.2);
+        
+        &:hover {
+          background: #096dd9;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(24, 144, 255, 0.3);
+        }
+      }
+
+      .tour-btn {
+        height: 48px;
+        font-size: 16px;
+        border-radius: 8px;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+
+  .landlord-card {
+    .landlord-info {
+      display: flex;
+      gap: 16px;
+      padding: 12px 0;
+
+      .landlord-avatar {
+        background: #e6f7ff;
+        border: 2px solid #1890ff;
+      }
+
+      .landlord-details {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+
+        .landlord-name {
+          font-size: 18px;
+          margin-bottom: 0;
+        }
+
+        .rating {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 4px;
+
+          .ant-rate {
+            font-size: 14px;
+          }
+        }
+
+        .company-name {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-bottom: 12px;
+        }
+
+        .landlord-contact {
+          display: flex;
+          gap: 12px;
+        }
+      }
+    }
+  }
+
+  .services-card {
+    .ant-list-item {
+      padding: 16px 0;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background-color: #f9f9f9;
+      }
+    }
+    
+    .service-price {
+      font-weight: 600;
+      color: #1890ff;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+  }
+
+  .address-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: none;
+  }
+
+  .details-table {
+    .ant-descriptions-item-label {
+      background-color: #fafafa;
+      font-weight: 500;
+    }
+  }
+
+  .room-description {
+    .ant-typography {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+    }
+  }
+
+  .image-preview-modal {
+    .ant-modal-content {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .ant-modal-body {
+      padding: 0;
+      background: #000;
+    }
+    
+    img {
+      max-height: 80vh;
+      object-fit: contain;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    
+    .page-header {
+      padding: 12px 16px;
+    }
+    
+    .room-carousel-container {
+      .room-carousel {
+        .carousel-item {
+          height: 280px;
+        }
+      }
+    }
+    
+    .price-card {
+      .price-card-actions {
+        .contact-btn, .tour-btn {
+          height: 44px;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .room-header {
+      .room-title-section {
+        h2 {
+          font-size: 24px;
+        }
+      }
+    }
+    
+    .amenities-list {
+      .amenity-tag {
+        padding: 6px 10px;
+      }
+    }
+    
+    .room-carousel-container {
+      .room-carousel {
+        .carousel-item {
+          height: 220px;
+        }
+      }
+    }
+  }
+}

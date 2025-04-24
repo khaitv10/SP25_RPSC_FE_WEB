@@ -24,8 +24,7 @@ const AdminPackageDetail = () => {
     type: "",
     highLightTime: "",
     maxPost: "",
-    label: "",
-    status: ""
+    label: ""
   });
   const [newService, setNewService] = useState({
     packageId: packageId,
@@ -46,8 +45,7 @@ const AdminPackageDetail = () => {
         type: data.type || "",
         highLightTime: data.highLightTime || "",
         maxPost: data.maxPost || null,
-        label: data.label || "",
-        status: data.status || "Active"
+        label: data.label || ""
       });
     } catch (error) {
       message.error("Lỗi khi tải dữ liệu gói dịch vụ!");
@@ -80,7 +78,7 @@ const AdminPackageDetail = () => {
         null, // newPriorityTime (not being edited in UI)
         editPackage.maxPost,
         editPackage.label,
-        editPackage.status
+        packageInfo.status // Keep the current status
       );
       
       toast.success("🎉 Cập nhật gói dịch vụ thành công!");
@@ -104,7 +102,7 @@ const AdminPackageDetail = () => {
       newName: selectedService?.name,
       newDuration: selectedService?.duration,
       newDescription: selectedService?.description,
-      newStatus: selectedService?.status // Include status in the log
+      newStatus: selectedService?.status // Keep the current status
     });
   
     try {
@@ -114,7 +112,7 @@ const AdminPackageDetail = () => {
         selectedService?.name,
         selectedService?.duration,
         selectedService?.description,
-        selectedService?.status // Include status in the API call
+        selectedService?.status // Keep the current status
       );
   
       console.log("✅ Phản hồi từ server:", response);
@@ -127,6 +125,47 @@ const AdminPackageDetail = () => {
     } catch (error) {
       console.error("❌ Lỗi khi cập nhật:", error);
       message.error(error.message || "❌ Lỗi khi cập nhật dịch vụ.");
+    }
+  };
+
+  const handleTogglePackageStatus = async () => {
+    try {
+      const newStatus = packageInfo.status === "Active" ? "Inactive" : "Active";
+      
+      await updateServicePackage(
+        packageId,
+        packageInfo.type,
+        packageInfo.highLightTime,
+        null, // newPriorityTime (not being edited in UI)
+        packageInfo.maxPost,
+        packageInfo.label,
+        newStatus
+      );
+      
+      toast.success(`🎉 Đã ${newStatus === "Active" ? "kích hoạt" : "vô hiệu hóa"} gói dịch vụ!`);
+      fetchPackageDetails();
+    } catch (error) {
+      toast.error(error.message || "❌ Lỗi khi cập nhật trạng thái gói dịch vụ.");
+    }
+  };
+
+  const handleToggleServiceStatus = async (record) => {
+    const newStatus = record.status === "Active" ? "Inactive" : "Active";
+    
+    try {
+      await updatePrice(
+        record.priceId, 
+        record.price,
+        record.name,
+        record.duration,
+        record.description,
+        newStatus
+      );
+  
+      toast.success(`🎉 Đã ${newStatus === "Active" ? "kích hoạt" : "vô hiệu hóa"} dịch vụ!`);
+      fetchPackageDetails();
+    } catch (error) {
+      toast.error(error.message || "❌ Lỗi khi cập nhật trạng thái dịch vụ.");
     }
   };
   
@@ -155,7 +194,7 @@ const AdminPackageDetail = () => {
   
     try {
       await createServiceDetail(newService);
-      toast.success("🎉 Thêm dịch vụ thành công!", { duration: 5000 }); // Hiển thị 5 giây
+      toast.success("🎉 Thêm dịch vụ thành công!", { duration: 5000 });
   
       // 🛠 Reset lại form nhập
       setNewService({
@@ -214,6 +253,20 @@ const AdminPackageDetail = () => {
                     <span className="icon">📌</span> {packageInfo.type}
                   </div>
                   <div className="status-container">
+                    <Button 
+                      className="status-toggle-button"
+                      onClick={handleTogglePackageStatus}
+                      disabled={isServicesInUse}
+                      title={isServicesInUse ? "Cannot change status while services are in use" : "Toggle status"}
+                      style={{ 
+                        backgroundColor: statusStyle.bg, 
+                        color: statusStyle.color,
+                        borderColor: statusStyle.color,
+                        marginRight: "10px"
+                      }}
+                    >
+                      {packageInfo.status === "Active" ? "Deactivate" : "Activate"}
+                    </Button>
                     <div className="status-badge" style={{ backgroundColor: statusStyle.bg, color: statusStyle.color }}>
                       {packageInfo.status}
                     </div>
@@ -321,21 +374,39 @@ const AdminPackageDetail = () => {
                     title: "✏️ Action",
                     key: "action",
                     render: (_, record) => (
-                      <Button 
-                        type="primary" 
-                        className="edit-button" 
-                        onClick={() => handleEditPrice(record)}
-                        disabled={isServicesInUse}
-                        title={isServicesInUse ? "Cannot edit while any service is in use" : "Edit service"}
-                        style={{
-                          backgroundColor: "#3b82f6",
-                          borderRadius: "8px",
-                          fontWeight: "500",
-                          border: "none"
-                        }}
-                      >
-                        Edit
-                      </Button>
+                      <div className="action-buttons">
+                        <Button 
+                          type="primary" 
+                          className="edit-button" 
+                          onClick={() => handleEditPrice(record)}
+                          disabled={isServicesInUse}
+                          title={isServicesInUse ? "Cannot edit while any service is in use" : "Edit service"}
+                          style={{
+                            backgroundColor: "#3b82f6",
+                            borderRadius: "8px",
+                            fontWeight: "500",
+                            border: "none",
+                            marginRight: "8px"
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button 
+                          className="status-toggle-button"
+                          onClick={() => handleToggleServiceStatus(record)}
+                          disabled={isServicesInUse}
+                          title={isServicesInUse ? "Cannot change status while services are in use" : "Toggle status"}
+                          style={{ 
+                            backgroundColor: record.status === "Active" ? "#FFF1F2" : "#ECFDF5",
+                            color: record.status === "Active" ? "#F43F5E" : "#10B981",
+                            borderColor: record.status === "Active" ? "#F43F5E" : "#10B981",
+                            borderRadius: "8px",
+                            fontWeight: "500"
+                          }}
+                        >
+                          {record.status === "Active" ? "Deactivate" : "Activate"}
+                        </Button>
+                      </div>
                     ),
                   },
                 ]}
@@ -397,18 +468,6 @@ const AdminPackageDetail = () => {
               step="1000" 
             />
           </div>
-
-          <div className="form-group">
-            <label>Status</label>
-            <Select
-              value={selectedService?.status || "Active"}
-              onChange={(value) => setSelectedService({ ...selectedService, status: value })}
-              style={{ width: '100%' }}
-            >
-              <Option value="Active">Active</Option>
-              <Option value="Inactive">Inactive</Option>
-            </Select>
-          </div>
         </div>
       </Modal>
 
@@ -461,18 +520,6 @@ const AdminPackageDetail = () => {
               value={editPackage.label}
               onChange={(e) => setEditPackage({ ...editPackage, label: e.target.value })}
             />
-          </div>
-
-          <div className="form-group">
-            <label>Status</label>
-            <Select
-              value={editPackage.status}
-              onChange={(value) => setEditPackage({ ...editPackage, status: value })}
-              style={{ width: '100%' }}
-            >
-              <Option value="Active">Active</Option>
-              <Option value="Inactive">Inactive</Option>
-            </Select>
           </div>
         </div>
       </Modal>
@@ -538,18 +585,6 @@ const AdminPackageDetail = () => {
                 onChange={(e) => setNewService({ ...newService, price: e.target.value })}
                 min="1"
               />
-            </div>
-
-            <div className="form-group">
-              <label>Status</label>
-              <Select
-                value={newService.status}
-                onChange={(value) => setNewService({ ...newService, status: value })}
-                style={{ width: '100%' }}
-              >
-                <Option value="Active">Active</Option>
-                <Option value="Inactive">Inactive</Option>
-              </Select>
             </div>
           </div>
         </Modal>

@@ -39,6 +39,7 @@ import LandlordProfile from "../pages/Landlord/LandlordProfile/LandlordProfile";
 import LeaveRoomRequestList from "../pages/Landlord/LeaveRoomRequestList";
 import PostList from "../pages/Landlord/PostList";
 import ConfirmPayment from "../pages/PackageContract/ConfirmPayment";
+import PostRoomDetail from "../pages/Landlord/PostRoomDetail";
 
 const AppRoutes = () => {
   return (
@@ -88,6 +89,7 @@ export const LandlordRoutes = () => {
       <Route path="/contract-detail/:contractId" element={<PrivateRoute allowedRoles={["Landlord"]}><HistoryContractDetail /></PrivateRoute>} />
       <Route path="landlord-profile" element={<PrivateRoute allowedRoles={["Landlord"]}><LandlordProfile /></PrivateRoute>} />
       <Route path="post" element={<PrivateRoute allowedRoles={["Landlord"]}><PostList /></PrivateRoute>} />
+      <Route path="post/roompostdetail/:roomId" element={<PrivateRoute allowedRoles={["Landlord"]}><PostRoomDetail /></PrivateRoute>} />
 
       {/* Fallback route for /landlord/* */}
       <Route path="*" element={<NotFoundPage />} />

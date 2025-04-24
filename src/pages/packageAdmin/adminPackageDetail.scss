@@ -110,6 +110,28 @@
           display: flex;
           align-items: center;
 
+          .status-toggle-button {
+            border-radius: 8px;
+            font-weight: 500;
+            height: 36px;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            &[disabled] {
+              opacity: 0.6;
+              cursor: not-allowed;
+              
+              &:hover {
+                transform: none;
+                box-shadow: none;
+              }
+            }
+          }
+
           .status-badge {
             border-radius: 30px;
             padding: 8px 16px;
@@ -298,6 +320,12 @@
             font-weight: 600;
             color: #6366f1;
           }
+          
+          .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
 
           .edit-button {
             border-radius: 8px;
@@ -321,6 +349,27 @@
                 transform: none;
                 box-shadow: none;
                 background-color: #e5e7eb;
+              }
+            }
+          }
+          
+          .status-toggle-button {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            &[disabled] {
+              opacity: 0.6;
+              cursor: not-allowed;
+              
+              &:hover {
+                transform: none;
+                box-shadow: none;
               }
             }
           }

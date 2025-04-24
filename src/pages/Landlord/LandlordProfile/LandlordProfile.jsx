@@ -57,7 +57,7 @@ const LandlordProfile = () => {
         }
       }
     } catch (error) {
-      toast.error("Không thể tải thông tin hồ sơ");
+      toast.error("Unable to load profile information");
     } finally {
       setLoading(false);
     }
@@ -107,14 +107,14 @@ const LandlordProfile = () => {
       const response = await updateUserProfile(updateData);
       
       if (response.isSuccess) {
-        toast.success("Cập nhật thông tin cá nhân thành công");
+        toast.success("Personal information updated successfully");
         setEditMode((prev) => ({ ...prev, user: false }));
         fetchProfileData();
         // Clear the file object after successful update
         setAvatarFile(null);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Cập nhật thông tin thất bại");
+      toast.error(error.response?.data?.message || "Information update failed");
     } finally {
       setLoading(false);
     }
@@ -133,12 +133,12 @@ const LandlordProfile = () => {
       });
       
       if (response.isSuccess) {
-        toast.success("Cập nhật thông tin chủ trọ thành công");
+        toast.success("Landlord information updated successfully");
         setEditMode((prev) => ({ ...prev, landlord: false }));
         fetchProfileData();
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Cập nhật thông tin thất bại");
+      toast.error(error.response?.data?.message || "Information update failed");
     } finally {
       setLoading(false);
     }
@@ -156,22 +156,22 @@ const LandlordProfile = () => {
   return (
     <div className="landlord-profile-container">
       <div className="profile-header">
-        <h1>Hồ Sơ Chủ Trọ</h1>
-        <p>Quản lý thông tin cá nhân và doanh nghiệp của bạn</p>
+        <h1>Landlord Profile</h1>
+        <p>Manage your personal and business information</p>
       </div>
 
       <div className="profile-content">
         {/* User Information Section */}
         <div className="info-card user-info">
           <div className="card-header">
-            <h2>Thông Tin Cá Nhân</h2>
+            <h2>Personal Information</h2>
             <button
               className="edit-btn"
               onClick={() =>
                 setEditMode((prev) => ({ ...prev, user: !prev.user }))
               }
             >
-              {editMode.user ? "Hủy" : "Chỉnh sửa"}
+              {editMode.user ? "Cancel" : "Edit"}
             </button>
           </div>
           <div className="card-body">
@@ -188,7 +188,7 @@ const LandlordProfile = () => {
                     accept="image/*" 
                     onChange={handleAvatarChange} 
                   />
-                  <span>Thay đổi ảnh</span>
+                  <span>Change image</span>
                 </label>
               )}
             </div>
@@ -204,7 +204,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Họ và tên</label>
+                  <label>Full Name</label>
                   <input
                     type="text"
                     name="fullName"
@@ -214,7 +214,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Số điện thoại</label>
+                  <label>Phone Number</label>
                   <input
                     type="tel"
                     name="phoneNumber"
@@ -224,7 +224,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Ngày sinh</label>
+                  <label>Date of Birth</label>
                   <input
                     type="date"
                     name="dob"
@@ -234,7 +234,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Địa chỉ</label>
+                  <label>Address</label>
                   <input
                     type="text"
                     name="address"
@@ -244,22 +244,22 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Giới tính</label>
+                  <label>Gender</label>
                   <select
                     name="gender"
                     value={userData.gender}
                     onChange={handleUserChange}
                     disabled={!editMode.user}
                   >
-                    <option value="Male">Nam</option>
-                    <option value="Female">Nữ</option>
-                    <option value="Other">Khác</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
               </div>
               {editMode.user && (
                 <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? "Đang cập nhật..." : "Lưu thay đổi"}
+                  {loading ? "Updating..." : "Save changes"}
                 </button>
               )}
             </form>
@@ -270,21 +270,21 @@ const LandlordProfile = () => {
         <div className="info-card landlord-info">
           {/* Landlord form implementation remains unchanged */}
           <div className="card-header">
-            <h2>Thông Tin Doanh Nghiệp</h2>
+            <h2>Business Information</h2>
             <button
               className="edit-btn"
               onClick={() =>
                 setEditMode((prev) => ({ ...prev, landlord: !prev.landlord }))
               }
             >
-              {editMode.landlord ? "Hủy" : "Chỉnh sửa"}
+              {editMode.landlord ? "Cancel" : "Edit"}
             </button>
           </div>
           <div className="card-body">
             <form onSubmit={handleLandlordSubmit}>
               <div className="form-grid">
                 <div className="form-group">
-                  <label>Tên công ty</label>
+                  <label>Company Name</label>
                   <input
                     type="text"
                     name="companyName"
@@ -294,7 +294,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Số bài post còn lại</label>
+                  <label>Remaining Posts</label>
                   <input
                     type="number"
                     name="numberRoom"
@@ -304,7 +304,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Số giấy phép</label>
+                  <label>License Number</label>
                   <input
                     type="text"
                     name="licenseNumber"
@@ -314,7 +314,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Ngân hàng</label>
+                  <label>Bank Name</label>
                   <input
                     type="text"
                     name="bankName"
@@ -324,7 +324,7 @@ const LandlordProfile = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Số tài khoản</label>
+                  <label>Account Number</label>
                   <input
                     type="text"
                     name="bankNumber"
@@ -337,7 +337,7 @@ const LandlordProfile = () => {
               
               {landlordData.businessImages && landlordData.businessImages.length > 0 && (
                 <div className="business-images-section">
-                  <label className="images-label">Hình ảnh doanh nghiệp</label>
+                  <label className="images-label">Business Images</label>
                   <div className="images-grid">
                     {landlordData.businessImages.map((image, index) => (
                       <div className="image-item" key={index}>
@@ -350,22 +350,22 @@ const LandlordProfile = () => {
 
               {editMode.landlord && (
                 <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? "Đang cập nhật..." : "Lưu thay đổi"}
+                  {loading ? "Updating..." : "Save changes"}
                 </button>
               )}
             </form>
             <div className="meta-info">
               <p>
-                <span>Ngày tạo:</span>{" "}
-                {new Date(landlordData.createdDate).toLocaleDateString("vi-VN")}
+                <span>Created:</span>{" "}
+                {new Date(landlordData.createdDate).toLocaleDateString("en-US")}
               </p>
               <p>
-                <span>Cập nhật lần cuối:</span>{" "}
-                {new Date(landlordData.updatedDate).toLocaleDateString("vi-VN")}
+                <span>Last updated:</span>{" "}
+                {new Date(landlordData.updatedDate).toLocaleDateString("en-US")}
               </p>
               <p>
-                <span>Trạng thái:</span>{" "}
-                {landlordData.status === "Active" ? "Hoạt động" : "Không hoạt động"}
+                <span>Status:</span>{" "}
+                {landlordData.status === "Active" ? "Active" : "Inactive"}
               </p>
             </div>
           </div>

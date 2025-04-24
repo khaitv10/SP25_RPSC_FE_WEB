@@ -61,11 +61,11 @@ const AmenityManagement = () => {
         setAmenities(response.amenties);
         setTotalItems(response.totalAmenties || 0);
       } else {
-        toast.error("Invalid data format: Expected 'amenties' array");
+       // toast.error("Invalid data format: Expected 'amenties' array");
       }
     } catch (error) {
-      toast.error("Error fetching amenities");
-      console.error(error);
+      //toast.error("Error fetching amenities");
+      //console.error(error);
     } finally {
       setLoading(false);
     }

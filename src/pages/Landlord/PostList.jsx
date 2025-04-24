@@ -10,6 +10,7 @@ import {
   EditOutlined, DeleteOutlined, EyeOutlined, CloseOutlined,
   MailOutlined, PhoneOutlined, ClockCircleOutlined
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import roomAPI from '../../Services/Room/roomAPI';
 import postAPI from '../../Services/Post/postAPI';
@@ -20,6 +21,8 @@ const { Search } = Input;
 const { TabPane } = Tabs;
 
 const PostList = () => {
+  const navigate = useNavigate();
+  
   // States for Room List Tab
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -145,6 +148,11 @@ const PostList = () => {
     }
   };
 
+  // Function to navigate to the room detail page
+  const navigateToRoomDetail = (roomId) => {
+    navigate(`/landlord/post/roompostdetail/${roomId}`);
+  };
+
   const postListColumns = [
     {
       title: 'Title',
@@ -222,7 +230,11 @@ const PostList = () => {
       render: (_, record) => (
         <Space>
           <Tooltip title="View Details">
-            <Button type="text" icon={<EyeOutlined />} />
+            <Button 
+              type="text" 
+              icon={<EyeOutlined />} 
+              onClick={() => navigateToRoomDetail(record.roomId)}
+            />
           </Tooltip>
           <Tooltip title="Inactivate Post">
             <Button 
@@ -250,21 +262,7 @@ const PostList = () => {
     <div className="post-list-section">
       <Tabs defaultActiveKey="1" className="post-list-tabs">
         <TabPane tab="Room List" key="1">
-          <Alert
-            message="Room Posts"
-            description="Manage and view all your room listings. You can edit, delete, or view details of each post."
-            type="info"
-            showIcon
-            icon={<InfoCircleOutlined />}
-            closable
-            style={{ 
-              marginBottom: '32px', 
-              borderRadius: '12px',
-              border: 'none',
-              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.05)'
-            }}
-          />
-
+      
           <div className="search-container">
             <Space>
               <Search
@@ -324,7 +322,11 @@ const PostList = () => {
                       }
                       actions={[
                         <Tooltip title="View Details">
-                          <Button type="text" icon={<EyeOutlined />} />
+                          <Button 
+                            type="text" 
+                            icon={<EyeOutlined />}
+                            onClick={() => navigateToRoomDetail(post.roomId)}
+                          />
                         </Tooltip>,
                         <Tooltip title="Edit Post">
                           <Button type="text" icon={<EditOutlined />} />
@@ -382,7 +384,7 @@ const PostList = () => {
                           <div className="services-list">
                             {post.roomServices.map((service) => (
                               <Tag key={service.serviceId}>
-                                {service.serviceName} ({formatPrice(service.cost)}/unit)
+                                {service.serviceName} ({formatPrice(service.cost)})
                               </Tag>
                             ))}
                           </div>
@@ -410,21 +412,6 @@ const PostList = () => {
         </TabPane>
 
         <TabPane tab="Post List" key="2">
-          <Alert
-            message="Customer Posts"
-            description="View and manage customer posts looking for roommates."
-            type="info"
-            showIcon
-            icon={<InfoCircleOutlined />}
-            closable
-            style={{ 
-              marginBottom: '32px', 
-              borderRadius: '12px',
-              border: 'none',
-              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.05)'
-            }}
-          />
-
           <Table
             columns={postListColumns}
             dataSource={postList}
@@ -442,4 +429,4 @@ const PostList = () => {
   );
 };
 
-export default PostList; 
+export default PostList;

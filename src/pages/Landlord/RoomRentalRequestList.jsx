@@ -387,46 +387,43 @@ const RoomRentalRequestList = () => {
 
       {/* Request Details Drawer */}
       <Drawer
-        title={
-          <div className="drawer-title">
-            <UserOutlined className="drawer-icon" />
-            Room Rental Request Details
-          </div>
-        }
-        placement="right"
-        width={600}
-        onClose={closeDrawer}
-        open={drawerVisible}
-        className="request-details-drawer"
-        styles={{
-          header: { 
-            fontSize: '24px', 
-            fontWeight: 'bold', 
-            background: 'linear-gradient(135deg, #f0f7ff 0%, #e6f7ff 100%)', 
-            padding: '20px',
-            borderBottom: '1px solid #e6f0fa'
-          },
-          body: { padding: '24px' }
-        }}
-        footer={
-          <div className="drawer-footer">
-            <Button size="large" onClick={closeDrawer} disabled={isLoading}
-              className="cancel-button">
-              Close
-            </Button>
-            <Button
-              size="large"
-              type="primary"
-              onClick={showConfirmModal}
-              disabled={isLoading}
-              className="approve-button"
-              icon={isLoading ? <LoadingOutlined /> : <CheckOutlined />}
-            >
-              Approve
-            </Button>
-          </div>
-        }
+  title={
+    <div className="drawer-title">
+      <UserOutlined className="drawer-icon" />
+      Room Rental Request Details
+    </div>
+  }
+  placement="right"
+  width={600}
+  onClose={closeDrawer}
+  open={drawerVisible}
+  className="request-details-drawer"
+  styles={{
+    header: { 
+      fontSize: '24px', 
+      fontWeight: 'bold', 
+      background: 'linear-gradient(135deg, #f0f7ff 0%, #e6f7ff 100%)', 
+      padding: '20px',
+      borderBottom: '1px solid #e6f0fa'
+    },
+    body: { padding: '24px' }
+  }}
+  footer={
+    <div className="drawer-footer">
+      <Button
+        size="large"
+        type="primary"
+        onClick={showConfirmModal}
+        disabled={isLoading}
+        className="approve-button"
+        icon={isLoading ? <LoadingOutlined /> : <CheckOutlined />}
+        block
       >
+        Approve
+      </Button>
+    </div>
+  }
+>
         {selectedRequest && (
           <div className="request-details">
             <div className="customer-avatar">
@@ -499,38 +496,38 @@ const RoomRentalRequestList = () => {
 
       {/* Confirm Modal */}
       <Modal
-        title={
-          <div className="confirm-modal-title">
-            <QuestionCircleOutlined className="confirm-icon" />
-            <span>Confirm Approval</span>
-          </div>
-        }
-        open={confirmModalVisible}
-        onCancel={hideConfirmModal}
-        footer={[
-          <Button key="cancel" onClick={hideConfirmModal} className="cancel-button">Cancel</Button>,
-          <Button
-            key="approve"
-            type="primary"
-            loading={isLoading}
-            onClick={handleApprove}
-            className="confirm-button"
-          >
-            Confirm
-          </Button>,
-        ]}
-        centered
-        maskClosable={false}
-        className="confirm-modal"
-      >
-        <p className="confirm-message">
-          Are you sure you want to approve this room rental request from{' '}
-          <Text strong>{selectedRequest?.customerName || selectedRequest?.fullName || 'this tenant'}</Text>?
-        </p>
-        <p className="confirm-note">
-          Once approved, the tenant will be notified and the room status will be updated.
-        </p>
-      </Modal>
+  title={
+    <div className="confirm-modal-title">
+      <QuestionCircleOutlined className="confirm-icon" />
+      <span>Confirm Approval</span>
+    </div>
+  }
+  open={confirmModalVisible}
+  onCancel={hideConfirmModal}
+  footer={[
+    <Button key="cancel" onClick={hideConfirmModal} className="cancel-button">Cancel</Button>,
+    <Button
+      key="approve"
+      type="primary"
+      loading={isLoading}
+      onClick={handleApprove}
+      className="confirm-button"
+    >
+      Confirm
+    </Button>,
+  ]}
+  centered
+  maskClosable={false}
+  className="confirm-modal"
+>
+  <p className="confirm-message">
+    Are you sure you want to approve this room rental request from{' '}
+    <Text strong>{selectedRequest?.customerName || selectedRequest?.fullName || 'this tenant'}</Text>?
+  </p>
+  <p className="confirm-note">
+    Once approved, the tenant will be notified and the room status will be updated.
+  </p>
+</Modal>
     </div>
   );
 };

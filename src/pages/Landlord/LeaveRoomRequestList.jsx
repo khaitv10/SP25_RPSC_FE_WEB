@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, Typography, Avatar, Tag, Divider, Row, Col, Spin, Button,
-  Empty, Pagination, Space, Input, Alert, Badge 
+  Empty, Pagination, Space, Input, Alert, Badge, message
 } from 'antd';
 import { 
   UserOutlined, PhoneOutlined, MailOutlined, CalendarOutlined, 
   HomeOutlined, CheckOutlined, SearchOutlined, LoadingOutlined,
   QuestionCircleOutlined, LogoutOutlined, InfoCircleOutlined
 } from '@ant-design/icons';
-import { toast } from 'react-toastify';
 import landlordAPI from '../../Services/Landlord/landlordAPI';
 
 const { Title, Text } = Typography;
@@ -27,8 +26,6 @@ const LeaveRoomRequestList = () => {
   useEffect(() => {
     fetchLeaveRoomRequests();
   }, [pageIndex, pageSize, searchQuery]);
-
-
   
   const fetchLeaveRoomRequests = async () => {
     try {
@@ -45,7 +42,7 @@ const LeaveRoomRequestList = () => {
         setTotal(0);
       }
     } catch (error) {
-      toast.error('Failed to fetch leave room requests');
+      message.error('Failed to fetch leave room requests');
       console.error('Error:', error);
       setRequests([]);
     } finally {
@@ -60,13 +57,13 @@ const LeaveRoomRequestList = () => {
       const response = await landlordAPI.acceptLeaveRoomRequest(requestId);
       
       if (response.success) {
-        toast.success(response.message || 'Leave room request accepted successfully');
+        message.success(response.message || 'Leave room request accepted successfully');
         fetchLeaveRoomRequests(); // Refresh the list
       } else {
-        toast.error(response.message || 'Failed to accept leave room request');
+        message.error(response.message || 'Failed to accept leave room request');
       }
     } catch (error) {
-      toast.error('Failed to accept leave room request');
+      message.error('Failed to accept leave room request');
       console.error('Error:', error);
     } finally {
       setProcessing(prev => ({ ...prev, [requestId]: false }));
@@ -130,6 +127,18 @@ const LeaveRoomRequestList = () => {
 
   return (
     <div className="leave-room-section">
+      {/* Search component (uncomment if you need search functionality) */}
+      {/* <div className="search-container">
+        <Search
+          placeholder="Search by name or room number"
+          value={searchValue}
+          onChange={onSearchChange}
+          onSearch={handleSearch}
+          enterButton
+          allowClear
+          style={{ marginBottom: '20px' }}
+        />
+      </div> */}
 
       {requests.length === 0 ? (
         <Empty 

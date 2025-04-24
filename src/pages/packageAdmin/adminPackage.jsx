@@ -155,7 +155,7 @@ const AdminPackage = () => {
 
         <div className="search-container">
           <Input
-            placeholder="🔍 Search by package type..."
+            placeholder="Search by package type..."
             prefix={<SearchOutlined className="search-icon" />}
             onChange={handleSearch}
             className="search-input"
@@ -198,10 +198,10 @@ const AdminPackage = () => {
           
           <Form.Item 
             name="highLightTime" 
-            label="🌟 HighLight Time" 
-            rules={[{ required: true, message: "Please enter highlight time" }]}
+            label="🌟 HighLight" 
+            rules={[{ required: true, message: "Please enter highlight" }]}
           >
-            <Input placeholder="Enter highlight time" />
+            <Input placeholder="Enter highlight" />
           </Form.Item>
           
           <Form.Item 

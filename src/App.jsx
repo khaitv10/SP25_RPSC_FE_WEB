@@ -13,7 +13,7 @@ import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.jsx";
 function App() {
   return (
     <Router>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" />
       <Routes>
         {/* Authentication pages that don't need Layout */}
         <Route path="/login" element={<Login />} />

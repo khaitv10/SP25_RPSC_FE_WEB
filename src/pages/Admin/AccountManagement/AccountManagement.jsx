@@ -147,7 +147,7 @@ const AccountManagement = () => {
         <div className="filters-row">
           <Input
             className="search-input"
-            placeholder="🔍 Search by name or email..."
+            placeholder="Search by name or email..."
             value={searchTerm}
             onChange={handleSearch}
             prefix={<SearchOutlined className="search-icon" />}

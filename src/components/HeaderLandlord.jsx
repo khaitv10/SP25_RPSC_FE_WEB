@@ -48,6 +48,12 @@ const HeaderLandlord = () => {
     navigate("/login");
   };
 
+  const handleChat = () => {
+    setIsOpen(false);
+    // Navigate to login page
+    navigate("/landlord/chat");
+  };
+
   return (
     <header className="flex justify-between items-center bg-white shadow-md relative">
       {/* Logo */}
@@ -85,10 +91,17 @@ const HeaderLandlord = () => {
             </button>
             <button
               className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+              onClick={handleChat}
+            >
+              Chat
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
               onClick={handleLogout}
             >
               Log out
             </button>
+
           </div>
         )}
       </div>

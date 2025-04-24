@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://localhost:7159/api/landlord';
+const BASE_URL = 'https://opal.io.vn/api/landlord';
 
 const landlordAPI = {
     getLeaveRoomRequests: async () => {

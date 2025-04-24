@@ -3,12 +3,17 @@ import { useState } from "react";
 const Table = ({ data, onViewMore }) => {
   const [hoveredRow, setHoveredRow] = useState(null);
   
+  // Filter data to only show Pending status landlords
+  const filteredData = data
+    .filter(landlord => landlord.status?.toLowerCase() === 'pending')
+    .slice(0, 5); // Only show first 5 items
+  
   // Status badge styles
   const getStatusBadgeStyle = (status) => {
     switch(status?.toLowerCase()) {
       case 'pending':
         return "bg-yellow-100 text-yellow-800 border border-yellow-300";
-      case 'approved':
+      case 'active':
         return "bg-green-100 text-green-800 border border-green-300";
       case 'rejected':
         return "bg-red-100 text-red-800 border border-red-300";
@@ -17,12 +22,18 @@ const Table = ({ data, onViewMore }) => {
     }
   };
 
+  // Format date to a readable format
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-gray-800 flex items-center">
           <span className="bg-amber-100 text-amber-600 p-1 rounded-lg mr-2">🏠</span>
-          Recent Landlord Requests
+          Pending Landlord Requests
         </h2>
         <button 
           onClick={onViewMore}
@@ -35,9 +46,9 @@ const Table = ({ data, onViewMore }) => {
         </button>
       </div>
 
-      {data.length === 0 ? (
+      {filteredData.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          No landlord requests available
+          No pending requests
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -48,11 +59,10 @@ const Table = ({ data, onViewMore }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Landlord</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {data.map((landlord, index) => (
+              {filteredData.map((landlord, index) => (
                 <tr 
                   key={landlord.landlordId || index}
                   className={`transition-all duration-200 ${hoveredRow === index ? 'bg-blue-50' : ''}`}
@@ -60,7 +70,7 @@ const Table = ({ data, onViewMore }) => {
                   onMouseLeave={() => setHoveredRow(null)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    #{landlord.landlordId}
+                    #{landlord.landlordId.substring(0, 8)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -71,7 +81,7 @@ const Table = ({ data, onViewMore }) => {
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{landlord.fullName}</div>
-                        <div className="text-sm text-gray-500">Joined {new Date().toLocaleDateString()}</div>
+                        <div className="text-sm text-gray-500">Joined {formatDate(landlord.createdDate)}</div>
                       </div>
                     </div>
                   </td>
@@ -83,18 +93,7 @@ const Table = ({ data, onViewMore }) => {
                     <span className={`px-3 py-1 inline-flex text-sm leading-5 font-medium rounded-full ${getStatusBadgeStyle(landlord.status)}`}>
                       {landlord.status}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900 p-1 rounded-full hover:bg-blue-100 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                          <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                      
-                    </div>
-                  </td>
+                  </td> 
                 </tr>
               ))}
             </tbody>

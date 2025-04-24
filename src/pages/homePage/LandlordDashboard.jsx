@@ -23,11 +23,25 @@ const LandlordDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user just logged in
+    console.log("Dashboard mounted, checking localStorage...");
+    const isLoggedIn = localStorage.getItem("loggedIn");
+
+    if (isLoggedIn === "true") {
+      toast.success("Login successful! Welcome to the Dashboard 🎉");
+
+      // Remove the loggedIn flag after displaying toast
+      setTimeout(() => {
+        localStorage.removeItem("loggedIn");
+        //console.log("loggedIn removed from localStorage");
+      }, 2000);
+    }
+
     const fetchRoomCounts = async () => {
       try {
         setLoading(true);
         const data = await getRoomCountsByLandlord();
-        console.log("✅ API Data:", data);
+        //console.log("✅ API Data:", data);
         setRoomCounts({
           totalRooms: data.totalRooms,
           totalRoomsActive: data.totalRoomsActive,

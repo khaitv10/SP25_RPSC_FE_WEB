@@ -209,14 +209,6 @@ const Register = () => {
               ))}
             </TextField>
 
-            <div className="checkbox-area">
-              <FormControlLabel
-                control={<Checkbox color="primary" />}
-                label="I agree to the"
-              />
-              <Link to="/terms" className="terms-link">Terms and Policies</Link>
-            </div>
-
             <Button type="submit" variant="contained" fullWidth>
               Create account
             </Button>
