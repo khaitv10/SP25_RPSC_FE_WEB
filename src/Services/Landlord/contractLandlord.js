@@ -1,4 +1,5 @@
 import axiosClient from "../axios/config";
+import axios from 'axios';
 
 export const getCustomerContracts = async (
   pageIndex = 1,
@@ -217,6 +218,22 @@ export const confirmContractAndCreateRoomStay = async (contractId, contractFile)
     } catch (error) {
       console.error("❌ Error rejecting extend request:", error);
       throw error.response?.data || new Error("An error occurred while rejecting the request");
+    }
+  };
+  
+  export const getContractTerm = async (rentalRoomId) => {
+    try {
+      if (!rentalRoomId) {
+        throw new Error('Rental room ID is required');
+      }
+
+      const response = await axiosClient.get('/api/contractcustomer/get-contract-term', {
+        params: { rentalRoomId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error getting contract term:', error);
+      throw error.response?.data || new Error("An error occurred while getting contract term");
     }
   };
   

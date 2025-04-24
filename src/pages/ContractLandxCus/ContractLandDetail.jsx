@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getContractDetail, confirmContractAndCreateRoomStay } from "../../Services/Landlord/contractLandlord";
+import { getContractDetail, confirmContractAndCreateRoomStay, getContractTerm } from "../../Services/Landlord/contractLandlord";
 import { ArrowLeft, FileText, User, Home, Calendar, Clock, Upload, Tag, MapPin, CreditCard, UserCheck, Phone, Mail, Users } from "lucide-react";
 import { toast } from "react-toastify";
 import "./ContractLandDetail.scss";
@@ -75,6 +75,33 @@ const ContractLandDetail = () => {
     } catch (error) {
       console.error("❌ Error uploading contract:", error);
       toast.error(error.message || 'Failed to upload contract');
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+
+  const handleGenerateTemplate = async () => {
+    try {
+      console.log("Contract object:", contract); // Debug log
+      
+      // Check if contract has roomId instead of rentalRoomId
+      const roomId = contract?.room?.roomId;
+      if (!roomId) {
+        toast.error('Room ID is missing');
+        return;
+      }
+
+      setUploadLoading(true);
+      const response = await getContractTerm(roomId);
+      if (response.isSuccess && response.data.term) {
+        window.open(response.data.term, '_blank');
+        toast.success('Contract template generated successfully');
+      } else {
+        toast.error('Failed to generate contract template');
+      }
+    } catch (error) {
+      console.error("❌ Error generating template:", error);
+      toast.error(error.message || 'Failed to generate template');
     } finally {
       setUploadLoading(false);
     }
@@ -302,30 +329,40 @@ const ContractLandDetail = () => {
         {/* Upload Section */}
         {contract.status === "Pending" && (
           <div className="upload-section">
-            <input 
-              type="file" 
-              accept=".pdf" 
-              onChange={handleFileUpload}
-              className="file-input" 
-              id="contract-upload"
-              disabled={uploadLoading}
-            />
-            <label 
-              htmlFor="contract-upload" 
-              className={`upload-button ${uploadLoading ? 'loading' : ''}`}
-            >
-              {uploadLoading ? (
-                <div className="loading-text">
-                  <div className="upload-spinner"></div>
-                  <span>Uploading...</span>
-                </div>
-              ) : (
-                <>
-                  <Upload className="icon" />
-                  <span>Upload Contract PDF</span>
-                </>
-              )}
-            </label>
+            <div className="upload-buttons">
+              <input 
+                type="file" 
+                accept=".pdf" 
+                onChange={handleFileUpload}
+                className="file-input" 
+                id="contract-upload"
+                disabled={uploadLoading}
+              />
+              <label 
+                htmlFor="contract-upload" 
+                className={`upload-button ${uploadLoading ? 'loading' : ''}`}
+              >
+                {uploadLoading ? (
+                  <div className="loading-text">
+                    <div className="upload-spinner"></div>
+                    <span>Uploading...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="icon" />
+                    <span>Upload Contract PDF</span>
+                  </>
+                )}
+              </label>
+              <button
+                onClick={handleGenerateTemplate}
+                className={`generate-button ${uploadLoading ? 'loading' : ''}`}
+                disabled={uploadLoading}
+              >
+                <FileText className="icon" />
+                <span>Generate Template</span>
+              </button>
+            </div>
           </div>
         )}
       </div>
