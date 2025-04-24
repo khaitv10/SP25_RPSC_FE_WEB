@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:5262/',
+  baseURL: 'https://opal.io.vn/',
 });
 
 axiosClient.interceptors.request.use(
