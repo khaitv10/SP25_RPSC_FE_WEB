@@ -1,167 +1,243 @@
 .landlord-admin {
   padding: 24px;
-  background-color: #f5f5f5;
+  background-color: #f0f2f5;
   min-height: 100vh;
-  
+
   .landlord-card {
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
     width: 100%;
+    max-width: 100%;
+    padding: 24px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
     background: #fff;
     border: none;
-  }
 
-  .admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: flex-start;
+    .title {
+      color: #111827;
+      text-align: left;
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+
+      .title-icon {
+        margin-right: 12px;
+        font-size: 32px;
+      }
     }
-    
-    .header-title {
-      h2 {
-        margin-bottom: 4px;
+
+    /* Tabs Section */
+    .admin-tabs {
+      display: flex;
+      border-bottom: 2px solid #eaeaea;
+      margin-bottom: 24px;
+
+      .tab {
+        font-size: 16px;
         font-weight: 600;
-        color: #1a202c;
-        font-size: 24px;
-      }
-      
-      .header-subtitle {
-        font-size: 14px;
-        color: #718096;
-        margin-bottom: 0;
-      }
-    }
-  }
-  
-  .search-input {
-    width: 280px;
-    
-    .ant-input {
-      border-radius: 4px 0 0 4px;
-    }
-    
-    .ant-input-search-button {
-      border-radius: 0 4px 4px 0;
-      background: #4a5568;
-      
-      &:hover {
-        background: #2d3748;
-      }
-    }
-  }
+        padding: 12px 24px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: #6b7280;
+        transition: all 0.3s ease;
+        position: relative;
 
-  .table-container {
-    width: 100%;
-    overflow-x: auto;
-  }
+        &.active {
+          color: #1e40af;
+          font-weight: 700;
+        }
 
-  .ant-table {
-    width: 100%;
-    
-    .ant-table-thead > tr > th {
-      background: #2d3748;
-      color: white;
-      font-size: 14px;
-      text-align: left;
-      padding: 12px 16px;
-      font-weight: 500;
-      
-      &::before {
-        display: none;
+        &.active::after {
+          content: "";
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 3px;
+          background-color: #1e40af;
+          border-radius: 3px 3px 0 0;
+        }
+
+        &:hover {
+          color: #1e40af;
+        }
       }
     }
 
-    .ant-table-tbody > tr > td {
-      text-align: left;
-      padding: 12px 16px;
-      font-size: 14px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    
-    .ant-table-tbody > tr:hover > td {
-      background-color: #f9fafb;
-    }
-  }
+    .admin-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
 
-  .status-tag {
-    padding: 4px 12px;
-    font-size: 12px;
-    border-radius: 16px;
-    display: inline-block;
-    font-weight: 500;
-    
-    &.Pending {
-      color: #d48806;
-      background-color: #fffbe6;
-      border: 1px solid #ffe58f;
-    }
+      .search-container {
+        flex: 1;
+        max-width: 400px;
 
-    &.Approved {
-      color: #389e0d;
-      background-color: #f6ffed;
-      border: 1px solid #b7eb8f;
-    }
+        .search-input {
+          border-radius: 8px;
+          height: 40px;
+          border: 1px solid #d1d5db;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-    &.Rejected {
-      color: #cf1322;
-      background-color: #fff1f0;
-      border: 1px solid #ffa39e;
-    }
-  }
+          &:hover, &:focus {
+            border-color: #1e40af;
+            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
+          }
 
-  .view-button {
-    background: #4a5568;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    height: 32px;
-    font-weight: 500;
-    padding: 0 12px;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    text-transform: none;
-    font-size: 13px;
-    transform: none;
-    box-shadow: none;
+          .search-icon {
+            color: #6b7280;
+          }
+        }
+      }
 
-    &:hover {
-      background: #2d3748;
-      color: white;
+      .filter-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .filter-icon {
+          color: #4b5563;
+          font-size: 18px;
+        }
+
+        .status-filter {
+          width: 380px;
+          border-radius: 8px;
+          height: 40px;
+          border: 1px solid #d1d5db;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+          &:hover {
+            border-color: #1e40af;
+          }
+        }
+      }
     }
 
-    .anticon {
-      font-size: 14px;
-    }
-  }
-  
-  .table-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    flex-wrap: wrap;
-    gap: 16px;
-    
-    .total-count {
-      font-size: 14px;
-      color: #4a5568;
-      font-weight: 500;
-    }
-    
-    @media (max-width: 576px) {
-      flex-direction: column;
-      align-items: flex-start;
+    .table-container {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+      .landlords-table {
+        .ant-table {
+          border-radius: 12px;
+          overflow: hidden;
+
+          .ant-table-thead > tr > th {
+            background: #2a3042;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+            padding: 16px;
+            border-bottom: none;
+          }
+
+          .ant-table-tbody > tr > td {
+            padding: 16px;
+            border-bottom: 1px solid #eaeaea;
+            text-align: center;
+          }
+
+          .ant-table-tbody > tr:hover > td {
+            background-color: #f8fafc;
+          }
+
+          .rejected-row {
+            background-color: #f9fafb;
+            color: #6b7280;
+          }
+
+          .cell-content {
+            font-weight: 500;
+
+            &.landlord-name {
+              font-weight: 600;
+            }
+          }
+
+          .date-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            .calendar-icon {
+              color: #6b7280;
+            }
+          }
+
+          .status-tag {
+            border-radius: 16px;
+            padding: 4px 12px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            &.approved {
+              background-color: #ecfdf5;
+              color: #047857;
+              border: 1px solid #10b981;
+            }
+
+            &.pending {
+              background-color: #fffbeb;
+              color: #b45309;
+              border: 1px solid #f59e0b;
+            }
+
+            &.rejected {
+              background-color: #fef2f2;
+              color: #b91c1c;
+              border: 1px solid #ef4444;
+            }
+          }
+
+          .action-buttons {
+            .view-button {
+              border-radius: 8px;
+              height: 36px;
+              width: 36px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border: none;
+              transition: all 0.3s ease;
+              padding: 0;
+              background: #dbeafe;
+              color: #1e40af;
+
+              &:hover {
+                background: #1e40af;
+                color: white;
+              }
+            }
+          }
+        }
+
+        .ant-pagination {
+          margin: 16px 0;
+          padding: 0 16px;
+          
+          .ant-pagination-item-active {
+            border-color: #1e40af;
+            
+            a {
+              color: #1e40af;
+            }
+          }
+        }
+      }
     }
   }
 }

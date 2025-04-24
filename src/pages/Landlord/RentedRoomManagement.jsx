@@ -10,7 +10,8 @@ import {
   Input, 
   Pagination,
   Row,
-  Col
+  Col,
+  Tag
 } from "antd";
 import { 
   HomeOutlined, 
@@ -19,7 +20,8 @@ import {
   PictureOutlined,
   ClockCircleOutlined,
   RightOutlined,
-  SearchOutlined
+  SearchOutlined,
+  CloseOutlined
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getRoomStaysByLandlord } from "../../Services/Landlord/roomStayApi";
@@ -72,13 +74,13 @@ const RentedRoomManagement = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Active":
-        return <Badge status="success" text="Active" />;
+        return <Tag color="success" className="status-tag">Active</Tag>;
       case "Pending":
-        return <Badge status="warning" text="Pending" />;
+        return <Tag color="warning" className="status-tag">Pending</Tag>;
       case "Expired":
-        return <Badge status="error" text="Expired" />;
+        return <Tag color="error" className="status-tag">Expired</Tag>;
       default:
-        return <Badge status="default" text={status} />;
+        return <Tag color="default" className="status-tag">{status}</Tag>;
     }
   };
 
@@ -86,7 +88,7 @@ const RentedRoomManagement = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   };
@@ -147,9 +149,9 @@ const RentedRoomManagement = () => {
               />
             </Col>
             <Col xs={24} md={8} lg={8} className="rooms-count">
-              <Text className="total-rooms">
+              <div className="total-rooms">
                 Total Rooms: <span>{pagination.total}</span>
-              </Text>
+              </div>
             </Col>
           </Row>
         </div>
@@ -180,22 +182,20 @@ const RentedRoomManagement = () => {
                       />
                       {room.imageUrls.length > 1 && (
                         <div className="more-images-badge">
-                          <PictureOutlined /> +{room.imageUrls.length - 1}
+                          <PictureOutlined /> +{room.imageUrls.length - 1} photos
                         </div>
                       )}
+                    </div>
+                    <div className="room-number-badge">
+                      Room #{room.roomNumber}
                     </div>
                   </div>
 
                   <div className="room-card-content">
                     <div className="room-header">
-                      <div className="room-title-area">
-                        <Title level={4}>{room.title}</Title>
-                        <div className="room-status">
-                          {getStatusBadge(room.status)}
-                        </div>
-                      </div>
-                      <div className="room-number">
-                        Room #{room.roomNumber}
+                      <Title level={4} ellipsis={{ rows: 1 }}>{room.title}</Title>
+                      <div className="room-status">
+                        {getStatusBadge(room.status)}
                       </div>
                     </div>
 
@@ -212,7 +212,10 @@ const RentedRoomManagement = () => {
                       
                       <div className="info-row">
                         <div className="info-item">
-                          <CalendarOutlined /> {formatDate(room.startDate)} - {formatDate(room.endDate)}
+                          <CalendarOutlined /> 
+                          <span className="date-range">
+                            {formatDate(room.startDate)} - {formatDate(room.endDate)}
+                          </span>
                         </div>
                       </div>
 
@@ -222,8 +225,6 @@ const RentedRoomManagement = () => {
                         </div>
                       </div>
                     </div>
-
-                    <Divider className="card-divider" />
 
                     <div className="card-actions">
                       <Button 
@@ -251,11 +252,12 @@ const RentedRoomManagement = () => {
             </div>
           </>
         ) : (
-          <Empty 
-            className="no-data" 
-            description="No rented rooms available" 
-            image={Empty.PRESENTED_IMAGE_SIMPLE} 
-          />
+          <div className="no-data">
+            <Empty 
+              description="No rented rooms available" 
+              image={Empty.PRESENTED_IMAGE_SIMPLE} 
+            />
+          </div>
         )}
       </div>
 
@@ -267,10 +269,9 @@ const RentedRoomManagement = () => {
               className="close-preview" 
               type="primary" 
               shape="circle" 
+              icon={<CloseOutlined />}
               onClick={handleCloseImagePreview}
-            >
-              ×
-            </Button>
+            />
           </div>
         </div>
       )}

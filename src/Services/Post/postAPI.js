@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5262/api/post';
+const BASE_URL = 'https://opal.io.vn/api/post';
 
 const postAPI = {
   getLandlordCustomerPosts: async () => {

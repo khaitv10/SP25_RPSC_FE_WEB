@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Typography, Descriptions, Image, Button, Spin, Modal, Input, message } from "antd";
-import { LeftOutlined, RightOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { Card, Typography, Descriptions, Image, Button, Spin, Modal, Input, message, Badge } from "antd";
+import { 
+  LeftOutlined, 
+  RightOutlined, 
+  CheckCircleOutlined, 
+  CloseCircleOutlined,
+  ClockCircleOutlined,
+  FileImageOutlined
+} from "@ant-design/icons";
 import { getLandlordById, updateLandlordStatus } from "../../Services/userAPI";
 import { toast } from "react-toastify";
 import "./LandlordRegisDetailAdmin.scss";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const LandlordRegisDetailAdmin = () => {
@@ -20,7 +27,7 @@ const LandlordRegisDetailAdmin = () => {
 
   useEffect(() => {
     fetchLandlordDetail();
-  }, []);
+  }, [landlordId]);
 
   const fetchLandlordDetail = async () => {
     try {
@@ -33,6 +40,7 @@ const LandlordRegisDetailAdmin = () => {
       }
     } catch (error) {
       message.error("Error fetching landlord details!");
+      console.error("Error:", error);
     }
     setLoading(false);
   };
@@ -42,10 +50,10 @@ const LandlordRegisDetailAdmin = () => {
       setLoading(true);
       const response = await updateLandlordStatus(userId, isApproved, reason);
       if (response.isSuccess) {
-        toast.success("Status updated successfully!");
+        toast.success(`Landlord registration ${isApproved ? 'approved' : 'rejected'} successfully!`);
         setTimeout(() => {
           navigate("/admin/regis");
-        }, 1000);
+        }, 1500);
       } else {
         const errorMsg = response?.message || response?.data?.message || "Update failed!";
         toast.error(errorMsg);
@@ -68,81 +76,147 @@ const LandlordRegisDetailAdmin = () => {
     setRejectionReason("");
   };
 
-  if (loading) return <Spin size="large" className="loading-spinner" />;
+  const getStatusBadge = (status) => {
+    switch(status?.toLowerCase()) {
+      case 'approved':
+        return <Badge status="success" text={<Text strong className="status approved">Approved</Text>} />;
+      case 'rejected':
+        return <Badge status="error" text={<Text strong className="status rejected">Rejected</Text>} />;
+      case 'pending':
+      default:
+        return <Badge status="warning" text={<Text strong className="status pending">Pending</Text>} />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <Spin size="large" tip="Loading details..." />
+      </div>
+    );
+  }
 
   return (
     <div className="landlord-regis-detail-admin-container">
       <div className="landlord-detail-container">
         <Card className="landlord-card">
-          <Button type="default" className="back-button" onClick={() => navigate("/admin/regis")}>
-            <LeftOutlined /> Back
+          <Button 
+            type="default" 
+            className="back-button" 
+            onClick={() => navigate("/admin/regis")}
+            icon={<LeftOutlined />}
+          >
+            Back to List
           </Button>
 
-          <Title level={2} className="title">Landlord Registration Detail</Title>
+          <div className="status-indicator">
+            {getStatusBadge(landlord?.status)}
+            {landlord?.status?.toLowerCase() === 'pending' && (
+              <div className="pending-indicator">
+                <ClockCircleOutlined /> Awaiting Review
+              </div>
+            )}
+          </div>
+
+          <Title level={2} className="title">
+            Landlord Registration Details
+          </Title>
 
           <div className="content-wrapper">
             {/* Left Section - Details */}
             <div className="left-section">
+              <div className="section-header">
+                <Title level={4}>Business Information</Title>
+              </div>
+              
               <Descriptions bordered column={1} className="details">
-                <Descriptions.Item label={<strong>Company Name</strong>}>{landlord.companyName}</Descriptions.Item>
-                <Descriptions.Item label={<strong>Number of Rooms</strong>}>{landlord.numberRoom}</Descriptions.Item>
-                <Descriptions.Item label={<strong>License Number</strong>}>{landlord.licenseNumber}</Descriptions.Item>
-                <Descriptions.Item label={<strong>Landlord Name</strong>}>{landlord.fullName}</Descriptions.Item>
-                <Descriptions.Item label={<strong>Phone</strong>}>{landlord.phoneNumber}</Descriptions.Item>
-                <Descriptions.Item label={<strong>Email</strong>}>{landlord.email}</Descriptions.Item>
-                <Descriptions.Item label={<strong>Gender</strong>}>{landlord.gender}</Descriptions.Item>
-                <Descriptions.Item label={<strong>Created Date</strong>}>
+                <Descriptions.Item label="Company Name">{landlord.companyName}</Descriptions.Item>
+                <Descriptions.Item label="Number of Rooms">{landlord.numberRoom}</Descriptions.Item>
+                <Descriptions.Item label="License Number">{landlord.licenseNumber}</Descriptions.Item>
+                <Descriptions.Item label="Landlord Name">{landlord.fullName}</Descriptions.Item>
+                <Descriptions.Item label="Phone">{landlord.phoneNumber}</Descriptions.Item>
+                <Descriptions.Item label="Email">{landlord.email}</Descriptions.Item>
+                <Descriptions.Item label="Gender">{landlord.gender}</Descriptions.Item>
+                <Descriptions.Item label="Registration Date">
                   {new Date(landlord.createdDate).toLocaleString()}
-                </Descriptions.Item>
-                <Descriptions.Item label={<strong>Status</strong>} className={`status ${landlord.status.toLowerCase()}`}>
-                  {landlord.status}
                 </Descriptions.Item>
               </Descriptions>
             </div>
 
             {/* Right Section - Image Gallery */}
             <div className="right-section">
-              <Title level={4} className="image-title">Business License Images</Title>
+              <div className="section-header">
+                <Title level={4}><FileImageOutlined /> Business License Images</Title>
+
+              </div>
+              
               {landlord?.businessImageUrls?.length > 0 ? (
-                <div className="image-container">
-                  <Button
-                    icon={<LeftOutlined />}
-                    onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? landlord.businessImageUrls.length - 1 : prev - 1))}
-                    className="image-nav-button left"
-                  />
-                  <Image
-                    src={landlord.businessImageUrls[currentImageIndex]}
-                    width={350}
-                    className="business-image"
-                    preview={false}
-                  />
-                  <Button
-                    icon={<RightOutlined />}
-                    onClick={() => setCurrentImageIndex((prev) => (prev === landlord.businessImageUrls.length - 1 ? 0 : prev + 1))}
-                    className="image-nav-button right"
-                  />
+                <div className="image-gallery">
+                  <div className="image-container">
+                    <Button
+                      icon={<LeftOutlined />}
+                      onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? landlord.businessImageUrls.length - 1 : prev - 1))}
+                      className="image-nav-button left"
+                      disabled={landlord.businessImageUrls.length <= 1}
+                    />
+                    <Image
+                      src={landlord.businessImageUrls[currentImageIndex]}
+                      className="business-image"
+                      preview={{ 
+                        visible: false,
+                        mask: "View Full Image"
+                      }}
+                    />
+                    <Button
+                      icon={<RightOutlined />}
+                      onClick={() => setCurrentImageIndex((prev) => (prev === landlord.businessImageUrls.length - 1 ? 0 : prev + 1))}
+                      className="image-nav-button right"
+                      disabled={landlord.businessImageUrls.length <= 1}
+                    />
+                  </div>
+                  
+                  {landlord.businessImageUrls.length > 1 && (
+                    <div className="image-thumbnails">
+                      {landlord.businessImageUrls.map((url, index) => (
+                        <div 
+                          key={index}
+                          className={`thumbnail ${index === currentImageIndex ? 'active' : ''}`}
+                          onClick={() => setCurrentImageIndex(index)}
+                        >
+                          <Image src={url} preview={false} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
-                <span className="no-image">No image available</span>
+                <div className="no-image">
+                  <FileImageOutlined />
+                  <span>No images available</span>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Approve / Reject Buttons */}
-          <div className="button-group">
-            <Button
-              className="approve"
-              onClick={() => handleUpdateStatus(landlordId, true)}
-            >
-              <CheckCircleOutlined /> Approve
-            </Button>
-            <Button
-              className="reject"
-              onClick={() => setIsRejectModalOpen(true)}
-            >
-              <CloseCircleOutlined /> Reject
-            </Button>
-          </div>
+          {/* Approve / Reject Buttons - Only shown when status is pending */}
+          {landlord?.status?.toLowerCase() === 'pending' && (
+            <div className="button-group">
+              <Button
+                className="approve"
+                onClick={() => handleUpdateStatus(landlordId, true)}
+                icon={<CheckCircleOutlined />}
+              >
+                Approve
+              </Button>
+              <Button
+                className="reject"
+                onClick={() => setIsRejectModalOpen(true)}
+                icon={<CloseCircleOutlined />}
+              >
+                Reject
+              </Button>
+            </div>
+          )}
         </Card>
       </div>
 
@@ -152,15 +226,18 @@ const LandlordRegisDetailAdmin = () => {
         open={isRejectModalOpen}
         onCancel={() => setIsRejectModalOpen(false)}
         onOk={handleReject}
-        okText="Confirm"
+        okText="Confirm Rejection"
         cancelText="Cancel"
+        className="rejection-modal"
       >
-        <p>Please enter the reason for rejection:</p>
+        <p>Please specify the reason for rejecting this landlord registration:</p>
         <TextArea
           rows={4}
           value={rejectionReason}
           onChange={(e) => setRejectionReason(e.target.value)}
-          placeholder="Enter rejection reason..."
+          placeholder="Enter detailed rejection reason..."
+          maxLength={500}
+          showCount
         />
       </Modal>
     </div>
