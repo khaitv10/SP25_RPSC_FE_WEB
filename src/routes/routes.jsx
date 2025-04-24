@@ -21,7 +21,6 @@ import RentedRoomDetail from "../pages/Landlord/RentedRoomDetail";
 import RoomRequestManagement from "../pages/Landlord/RoomRequestManagement";
 import ForgotPassword from "../pages/forgotPassword/ForgotPassword";
 import PricingTable1 from "../pages/packageLandlord/PricingTable1";
-import ConfirmPayment from "../pages/PackageContract/confirmPayment";
 import FeedbackRoom from "../pages/Landlord/FeedbackRoom/FeedbackRoom";
 import FeedbackDetail from "../pages/Landlord/FeedbackRoom/FeedbackDetail";
 import ContractLand from "../pages/ContractLandxCus/ContractLand";
@@ -39,6 +38,7 @@ import HistoryContractDetail from "../pages/packageLandlord/HistoryContractDetai
 import LandlordProfile from "../pages/Landlord/LandlordProfile/LandlordProfile";
 import LeaveRoomRequestList from "../pages/Landlord/LeaveRoomRequestList";
 import PostList from "../pages/Landlord/PostList";
+import ConfirmPayment from "../pages/PackageContract/ConfirmPayment";
 
 const AppRoutes = () => {
   return (
