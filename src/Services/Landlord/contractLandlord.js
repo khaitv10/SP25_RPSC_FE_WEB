@@ -134,3 +134,89 @@ export const confirmContractAndCreateRoomStay = async (contractId, contractFile)
       throw error.response?.data || new Error("An error occurred while extending the package");
     }
   };
+
+  export const viewAllRequestExtendContract = async (pageIndex = 1, pageSize = 10) => {
+    try {
+      const token = localStorage.getItem("authToken");
+  
+      const params = new URLSearchParams();
+      params.append("pageIndex", pageIndex);
+      params.append("pageSize", pageSize);
+  
+      const response = await axiosClient.get(
+        `/api/requestextendcontract/View-All-Request-by-landlord?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+  
+      return response.data.data; // Trả về danh sách yêu cầu gia hạn hợp đồng
+    } catch (error) {
+      console.error("❌ Error fetching extend contract requests:", error);
+      throw error.response?.data || new Error("An error occurred while fetching extend contract requests");
+    }
+  };
+  
+
+  export const getExtendRequestDetailByContractId = async (contractId) => {
+    try {
+      const response = await axiosClient.get(
+        `/api/requestextendcontract/View-Detail-Request-By-Contract`,
+        {
+          params: { contractId }
+        }
+      );
+  
+      return response.data.data; // Trả về dữ liệu chi tiết yêu cầu gia hạn
+    } catch (error) {
+      console.error("❌ Error fetching extend request detail:", error);
+      throw error.response?.data || new Error("An error occurred while fetching extend request detail");
+    }
+  };
+  
+  export const approveExtendContractRequest = async (requestId, messageLandlord = "") => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axiosClient.post(
+        "/api/requestextendcontract/Approve-ExtendContract",
+        {
+          requestId,
+          messageLandlord
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error approving extend request:", error);
+      throw error.response?.data || new Error("An error occurred while approving the request");
+    }
+  };
+  
+  export const rejectExtendContractRequest = async (requestId, messageLandlord = "") => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axiosClient.post(
+        "/api/requestextendcontract/Reject-ExtendContract",
+        {
+          requestId,
+          messageLandlord
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error rejecting extend request:", error);
+      throw error.response?.data || new Error("An error occurred while rejecting the request");
+    }
+  };
+  

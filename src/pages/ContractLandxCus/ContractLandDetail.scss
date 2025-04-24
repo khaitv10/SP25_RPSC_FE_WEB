@@ -150,6 +150,7 @@ body {
   }
 }
 
+
 .detail-card {
   max-width: 1200px;
   margin: 0 auto;
@@ -164,16 +165,23 @@ body {
   background: linear-gradient(135deg, $primary-color, $secondary-color);
   color: white;
   padding: 1.5rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  
+  .back-button-container {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+  }
   .back-button {
+    grid-column: 1;  // Đặt nút back ở cột đầu tiên
     @include button-base;
     background: rgba(255, 255, 255, 0.1);
     padding: 0.75rem;
-    color: white;
+    color: wheat;
+    z-index: 10;
+    position: static;
     
     &:hover {
       background: rgba(255, 255, 255, 0.2);
@@ -186,10 +194,11 @@ body {
   }
   
   .header-content {
+    grid-column: 2;  // Đặt nội dung header ở cột giữa
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 1rem;
-    flex: 1;
     
     .header-icon {
       background: rgba(255, 255, 255, 0.15);
@@ -286,9 +295,6 @@ body {
     border-radius: $radius-md;
     transition: $transition-base;
     
-    &:hover {
-      background: darken($background-color, 2%);
-    }
     
     .info-label {
       font-size: 0.75rem;
@@ -337,9 +343,6 @@ body {
   color: white;
   width: 100%;
   
-  &:hover {
-    background: linear-gradient(135deg, darken($primary-color, 5%), darken($secondary-color, 5%));
-  }
   
   &.term-button {
     margin-top: 1rem;
@@ -352,10 +355,9 @@ body {
   color: $text-primary;
   border: 1px solid $border-color;
   
-  &:hover {
-    background: darken($background-color, 5%);
-  }
 }
+
+
 
 // Dates grid
 .dates-grid {
@@ -534,9 +536,6 @@ body {
     position: relative;
     overflow: hidden;
     
-    &:hover {
-      background: linear-gradient(135deg, darken($primary-color, 5%), darken($secondary-color, 5%));
-    }
     
     &.loading {
       pointer-events: none;
@@ -581,13 +580,7 @@ body {
   
   .detail-card {
     box-shadow: none;
-    
-    .contract-header {
-      .back-button {
-        display: none;
-      }
-    }
-    
+  
     .upload-section {
       display: none;
     }
@@ -613,16 +606,31 @@ body {
 }
 
 // Responsive adjustments
+// Responsive adjustments
 @media (max-width: 576px) {
   .contract-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "back"
+      "title"
+      "status";
+    
+    .back-button-container {
+      grid-area: back;
+      justify-self: start;
+    }
+    
+    .header-content {
+      grid-area: title;
+      justify-content: center;
+    }
     
     .status-badge {
-      align-self: flex-end;
+      grid-area: status;
+      justify-self: end;
     }
   }
+
   
   .section {
     .section-header {
