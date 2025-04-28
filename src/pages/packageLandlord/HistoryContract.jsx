@@ -195,7 +195,7 @@ const HistoryContract = () => {
               onClick={() => navigate('/landlord/service')}
               className="subscription-button"
             >
-              New Subscription
+              View Package
             </Button>
           </div>
         </div>

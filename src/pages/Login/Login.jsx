@@ -52,7 +52,7 @@ const Login = () => {
         toast.error("Invalid response from server.");
       }
     } catch (err) {
-      console.error("Login error:", err);
+      //console.error("Login error:", err);
       console.error("Error response:", err.response);
 
       const errorMessage =
