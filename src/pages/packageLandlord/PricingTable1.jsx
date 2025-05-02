@@ -82,6 +82,7 @@ const PricingTable = () => {
       fixed: "left",
       render: (_, record) => <b>{record.label}</b>,
       width: "20%",
+      align: "left", // Explicitly set left alignment for first column
     },
     ...paginatedData.map((item, index) => ({
       title: <>⭐ {item.type}</>,
@@ -125,88 +126,160 @@ const PricingTable = () => {
     { key: "maxPost", label: <>📝 Số bài đăng</>, type: "maxPost" },
     { key: "label", label: <>🏷️ Nhãn</>, type: "label" },
     { key: "autoApprove", label: <>⚡ Tự động duyệt</>, type: "autoApprove" },
-    { key: "showCallButton", label: <>📞 Hiển thị nút gọi điện</>, type: "showCallButton" },
   ];
+
+  // Custom modal styles
+  const modalStyles = {
+    content: {
+      width: '800px',
+      maxWidth: '90vw',
+      margin: '0 auto'
+    },
+    header: {
+      textAlign: 'center',
+      fontSize: '28px',
+      fontWeight: 'bold',
+      padding: '20px 0',
+      borderBottom: '2px solid #f0f0f0',
+      marginBottom: '24px'
+    },
+    body: {
+      padding: '10px 5px'
+    },
+    footer: {
+      borderTop: '2px solid #f0f0f0',
+      padding: '20px 0 10px',
+      marginTop: '24px'
+    },
+    detailItem: {
+      fontSize: '18px',
+      lineHeight: '2',
+      padding: '10px 15px',
+      margin: '8px 0',
+      backgroundColor: '#f8fafc',
+      borderRadius: '8px'
+    },
+    button: {
+      height: '48px',
+      fontSize: '18px',
+      fontWeight: '500',
+      padding: '0 30px',
+      borderRadius: '8px'
+    }
+  };
 
   return (
     <div className="pricing-table-wrapper">
-    <div className="pricing-table-container">
-      <Typography.Title level={5} className="table-title">📋 Bảng giá tin đăng</Typography.Title>
-      <Card className="custom-table">
-        <AnimatePresence mode="wait">
+      <div className="pricing-table-container">
+        <Typography.Title level={5} className="table-title">📋 Bảng giá tin đăng</Typography.Title>
+        <Card className="custom-table">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={page}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            >
+              <Table
+                columns={columns}
+                dataSource={dataSource}
+                pagination={false}
+                bordered
+              />
+            </motion.div>
+          </AnimatePresence>
+        </Card>
+
+        {/* Modal Xác Nhận Gói Dịch Vụ - Enhanced Size and Style */}
+        <Modal
+          title={<div style={modalStyles.header}>🛒 Confirm your Service Package</div>}
+          open={isModalOpen}
+          onCancel={() => setIsModalOpen(false)}  
+          width={800}
+          className="service-package-modal"
+          bodyStyle={modalStyles.body}
+          style={modalStyles.content}
+          footer={
+            <div style={modalStyles.footer}>
+              <Button 
+                key="cancel" 
+                onClick={() => setIsModalOpen(false)}
+                style={{ ...modalStyles.button, marginRight: '15px' }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                key="pay" 
+                type="primary" 
+                onClick={handleConfirmPayment}
+                style={modalStyles.button}
+              >
+                Buy Now
+              </Button>
+            </div>
+          }
+        >
+          {selectedPackage && (
+            <div className="service-package-details">
+              <p style={{ ...modalStyles.detailItem, backgroundColor: '#edf2f7' }}>
+                <b>📌 Loại tin:</b> {selectedPackage.type}
+              </p>
+              <p style={modalStyles.detailItem}>
+                <b>⭐ Gói dịch vụ:</b> {selectedPackage.name}
+              </p>
+              <p style={{ ...modalStyles.detailItem, backgroundColor: '#edf2f7' }}>
+                <b>📝 Mô tả:</b> {selectedPackage.description}
+              </p>
+              <p style={modalStyles.detailItem}>
+                <b>⏱️ Thời gian:</b> {selectedPackage.duration} ngày
+              </p>
+              <p style={{ ...modalStyles.detailItem, backgroundColor: '#edf2f7' }}>
+                <b>📊 Số bài đăng:</b> {selectedPackage.maxPost}
+              </p>
+              <p style={modalStyles.detailItem}>
+                <b>🏷️ Nhãn:</b> {selectedPackage.label}
+              </p>
+              <p style={{ ...modalStyles.detailItem, backgroundColor: '#edf2f7' }}>
+                <b>🌟 Nổi bật:</b> {selectedPackage.highLightTime}
+              </p>
+              <p style={modalStyles.detailItem}>
+                <b>💰 Giá:</b> {selectedPackage.price}
+              </p>
+            </div>
+          )}
+        </Modal>
+
+        {/* Nút phân trang */}
+        <div className="pagination-box">
+          <motion.div whileTap={{ scale: 0.9 }}>
+            <Button
+              type="primary"
+              onClick={() => setPage(prev => (prev === 0 ? Math.floor(pricingData.length / itemsPerPage) : prev - 1))}
+            >
+              ⬅️ 
+            </Button>
+          </motion.div>
+
           <motion.div
             key={page}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
           >
-            <Table
-              columns={columns}
-              dataSource={dataSource}
-              pagination={false}
-              bordered
-            />
+            <Typography.Text className="page-indicator">{page + 1} / {Math.ceil(pricingData.length / itemsPerPage)}</Typography.Text>
           </motion.div>
-        </AnimatePresence>
-      </Card>
 
-      {/* Modal Xác Nhận Gói Dịch Vụ */}
-      <Modal
-        title="🛒 Confirm your Service Package"
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}  
-        footer={[
-          <Button key="cancel" onClick={() => setIsModalOpen(false)}>Cancel</Button>,
-          <Button key="pay" type="primary" onClick={handleConfirmPayment}>
-            Buy Now
-          </Button> 
-        ]}
-      >
-        {selectedPackage && (
-          <div>
-            <p><b>📌 Loại tin:</b> {selectedPackage.type}</p>
-            <p><b>⭐ Gói dịch vụ:</b> {selectedPackage.name}</p>
-            <p><b>📝 Mô tả:</b> {selectedPackage.description}</p>
-            <p><b>⏱️ Thời gian:</b> {selectedPackage.duration} ngày</p>
-            <p><b>📊 Số bài đăng:</b> {selectedPackage.maxPost}</p>
-            <p><b>🏷️ Nhãn:</b> {selectedPackage.label}</p>
-            <p><b>🌟 Nổi bật:</b> {selectedPackage.highLightTime}</p>
-            <p><b>💰 Giá:</b> {selectedPackage.price}</p>
-          </div>
-        )}
-      </Modal>
-
-      {/* Nút phân trang */}
-      <div className="pagination-box">
-        <motion.div whileTap={{ scale: 0.9 }}>
-          <Button
-            type="primary"
-            onClick={() => setPage(prev => (prev === 0 ? Math.floor(pricingData.length / itemsPerPage) : prev - 1))}
-          >
-            ⬅️ 
-          </Button>
-        </motion.div>
-
-        <motion.div
-          key={page}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Typography.Text className="page-indicator">{page + 1} / {Math.ceil(pricingData.length / itemsPerPage)}</Typography.Text>
-        </motion.div>
-
-        <motion.div whileTap={{ scale: 0.9 }}>
-          <Button
-            type="primary"
-            onClick={() => setPage(prev => (prev + 1) * itemsPerPage >= pricingData.length ? 0 : prev + 1)}
-          >
-            ➡️
-          </Button>
-        </motion.div>
-      </div>
+          <motion.div whileTap={{ scale: 0.9 }}>
+            <Button
+              type="primary"
+              onClick={() => setPage(prev => (prev + 1) * itemsPerPage >= pricingData.length ? 0 : prev + 1)}
+            >
+              ➡️
+            </Button>
+          </motion.div>
+        </div>
       </div>
     </div>
   );

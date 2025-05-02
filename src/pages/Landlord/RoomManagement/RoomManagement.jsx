@@ -59,7 +59,6 @@ const RoomManagement = () => {
       }
     };
     
-
     fetchRooms();
   }, [roomTypeId, pagination.current, pagination.pageSize, searchTerm, statusFilter]);
 
@@ -69,9 +68,8 @@ const RoomManagement = () => {
     // Apply search filter
     if (searchTerm) {
       result = result.filter(room => 
-        room.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        room.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        room.roomNumber.toString().includes(searchTerm)
+        room.roomNumber.toString().includes(searchTerm) ||
+        room.location.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
@@ -126,6 +124,10 @@ const RoomManagement = () => {
     });
   };
   
+  // Function to format price with comma separators
+  const formatPrice = (price) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   return (
     <div className="room-management">
@@ -148,7 +150,7 @@ const RoomManagement = () => {
       <div className="filters-container">
         <div className="search-box">
           <Input
-            placeholder="Search by room name, number or description..."
+            placeholder="Search by room number or location..."
             prefix={<SearchOutlined className="text-gray-400" />}
             value={searchTerm}
             onChange={handleSearchChange}
@@ -179,7 +181,7 @@ const RoomManagement = () => {
       <div className="flex justify-between items-center mb-5">
         {filteredRooms.length > 0 && (
           <div className="text-sm font-medium text-gray-500">
-            Showing {filteredRooms.length} of {roomList.length} rooms
+            Showing {filteredRooms.length} of {pagination.total} rooms
           </div>
         )}
 
@@ -223,7 +225,7 @@ const RoomManagement = () => {
                 cover={
                   <div className="card-image-container">
                     <img
-                      alt={room.title}
+                      alt={`Room ${room.roomNumber}`}
                       src={room.roomImages?.[0] || "https://via.placeholder.com/300x200?text=No+Image"}
                       className="room-image"
                     />
@@ -244,17 +246,33 @@ const RoomManagement = () => {
                   </Button>
                 ]}
               >
-                <div className="room-title">{room.title}</div>
                 <div className="room-details">
                   <div className="room-number">Room {room.roomNumber}</div>
-                  <div className="room-description">{room.description}</div>
+                  <div className="room-type">{room.roomTypeName}</div>
                   <div className="card-divider" />
                   <div className="room-price">
-                    <DollarOutlined /> {room.price.toLocaleString()} VNĐ
+                    <DollarOutlined /> {formatPrice(room.price)} VNĐ
                   </div>
                   <div className="room-location">
                     <EnvironmentOutlined /> {room.location}
                   </div>
+                  
+                  {/* Display Amenities */}
+                  {room.amenties && room.amenties.length > 0 && (
+                    <div className="room-amenities mt-2">
+                      <div className="text-sm font-medium mb-1">Amenities:</div>
+                      <div className="amenities-list flex flex-wrap gap-1">
+                        {room.amenties.slice(0, 3).map((amenity) => (
+                          <Tag key={amenity.roomAmentyId} className="mb-1">
+                            {amenity.name}
+                          </Tag>
+                        ))}
+                        {room.amenties.length > 3 && (
+                          <Tag className="mb-1">+{room.amenties.length - 3} more</Tag>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </Card>
             </Col>
@@ -268,9 +286,8 @@ const RoomManagement = () => {
         total={pagination.total}  // Tổng số phòng
         onChange={handlePageChange}  // Hàm xử lý chuyển trang
         showSizeChanger={false}  // Ẩn lựa chọn thay đổi số phòng mỗi trang
-        className="pagination"
+        className="pagination mt-6"
       />
-
     </div>
   );
 };

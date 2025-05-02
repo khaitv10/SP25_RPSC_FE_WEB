@@ -1,0 +1,328 @@
+.create-post-container {
+    padding: 32px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f9fafc;
+    min-height: 100vh;
+    
+    .create-post-card {
+      box-shadow: 0 8px 24px rgba(149, 157, 165, 0.15);
+      border-radius: 16px;
+      border: none;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        box-shadow: 0 12px 28px rgba(149, 157, 165, 0.2);
+      }
+    }
+    
+    .page-header {
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      
+      h2 {
+        margin-bottom: 0;
+        font-weight: 600;
+        color: #222;
+        font-size: 28px;
+      }
+      
+      .ant-btn {
+        margin-right: 12px;
+        
+        &:hover {
+          background-color: #f0f0f0;
+          color: #1890ff;
+        }
+      }
+    }
+    
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 72px 0;
+      
+      p {
+        margin-top: 24px;
+        font-size: 16px;
+        color: #637381;
+        font-weight: 500;
+      }
+      
+      .anticon {
+        color: #1890ff;
+      }
+    }
+    
+    .selected-room-card {
+      height: 100%;
+      border: none;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      overflow: hidden;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      }
+      
+      .room-info {
+        display: flex;
+        gap: 16px;
+        
+        .room-thumbnail {
+          width: 90px;
+          height: 90px;
+          object-fit: cover;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: scale(1.03);
+          }
+        }
+        
+        .room-details {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding: 4px 0;
+          
+          .ant-typography {
+            margin-bottom: 0;
+            
+            &:first-child {
+              font-size: 16px;
+              color: #222;
+            }
+            
+            &.ant-typography-secondary {
+              color: #637381;
+            }
+            
+            &.ant-typography-success {
+              color: #52c41a;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              margin-top: 4px;
+              
+              .anticon {
+                background-color: rgba(82, 196, 26, 0.1);
+                border-radius: 50%;
+                padding: 2px;
+                font-size: 12px;
+              }
+            }
+            
+            .anticon {
+              margin-right: 6px;
+            }
+          }
+        }
+      }
+    }
+    
+    .placeholder-card {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f9fafb;
+      border: 2px dashed #e6e8eb;
+      border-radius: 12px;
+      padding: 32px 16px;
+      color: #919eab;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: #c9cfd6;
+        color: #637381;
+      }
+      
+      .anticon {
+        font-size: 18px;
+        margin-right: 8px;
+        color: #b0b9c2;
+      }
+    }
+    
+    .ant-divider {
+      margin: 28px 0;
+    }
+    
+    .ant-form {
+      .ant-form-item-label > label {
+        font-weight: 500;
+        color: #344054;
+        font-size: 15px;
+      }
+      
+      .ant-input, .ant-select-selector, .ant-picker {
+        border-radius: 8px;
+        border: 1px solid #e6e8eb;
+        transition: all 0.2s ease;
+        padding: 8px 12px;
+        
+        &:hover, &:focus {
+          border-color: #1890ff;
+          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+        }
+      }
+      
+      .ant-input-affix-wrapper {
+        border-radius: 8px;
+        padding: 0 12px;
+        
+        .ant-input {
+          border: none;
+          box-shadow: none;
+        }
+      }
+      
+      .ant-select-selector {
+        height: auto !important;
+        padding: 8px 12px !important;
+        
+        .ant-select-selection-search-input {
+          height: 24px !important;
+        }
+        
+        .ant-select-selection-item {
+          line-height: 24px !important;
+        }
+      }
+      
+      .ant-select-item {
+        padding: 10px 12px;
+        border-radius: 4px;
+        margin: 4px 8px;
+        
+        &-option-active {
+          background-color: rgba(24, 144, 255, 0.06);
+        }
+        
+        &-option-selected {
+          font-weight: 500;
+          background-color: rgba(24, 144, 255, 0.1);
+        }
+      }
+      
+      textarea.ant-input {
+        padding: 12px;
+        line-height: 1.6;
+        font-size: 15px;
+        
+        &:focus {
+          border-color: #1890ff;
+          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+        }
+      }
+      
+      .ant-form-item-has-error {
+        .ant-input, .ant-select-selector, .ant-picker {
+          &:focus {
+            box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+          }
+        }
+      }
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 24px;
+      
+      .ant-btn {
+        border-radius: 8px;
+        height: 44px;
+        padding: 0 24px;
+        font-weight: 500;
+        font-size: 15px;
+        
+        &-default {
+          border-color: #d9d9d9;
+          background: white;
+          
+          &:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+          }
+        }
+        
+        &-primary {
+          background: #1890ff;
+          box-shadow: 0 4px 12px rgba(24, 144, 255, 0.25);
+          
+          &:hover {
+            background: #40a9ff;
+          }
+        }
+      }
+    }
+    
+    .ant-alert {
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 28px;
+      
+      &-error {
+        background-color: #fff2f0;
+        border: 1px solid #ffccc7;
+      }
+      
+      &-warning {
+        background-color: #fffbe6;
+        border: 1px solid #ffe58f;
+      }
+      
+      .ant-alert-message {
+        color: #434343;
+        font-weight: 500;
+      }
+    }
+    
+    // Responsive adjustments
+    @media (max-width: 768px) {
+      padding: 16px;
+      
+      .page-header {
+        h2 {
+          font-size: 24px;
+        }
+      }
+      
+      .selected-room-card, 
+      .placeholder-card {
+        margin-top: 16px;
+      }
+      
+      .form-actions {
+        justify-content: center;
+        
+        .ant-space {
+          width: 100%;
+          
+          .ant-btn {
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+  
+  // Animation for loading state
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .create-post-container {
+    animation: fadeIn 0.4s ease-out;
+  }

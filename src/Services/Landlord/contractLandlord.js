@@ -22,6 +22,29 @@ export const getCustomerContracts = async (
   }
 };
 
+export const updateContract = async (contractId, contractFile) => {
+  try {
+    const formData = new FormData();
+    formData.append("ContractId", contractId);
+    formData.append("ContractFile", contractFile);
+
+    const response = await axiosClient.post(
+      "/api/RoomRentRequest/Update-Contract",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error updating contract:", error);
+    throw error.response?.data || new Error("An error occurred");
+  }
+};
+
 export const confirmContractAndCreateRoomStay = async (contractId, contractFile) => {
     try {
       const formData = new FormData();

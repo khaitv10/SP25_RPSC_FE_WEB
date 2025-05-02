@@ -1,0 +1,239 @@
+.post-detail-container {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 64px);
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    .back-button {
+      margin-left: auto;
+    }
+  }
+  
+  .back-button {
+    margin-bottom: 20px;
+    font-size: 16px;
+    
+    &:hover {
+      color: #1890ff;
+    }
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    
+    p {
+      margin-top: 16px;
+      font-size: 16px;
+      color: #666;
+    }
+  }
+  
+  .error-container {
+    max-width: 600px;
+    margin: 40px auto;
+  }
+  
+  .post-header-card {
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    
+    .post-status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      
+      h2 {
+        margin-bottom: 0;
+      }
+      
+      .post-status-badge {
+        font-size: 14px;
+      }
+    }
+    
+    .post-location {
+      margin-bottom: 12px;
+      font-size: 16px;
+      color: #666;
+    }
+    
+    .post-meta {
+      margin-bottom: 16px;
+      
+      span {
+        margin-right: 24px;
+        color: #666;
+      }
+    }
+    
+    .post-description {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+  }
+  
+  .room-info-card {
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    
+    .room-gallery {
+      margin-bottom: 24px;
+      
+      .image-container {
+        width: 100%;
+        height: 160px;
+        overflow: hidden;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        
+        &:hover {
+          transform: scale(1.02);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .room-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+    
+    .amenities-list, .services-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+      
+      .ant-tag {
+        margin-right: 0;
+        padding: 4px 10px;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .owner-info-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    position: sticky;
+    top: 24px;
+    
+    .owner-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      
+      .owner-avatar {
+        margin-bottom: 16px;
+        border: 4px solid #f0f0f0;
+      }
+      
+      h3 {
+        margin-bottom: 12px;
+      }
+      
+      .owner-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 16px;
+      }
+    }
+    
+    .owner-details {
+      .ant-descriptions-item-label {
+        font-weight: bold;
+      }
+    }
+    
+    .contact-button {
+      height: 48px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+  
+  .image-preview-modal {
+    .ant-modal-body {
+      padding: 0;
+      
+      img {
+        display: block;
+      }
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .post-detail-container {
+    padding: 16px;
+    
+    .page-header {
+      padding: 12px 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      
+      .header-actions {
+        margin-top: 12px;
+        width: 100%;
+        
+        .back-button {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+    }
+    
+    .post-header-card {
+      .post-status-header {
+        flex-direction: column;
+        align-items: flex-start;
+        
+        h2 {
+          margin-bottom: 12px;
+        }
+      }
+    }
+    
+    .room-info-card {
+      .room-gallery {
+        .image-container {
+          height: 120px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .post-detail-container {
+    .room-info-card {
+      .amenities-list, .services-list {
+        .ant-tag {
+          margin-bottom: 8px;
+        }
+      }
+    }
+  }
+}

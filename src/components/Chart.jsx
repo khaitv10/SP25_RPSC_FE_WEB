@@ -120,33 +120,11 @@ const Chart = ({ data }) => {
           dataKey="actualValue" 
           name="Revenue"  
           radius={[6, 6, 0, 0]} 
+          fill="#ACDCD0"
           isAnimationActive={animateChart}
           animationDuration={1500}
           animationEasing="ease-out"
-        >
-          {chartData.map((entry, index) => {
-            const ratio = entry.actualValue / (maxValue || 1);
-            let barColor;
-            
-            if (entry.actualValue === 0) {
-              barColor = "#F3F4F6"; // Lighter gray for zero values
-            } else if (ratio > 0.7) {
-              barColor = "#60A5FA"; // Brighter blue for high values
-            } else if (ratio > 0.4) {
-              barColor = "#34D399"; // Brighter green for medium values
-            } else {
-              barColor = "#FBBF24"; // Brighter amber for low values
-            }
-            
-            return (
-              <cell 
-                key={`cell-${index}`} 
-                fill={barColor}
-                style={{ filter: entry.actualValue > 0 ? "drop-shadow(0px 2px 3px rgba(0,0,0,0.1))" : "none" }}
-              />
-            );
-          })}
-        </Bar>
+        />
       </BarChart>
     </ResponsiveContainer>
   );

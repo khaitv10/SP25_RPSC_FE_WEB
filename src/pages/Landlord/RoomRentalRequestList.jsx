@@ -1,60 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card, Typography, Tabs, Badge, Button, Row, Col, Modal, List,
-  Avatar, Tag, Empty, Spin, Input, Pagination, Space, Drawer, Divider, notification, message
+  Card, Typography, Badge, Button, Row, Col, Modal, List,
+  Avatar, Tag, Empty, Spin, Input, Pagination, Space, Drawer, Divider
 } from 'antd';
 import {
   HomeOutlined, BellOutlined, CalendarOutlined, PhoneOutlined,
   DollarOutlined, SearchOutlined, MailOutlined, UserOutlined,
   CompassOutlined, ProfileOutlined, ClockCircleOutlined,
-  CheckOutlined, LoadingOutlined, QuestionCircleOutlined
+  CheckOutlined, LoadingOutlined, QuestionCircleOutlined,
+  CloseOutlined, FilterOutlined
 } from '@ant-design/icons';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import pic from '../../assets/room.jpg';
 import ava from '../../assets/avatar.jpg';
 import roomRentalService from "../../Services/Landlord/roomAPI";
 
 const { Title, Text } = Typography;
-const { Search } = Input;
-
-// Default toast configuration
-const showToast = {
-  success: (content) => {
-    message.success({
-      content: content || 'Operation completed successfully',
-      duration: 3,
-      style: {
-        marginTop: '20px',
-      },
-    });
-  },
-  error: (content) => {
-    message.error({
-      content: content || 'An error occurred',
-      duration: 5,
-      style: {
-        marginTop: '20px',
-      },
-    });
-  },
-  warning: (content) => {
-    message.warning({
-      content: content || 'Warning',
-      duration: 4,
-      style: {
-        marginTop: '20px',
-      },
-    });
-  },
-  info: (content) => {
-    message.info({
-      content: content || 'Information',
-      duration: 3,
-      style: {
-        marginTop: '20px',
-      },
-    });
-  }
-};
 
 const RoomRentalRequestList = () => {
   // Core states
@@ -86,7 +48,7 @@ const RoomRentalRequestList = () => {
       try {
         const { message: successMessage, time } = JSON.parse(successNotification);
         if (new Date().getTime() - time < 5000) {
-          showToast.success(successMessage);
+          toast.success(successMessage);
         }
       } catch (error) {
         console.error("Error parsing success notification:", error);
@@ -136,7 +98,7 @@ const RoomRentalRequestList = () => {
       }
     } catch (error) {
       console.error("Error loading room data:", error);
-      showToast.error('Unable to load room data. Please try again later.');
+      toast.error('Unable to load room data. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -184,7 +146,7 @@ const RoomRentalRequestList = () => {
   
     try {
       if (!selectedRequest?.customerId || !selectedRequest?.roomRentRequestsId) {
-        showToast.error('Missing required fields');
+        toast.error('Missing required fields');
         return;
       }
   
@@ -194,7 +156,7 @@ const RoomRentalRequestList = () => {
       );
   
       if (response?.isSuccess === true) {
-        showToast.success('Room rental request has been approved successfully.');
+        toast.success('Room rental request has been approved successfully.');
         
         localStorage.setItem('approval_success', JSON.stringify({
           message: 'Room rental request has been approved successfully.',
@@ -209,20 +171,20 @@ const RoomRentalRequestList = () => {
         
         if (errorMessage.includes("already has an active room stay") || 
           (response?.data?.errorType === "ActiveRoomExistsError")) {
-          showToast.error('This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
+          toast.error('This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
           setTimeout(() => window.location.reload(), 3000);
         } else {
-          showToast.error(errorMessage);
+          toast.error(errorMessage);
         }
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message || "An error occurred";
       
       if (errorMessage.includes("already has an active room stay")) {
-        showToast.error('This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
+        toast.error('This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
         setTimeout(() => window.location.reload(), 3000);
       } else {
-        showToast.error(errorMessage);
+        toast.error(errorMessage);
       }
     } finally {
       setIsLoading(false);
@@ -234,7 +196,7 @@ const RoomRentalRequestList = () => {
   const handleCancel = () => setIsModalVisible(false);
   const showDrawer = (request) => {
     if (!selectedRoom?.roomRentRequestsId) {
-      showToast.error('Missing room rent request ID');
+      toast.error('Missing room rent request ID');
       return;
     }
     setSelectedRequest({ ...request, roomRentRequestsId: String(selectedRoom.roomRentRequestsId) });
@@ -250,7 +212,7 @@ const RoomRentalRequestList = () => {
     setSearchValue(''); 
     setSearchQuery(''); 
     setPageIndex(1); 
-    showToast.info('Search cleared');
+    toast.info('Search cleared');
   };
 
   const renderRoomCard = (room) => (
@@ -310,27 +272,57 @@ const RoomRentalRequestList = () => {
   );
 
   return (
-    <div className="room-rental-request-list">
-      <div className="search-container">
-        <Space>
-          <Search
-            placeholder="Search by room name or address"
-            allowClear
-            enterButton={<Button type="primary"><SearchOutlined /></Button>}
-            size="large"
+    <div className="room-rental-request-list" style={{ padding: '24px 0' }}>
+      <ToastContainer position="top-right" autoClose={3000} />
+      
+      <div className="tab-header" style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: '24px'
+      }}>
+        <div className="left-section">
+          <Title level={4} style={{ margin: 0 }}>Room Rental Requests</Title>
+          <Text type="secondary">Manage rental requests for your properties</Text>
+        </div>
+      </div>
+
+      {/* Search Section */}
+      <div className="search-container" style={{
+        marginBottom: '24px',
+        padding: '16px 24px',
+        background: '#f9f9f9',
+        borderRadius: '8px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Input
+            placeholder="Search by room name or address..."
+            prefix={<SearchOutlined style={{ color: '#1677ff' }} />}
             value={searchValue}
             onChange={onSearchChange}
-            onSearch={handleSearch}
-            style={{ width: 320 }}
+            onPressEnter={() => handleSearch(searchValue)}
+            suffix={
+              searchValue ? 
+              <CloseOutlined onClick={clearSearch} style={{ cursor: 'pointer', color: '#999' }} /> : 
+              <FilterOutlined style={{ color: '#999' }} />
+            }
+            style={{ width: '100%', height: '40px', borderRadius: '6px' }}
           />
-          {searchQuery && <Button onClick={clearSearch}>Clear</Button>}
-        </Space>
+          <Button 
+            type="primary" 
+            onClick={() => handleSearch(searchValue)}
+            style={{ height: '40px', borderRadius: '6px' }}
+          >
+            Search
+          </Button>
+        </div>
       </div>
 
       {loading ? (
-        <div className="loading-container">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 0' }}>
           <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />} />
-          <p>Loading room data...</p>
+          <p style={{ marginTop: '16px' }}>Loading room data...</p>
         </div>
       ) : (
         <>
@@ -341,9 +333,20 @@ const RoomRentalRequestList = () => {
               <Col span={24}>
                 <Empty 
                   description={
-                    searchQuery 
-                      ? `No rooms found matching "${searchQuery}"` 
-                      : "No rooms with rental requests"
+                    <Space direction="vertical" size="small">
+                      <Text strong style={{ fontSize: 16 }}>
+                        {searchQuery 
+                          ? `No rooms found matching "${searchQuery}"` 
+                          : "No rooms with rental requests"
+                        }
+                      </Text>
+                      <Text type="secondary">
+                        {searchQuery 
+                          ? "Try using different keywords or clear your search" 
+                          : "All your rental requests will appear here"
+                        }
+                      </Text>
+                    </Space>
                   } 
                 />
               </Col>
@@ -351,7 +354,7 @@ const RoomRentalRequestList = () => {
           </Row>
           
           {totalRooms > 0 && (
-            <div className="pagination-container">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '24px 0 16px' }}>
               <Pagination
                 current={pageIndex}
                 pageSize={pageSize}
@@ -379,11 +382,9 @@ const RoomRentalRequestList = () => {
         onCancel={handleCancel}
         footer={null}
         width={700}
-        className="requests-modal"
       >
         {selectedRoom && roomRequests[selectedRoom.id] && (
           <List
-            className="request-list"
             itemLayout="horizontal"
             dataSource={roomRequests[selectedRoom.id]}
             renderItem={request => (
@@ -392,7 +393,6 @@ const RoomRentalRequestList = () => {
                   <Button
                     type="primary"
                     onClick={() => showDrawer(request)}
-                    className="details-button"
                   >
                     Details
                   </Button>
@@ -402,10 +402,10 @@ const RoomRentalRequestList = () => {
                   avatar={<Avatar src={request.avatar} size={74} />}
                   title={<Text strong>{request.customerName}</Text>}
                   description={
-                    <div className="request-brief">
-                      <div><PhoneOutlined className="detail-icon" /> {request.phone}</div>
-                      <div><CalendarOutlined className="detail-icon" /> Request Date: {formatDate(request.requestDate)}</div>
-                      <div><CalendarOutlined className="detail-icon" /> Want to Rent Date: {formatDate(request.dateWantToRent)}</div>
+                    <div>
+                      <div><PhoneOutlined /> {request.phone}</div>
+                      <div><CalendarOutlined /> Request Date: {formatDate(request.requestDate)}</div>
+                      <div><CalendarOutlined /> Want to Rent Date: {formatDate(request.dateWantToRent)}</div>
                     </div>
                   }
                 />
@@ -424,8 +424,8 @@ const RoomRentalRequestList = () => {
       {/* Request Details Drawer */}
       <Drawer
         title={
-          <div className="drawer-title">
-            <UserOutlined className="drawer-icon" />
+          <div>
+            <UserOutlined />
             Room Rental Request Details
           </div>
         }
@@ -433,7 +433,6 @@ const RoomRentalRequestList = () => {
         width={600}
         onClose={closeDrawer}
         open={drawerVisible}
-        className="request-details-drawer"
         styles={{
           header: { 
             fontSize: '24px', 
@@ -445,54 +444,49 @@ const RoomRentalRequestList = () => {
           body: { padding: '24px' }
         }}
         footer={
-          <div className="drawer-footer">
-            <Button
-              size="large"
-              type="primary"
-              onClick={showConfirmModal}
-              disabled={isLoading}
-              className="approve-button"
-              icon={isLoading ? <LoadingOutlined /> : <CheckOutlined />}
-              block
-            >
-              Approve
-            </Button>
-          </div>
+          <Button
+            size="large"
+            type="primary"
+            onClick={showConfirmModal}
+            disabled={isLoading}
+            icon={isLoading ? <LoadingOutlined /> : <CheckOutlined />}
+            block
+          >
+            Approve
+          </Button>
         }
       >
         {selectedRequest && (
-          <div className="request-details">
-            <div className="customer-avatar">
+          <div>
+            <div style={{ textAlign: 'center' }}>
               <Avatar
                 size={120}
                 src={selectedRequest.avatar}
                 icon={!selectedRequest.avatar && <UserOutlined />}
-                className="profile-avatar"
               />
               <Title level={3} style={{ margin: '16px 0 0' }}>
                 {selectedRequest.customerName || selectedRequest.fullName}
               </Title>
             </div>
 
-            <Divider className="section-divider" />
+            <Divider />
 
-            <Title level={4} className="section-title">Contact Information</Title>
-            <div className="detail-section">
+            <Title level={4}>Contact Information</Title>
+            <div>
               {renderDetailItem(<PhoneOutlined />, 'Phone', selectedRequest.phone || selectedRequest.phoneNumber || 'Not provided')}
               {renderDetailItem(<MailOutlined />, 'Email', selectedRequest.email || 'Not provided')}
               {renderDetailItem(<CalendarOutlined />, 'Status', 
                 <Tag color={selectedRequest.status === 'Pending' ? 'orange' :
-                  selectedRequest.status === 'Approved' ? 'green' : 'red'} 
-                  className="status-tag">
+                  selectedRequest.status === 'Approved' ? 'green' : 'red'}>
                   {selectedRequest.status || 'Pending'}
                 </Tag>
               )}
             </div>
 
-            <Divider className="section-divider" />
+            <Divider />
 
-            <Title level={4} className="section-title">Preferences</Title>
-            <div className="detail-section">
+            <Title level={4}>Preferences</Title>
+            <div>
               {selectedRequest.preferences && renderDetailItem(
                 <ProfileOutlined />, 'Preferences', selectedRequest.preferences
               )}
@@ -516,13 +510,11 @@ const RoomRentalRequestList = () => {
               )}
             </div>
 
-            <Divider className="section-divider" />
+            <Divider />
 
-            <div className="message-section">
-              <Title level={4} className="section-title">Message from tenant:</Title>
-              <Card
-                className="message-card"
-              >
+            <div>
+              <Title level={4}>Message from tenant:</Title>
+              <Card>
                 {selectedRequest.message || 'No message provided'}
               </Card>
             </div>
@@ -533,34 +525,32 @@ const RoomRentalRequestList = () => {
       {/* Confirm Modal */}
       <Modal
         title={
-          <div className="confirm-modal-title">
-            <QuestionCircleOutlined className="confirm-icon" />
+          <div>
+            <QuestionCircleOutlined />
             <span>Confirm Approval</span>
           </div>
         }
         open={confirmModalVisible}
         onCancel={hideConfirmModal}
         footer={[
-          <Button key="cancel" onClick={hideConfirmModal} className="cancel-button">Cancel</Button>,
+          <Button key="cancel" onClick={hideConfirmModal}>Cancel</Button>,
           <Button
             key="approve"
             type="primary"
             loading={isLoading}
             onClick={handleApprove}
-            className="confirm-button"
           >
             Confirm
           </Button>,
         ]}
         centered
         maskClosable={false}
-        className="confirm-modal"
       >
-        <p className="confirm-message">
+        <p>
           Are you sure you want to approve this room rental request from{' '}
           <Text strong>{selectedRequest?.customerName || selectedRequest?.fullName || 'this tenant'}</Text>?
         </p>
-        <p className="confirm-note">
+        <p>
           Once approved, the tenant will be notified and the room status will be updated.
         </p>
       </Modal>

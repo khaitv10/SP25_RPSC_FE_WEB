@@ -24,6 +24,7 @@ const LandlordRegisDetailAdmin = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [previewVisible, setPreviewVisible] = useState(false);
 
   useEffect(() => {
     fetchLandlordDetail();
@@ -77,15 +78,25 @@ const LandlordRegisDetailAdmin = () => {
   };
 
   const getStatusBadge = (status) => {
-    switch(status?.toLowerCase()) {
+    // Normalize the status to lowercase for case-insensitive comparison
+    const normalizedStatus = status?.toLowerCase();
+    
+    switch(normalizedStatus) {
       case 'approved':
-        return <Badge status="success" text={<Text strong className="status approved">Approved</Text>} />;
+      case 'active':
+        return <Badge status="success" text={<Text strong className="status approved">
+          {normalizedStatus === 'active' ? 'Active' : 'Approved'}
+        </Text>} />;
       case 'rejected':
         return <Badge status="error" text={<Text strong className="status rejected">Rejected</Text>} />;
       case 'pending':
       default:
         return <Badge status="warning" text={<Text strong className="status pending">Pending</Text>} />;
     }
+  };
+
+  const openPreview = () => {
+    setPreviewVisible(true);
   };
 
   if (loading) {
@@ -95,6 +106,9 @@ const LandlordRegisDetailAdmin = () => {
       </div>
     );
   }
+
+  // Check if status is pending or other statuses that require review
+  const isPending = landlord?.status?.toLowerCase() === 'pending';
 
   return (
     <div className="landlord-regis-detail-admin-container">
@@ -111,7 +125,7 @@ const LandlordRegisDetailAdmin = () => {
 
           <div className="status-indicator">
             {getStatusBadge(landlord?.status)}
-            {landlord?.status?.toLowerCase() === 'pending' && (
+            {isPending && (
               <div className="pending-indicator">
                 <ClockCircleOutlined /> Awaiting Review
               </div>
@@ -147,7 +161,6 @@ const LandlordRegisDetailAdmin = () => {
             <div className="right-section">
               <div className="section-header">
                 <Title level={4}><FileImageOutlined /> Business License Images</Title>
-
               </div>
               
               {landlord?.businessImageUrls?.length > 0 ? (
@@ -162,10 +175,12 @@ const LandlordRegisDetailAdmin = () => {
                     <Image
                       src={landlord.businessImageUrls[currentImageIndex]}
                       className="business-image"
-                      preview={{ 
-                        visible: false,
-                        mask: "View Full Image"
+                      preview={{
+                        visible: previewVisible,
+                        onVisibleChange: (visible) => setPreviewVisible(visible),
+                        src: landlord.businessImageUrls[currentImageIndex]
                       }}
+                      onClick={openPreview}
                     />
                     <Button
                       icon={<RightOutlined />}
@@ -199,7 +214,7 @@ const LandlordRegisDetailAdmin = () => {
           </div>
 
           {/* Approve / Reject Buttons - Only shown when status is pending */}
-          {landlord?.status?.toLowerCase() === 'pending' && (
+          {isPending && (
             <div className="button-group">
               <Button
                 className="approve"

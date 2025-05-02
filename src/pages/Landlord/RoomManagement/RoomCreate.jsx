@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input, Button, InputNumber, Upload, Select, Spin, Typography, Space, Card, DatePicker } from "antd";
+import { Form, Input, Button, InputNumber, Upload, Select, Spin, Typography, Space, Card, Modal } from "antd";
 import { 
   UploadOutlined, 
   ArrowLeftOutlined, 
   HomeOutlined, 
-  DollarOutlined, 
-  EnvironmentOutlined,
-  FileTextOutlined,
-  TagOutlined,
-  CalendarOutlined
+  DollarOutlined,
+  PlusOutlined
 } from "@ant-design/icons";
-import moment from "moment";
 import roomRentalService from "../../../Services/Landlord/roomAPI";
-import { getAllAmenities } from "../../../Services/Landlord/amenityAPI";
+import { getAllAmenities, createAmenity } from "../../../Services/Landlord/amenityAPI";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./RoomCreate.scss";
@@ -25,39 +21,38 @@ const RoomCreate = () => {
   const [loading, setLoading] = useState(false);
   const [loadingAmenities, setLoadingAmenities] = useState(true);
   const [form] = Form.useForm();
+  const [amenityForm] = Form.useForm();
   const { roomTypeId } = useParams();
   const [amenities, setAmenities] = useState([]);
   const [fileList, setFileList] = useState([]);
   const navigate = useNavigate();
-
-  // Define the disabledDate function to disable past dates
-  const disabledDate = (current) => {
-    // Disable all dates before today (inclusive of today)
-    return current && current < moment().startOf('day');
-  };
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [creatingAmenity, setCreatingAmenity] = useState(false);
 
   // Fetch amenities when component loads
   useEffect(() => {
-    const fetchAmenities = async () => {
-      setLoadingAmenities(true);
-      try {
-        const data = await getAllAmenities();
-        setAmenities(data.amenties);
-      } catch (error) {
-        toast.error("Error fetching amenities");
-        console.error("Error:", error);
-      } finally {
-        setLoadingAmenities(false);
-      }
-    };
-
     fetchAmenities();
   }, []);
+
+  const fetchAmenities = async () => {
+    setLoadingAmenities(true);
+    try {
+      const data = await getAllAmenities();
+      setAmenities(data.amenties);
+    } catch (error) {
+      toast.error("Error fetching amenities");
+      console.error("Error:", error);
+    } finally {
+      setLoadingAmenities(false);
+    }
+  };
 
   // Update roomtypeId value in form
   useEffect(() => {
     form.setFieldsValue({
       roomtypeId: roomTypeId,
+      // Set default hidden location
+      location: "Thủ Đức, Hồ Chí Minh"
     });
   }, [roomTypeId, form]);
 
@@ -73,17 +68,9 @@ const RoomCreate = () => {
   
       // Append form values to FormData
       formData.append("RoomNumber", values.roomNumber);
-      formData.append("Title", values.title || '');
-      formData.append("Description", values.description || '');
       formData.append("roomtypeId", values.roomtypeId);
       formData.append("price", values.price);
-      formData.append("Location", values.location || '');
-      
-      // Append the new AvailableDateToRent field if it exists
-      if (values.availableDateToRent) {
-        // Format date as ISO string for backend consumption
-        formData.append("AvailableDateToRent", values.availableDateToRent.toISOString());
-      }
+      formData.append("Location", values.location); // Hidden default value
   
       // Append images to FormData
       if (fileList && fileList.length > 0) {
@@ -141,6 +128,44 @@ const RoomCreate = () => {
   // Fixed navigateBack function that preserves the roomTypeId in the URL
   const navigateBack = () => {
     navigate(`/landlord/roomtype/room?roomType=${roomTypeId}`);
+  };
+
+  // Handle showing the create amenity modal
+  const showCreateAmenityModal = () => {
+    setIsModalVisible(true);
+    amenityForm.resetFields();
+  };
+
+  // Handle creating a new amenity
+  const handleCreateAmenity = async () => {
+    try {
+      const values = await amenityForm.validateFields();
+      setCreatingAmenity(true);
+      
+      const amenityData = {
+        Name: values.name,
+        Compensation: values.compensation || 0
+      };
+
+      const newAmenity = await createAmenity(amenityData);
+      
+      // Update amenities list with new amenity
+      await fetchAmenities();
+      
+      // Add the new amenity to the selected amenities in the form
+      const currentAmenities = form.getFieldValue('AmentyId') || [];
+      form.setFieldsValue({
+        AmentyId: [...currentAmenities, newAmenity.roomAmentyId]
+      });
+      
+      toast.success("Amenity created successfully!");
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Error creating amenity:", error);
+      toast.error(error.message || "Failed to create amenity");
+    } finally {
+      setCreatingAmenity(false);
+    }
   };
 
   return (
@@ -225,76 +250,9 @@ const RoomCreate = () => {
                 </Form.Item>
               </div>
 
-              <Form.Item 
-                label="Title" 
-                name="title"
-                className="full-width"
-              >
-                <Input 
-                  prefix={<TagOutlined className="site-form-item-icon" />}
-                  placeholder="Enter room title" 
-                  className="custom-input"
-                  size="large"
-                />
-              </Form.Item>
-
-              <Form.Item 
-                label="Location" 
-                name="location"
-                className="full-width"
-              >
-                <Input 
-                  prefix={<EnvironmentOutlined className="site-form-item-icon" />}
-                  placeholder="Enter room location" 
-                  className="custom-input"
-                  size="large"
-                />
-              </Form.Item>
-
-              <Form.Item 
-                label="Available Date To Rent" 
-                name="availableDateToRent"
-                className="full-width"
-                rules={[
-                  { 
-                    required: true, 
-                    message: "Available date is required" 
-                  },
-                  { 
-                    validator: (_, value) => {
-                      if (!value) {
-                        return Promise.reject("Please select an available date");
-                      }
-                      if (value && value < moment().startOf('day')) {
-                        return Promise.reject("Available date cannot be in the past");
-                      }
-                      return Promise.resolve();
-                    }
-                  }
-                ]}
-              >
-                <DatePicker 
-                  style={{ width: "100%" }}
-                  placeholder="Select available date"
-                  format="YYYY-MM-DD"
-                  className="custom-input"
-                  size="large"
-                  suffixIcon={<CalendarOutlined />}
-                  disabledDate={disabledDate}
-                />
-              </Form.Item>
-
-              <Form.Item 
-                label="Description" 
-                name="description"
-                className="full-width"
-              >
-                <Input.TextArea 
-                  placeholder="Enter room description" 
-                  rows={4}
-                  className="custom-textarea"
-                  prefix={<FileTextOutlined className="site-form-item-icon" />}
-                />
+              {/* Hidden field for Location with default value */}
+              <Form.Item name="location" hidden>
+                <Input />
               </Form.Item>
             </div>
 
@@ -331,7 +289,17 @@ const RoomCreate = () => {
             </div>
 
             <div className="form-section">
-              <Title level={4} className="section-title">Room Amenities</Title>
+              <div className="amenities-header">
+                <Title level={4} className="section-title">Room Amenities</Title>
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />} 
+                  onClick={showCreateAmenityModal}
+                  className="add-amenity-button"
+                >
+                  Add New Amenity
+                </Button>
+              </div>
               <Text type="secondary" className="section-description">
                 Select all amenities that are included with this room.
               </Text>
@@ -381,6 +349,57 @@ const RoomCreate = () => {
           </Form>
         )}
       </Card>
+
+      {/* Create Amenity Modal */}
+      <Modal
+        title="Create New Amenity"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button 
+            key="create" 
+            type="primary" 
+            onClick={handleCreateAmenity}
+            loading={creatingAmenity}
+          >
+            Create
+          </Button>
+        ]}
+      >
+        <Form
+          form={amenityForm}
+          layout="vertical"
+        >
+          <Form.Item
+            name="name"
+            label="Amenity Name"
+            rules={[{ required: true, message: "Amenity name is required" }]}
+          >
+            <Input placeholder="Enter amenity name" />
+          </Form.Item>
+          <Form.Item
+            name="compensation"
+            label="Compensation (Optional)"
+            rules={[
+              { 
+                type: 'number', 
+                min: 0, 
+                message: "Compensation must be a positive value" 
+              }
+            ]}
+          >
+            <InputNumber
+              placeholder="Enter compensation amount"
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\$\s?|(,*)/g, '')}
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

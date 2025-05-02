@@ -205,13 +205,24 @@
           
           .room-header {
             margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             
-            h4 {
-              margin: 0 0 8px 0;
+            .room-price {
+              display: flex;
+              align-items: center;
+              font-size: 20px;
               font-weight: 700;
-              font-size: 18px;
-              color: #1f2937;
-              line-height: 1.4;
+              color: #1e3a8a;
+              background-color: #e0e7ff;
+              padding: 8px 12px;
+              border-radius: 10px;
+              
+              .anticon {
+                margin-right: 6px;
+                font-size: 18px;
+              }
             }
             
             .room-status {
@@ -234,11 +245,37 @@
             /* Added padding-bottom to ensure space for the card-actions */
             padding-bottom: 70px;
             
-            .room-description {
-              color: #4b5563;
-              font-size: 14px;
-              margin-bottom: 18px;
-              line-height: 1.6;
+            .amenities-container {
+              margin-bottom: 20px;
+              
+              .amenities-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #4b5563;
+                margin-bottom: 10px;
+              }
+              
+              .amenities-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                
+                .amenity-tag {
+                  border-radius: 16px;
+                  padding: 6px 12px;
+                  font-size: 14px;
+                  background-color: #f3f4f6;
+                  border-color: #e5e7eb;
+                  color: #4b5563;
+                  display: flex;
+                  align-items: center;
+                  transition: all 0.2s ease;
+                  
+                  &:hover {
+                    background-color: #e5e7eb;
+                  }
+                }
+              }
             }
             
             .info-row {
@@ -489,19 +526,35 @@
           min-height: 480px;
           
           .room-card-content {
-            min-height: 260px; /* Adjusted for mobile */
+            min-height: 380px; /* Reduced min-height for mobile */
+            
+            .room-header {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 10px;
+            }
+            
+            .room-info {
+              padding-bottom: 60px;
+            }
+          }
+          
+          .room-image {
+            height: 180px; /* Smaller image height for mobile */
           }
         }
+      }
+      
+      .no-data {
+        padding: 40px 20px;
       }
     }
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 480px) {
   .rented-room-management {
     .dashboard-header {
-      padding: 25px 15px;
-      
       .header-content {
         .title {
           font-size: 26px;
@@ -510,12 +563,56 @@
     }
     
     .rooms-content {
-      padding: 15px 10px;
-      
       .filter-section {
-        top: -25px;
         padding: 16px;
       }
+      
+      .rooms-grid {
+        .room-card {
+          min-height: 450px;
+          
+          .room-card-content {
+            padding: 16px;
+            
+            .card-actions {
+              left: 16px;
+              right: 16px;
+              bottom: 16px;
+            }
+            
+            .room-header {
+              .room-price {
+                font-size: 18px;
+                padding: 6px 10px;
+              }
+            }
+            
+            .room-info {
+              .amenities-list {
+                .amenity-tag {
+                  padding: 4px 10px;
+                  font-size: 12px;
+                }
+              }
+              
+              .info-row {
+                font-size: 13px;
+              }
+              
+              .contract-info {
+                .remaining-days {
+                  padding: 6px 10px;
+                  font-size: 13px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .image-preview-overlay {
+      padding: 20px;
     }
   }
 }

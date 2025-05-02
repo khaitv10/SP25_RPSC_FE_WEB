@@ -45,3 +45,5 @@ export const createAmenity = async (amenityData) => {
       throw error.response?.data || new Error("An error occurred");
     }
   };
+
+  

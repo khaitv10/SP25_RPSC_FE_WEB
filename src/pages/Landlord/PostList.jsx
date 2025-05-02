@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, Typography, Tag, Row, Col, Spin, 
-  Empty, Pagination, Space, Input, Alert, Badge,
-  Image, Divider, Button, Tooltip, Tabs, Table, Avatar
+  Empty, Pagination, Space, Input, Badge,
+  Image, Button, Tooltip, Tabs, Table, Avatar,
+  Dropdown, Menu, Statistic, Segmented
 } from 'antd';
 import { 
   HomeOutlined, DollarOutlined, UserOutlined, 
-  SearchOutlined, LoadingOutlined, InfoCircleOutlined,
+  SearchOutlined, LoadingOutlined, FilterOutlined,
   EditOutlined, DeleteOutlined, EyeOutlined, CloseOutlined,
-  MailOutlined, PhoneOutlined, ClockCircleOutlined
+  MailOutlined, PhoneOutlined, ClockCircleOutlined,
+  PlusOutlined, EnvironmentOutlined, TeamOutlined,
+  AreaChartOutlined, AppstoreOutlined, UnorderedListOutlined,
+  EllipsisOutlined, StarOutlined, BellOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -16,7 +20,7 @@ import roomAPI from '../../Services/Room/roomAPI';
 import postAPI from '../../Services/Post/postAPI';
 import './PostList.scss';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { Search } = Input;
 const { TabPane } = Tabs;
 
@@ -30,12 +34,16 @@ const PostList = () => {
   const [searchValue, setSearchValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(3);
+  const [pageSize, setPageSize] = useState(6);
   const [total, setTotal] = useState(0);
+  const [viewMode, setViewMode] = useState('list');
 
   // States for Post List Tab
   const [postList, setPostList] = useState([]);
   const [postLoading, setPostLoading] = useState(true);
+  
+  // State for active tab
+  const [activeTab, setActiveTab] = useState('1');
 
   useEffect(() => {
     fetchPosts();
@@ -45,8 +53,9 @@ const PostList = () => {
   useEffect(() => {
     const filteredPosts = searchQuery
       ? allPosts.filter(post => 
-          post.roomNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          post.title.toLowerCase().includes(searchQuery.toLowerCase())
+          post.roomNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.location?.toLowerCase().includes(searchQuery.toLowerCase())
         )
       : allPosts;
 
@@ -111,9 +120,13 @@ const PostList = () => {
   const getStatusTag = (status) => {
     switch (status) {
       case 'Available':
-        return <Tag color="green">Available</Tag>;
+        return <Tag color="success" icon={<StarOutlined />}>Available</Tag>;
       case 'Renting':
-        return <Tag color="orange">Renting</Tag>;
+        return <Tag color="warning" icon={<BellOutlined />}>Renting</Tag>;
+      case 'Active':
+        return <Tag color="success" icon={<StarOutlined />}>Active</Tag>;
+      case 'Inactive':
+        return <Tag color="error" icon={<CloseOutlined />}>Inactive</Tag>;
       default:
         return <Tag>Unknown</Tag>;
     }
@@ -126,15 +139,16 @@ const PostList = () => {
     }).format(price);
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  // Updated formatDate function - located around line 172 in the original code
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
 
   const handleInactivatePost = async (postId) => {
     try {
@@ -148,11 +162,41 @@ const PostList = () => {
     }
   };
 
-  // Function to navigate to the room detail page
+  // Navigation functions
+  const navigateToCreatePost = () => {
+    navigate('/landlord/post/create-room-post');
+  };
+
   const navigateToRoomDetail = (roomId) => {
     navigate(`/landlord/post/roompostdetail/${roomId}`);
   };
+  
+  const navigateToPostDetail = (postId) => {
+    navigate(`/landlord/post/post-detail-cus/${postId}`);
+  };
 
+  // Handle tab change
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
+
+  // Room action menu
+  const roomActionMenu = (roomId) => (
+    <Menu>
+      <Menu.Item key="view" icon={<EyeOutlined />} onClick={() => navigateToRoomDetail(roomId)}>
+        View Details
+      </Menu.Item>
+      <Menu.Item key="edit" icon={<EditOutlined />}>
+        Edit Room
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="delete" danger icon={<DeleteOutlined />}>
+        Delete Room
+      </Menu.Item>
+    </Menu>
+  );
+
+  // Post list columns
   const postListColumns = [
     {
       title: 'Title',
@@ -162,264 +206,450 @@ const PostList = () => {
       render: (text) => <Text strong>{text}</Text>
     },
     {
-      title: 'Room',
-      dataIndex: 'roomTitle',
-      key: 'roomTitle',
-      width: 200
-    },
-    {
       title: 'Price',
       dataIndex: 'price',
       key: 'price',
       width: 150,
-      render: (price) => formatPrice(price)
+      render: (price) => (
+        <Text strong style={{ color: '#1677ff' }}>
+          {formatPrice(price)}
+        </Text>
+      )
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
       width: 100,
-      render: (status) => (
-        <Tag color={status === 'Active' ? 'green' : 'red'}>
-          {status}
-        </Tag>
-      )
+      render: (status) => getStatusTag(status)
     },
     {
       title: 'Customer',
       key: 'customer',
       width: 300,
       render: (_, record) => (
-        <Space direction="vertical" size="small">
-          <Space>
-            <Avatar 
-              src={record.customerAvatar} 
-              size="large"
-              icon={<UserOutlined />}
-            />
-            <Space direction="vertical" size={0}>
-              <Text strong>{record.customerName}</Text>
-              <Text type="secondary" style={{ fontSize: '12px' }}>
-                {record.customerEmail}
+        <Space className="customer-info">
+          <Avatar 
+            src={record.customerAvatar} 
+            size="large"
+            icon={<UserOutlined />}
+          />
+          <Space direction="vertical" size={0}>
+            <Text strong>{record.customerName}</Text>
+            <Space size={12}>
+              <Text type="secondary">
+                <MailOutlined /> {record.customerEmail}
               </Text>
+
             </Space>
-          </Space>
-          <Space>
-            <PhoneOutlined style={{ color: '#1890ff' }} />
-            <Text>{record.customerPhone}</Text>
           </Space>
         </Space>
       )
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'customerPhone',
+      key: 'customerPhone',
+      width: 200
     },
     {
       title: 'Created At',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      width: 200,
+      width: 150,
       render: (date) => (
-        <Space>
-          <ClockCircleOutlined style={{ color: '#1890ff' }} />
-          <Text>{formatDate(date)}</Text>
-        </Space>
+        <Text type="secondary">
+          <ClockCircleOutlined style={{ marginRight: 8 }} />
+          {formatDate(date)}
+        </Text>
       )
     },
     {
       title: 'Actions',
       key: 'actions',
-      width: 100,
+      width: 120,
       render: (_, record) => (
         <Space>
-          <Tooltip title="View Details">
-            <Button 
-              type="text" 
-              icon={<EyeOutlined />} 
-              onClick={() => navigateToRoomDetail(record.roomId)}
-            />
-          </Tooltip>
-          <Tooltip title="Inactivate Post">
-            <Button 
-              type="text" 
-              danger 
-              icon={<DeleteOutlined />}
-              onClick={() => handleInactivatePost(record.postId)}
-            />
-          </Tooltip>
+          <Button 
+            type="primary" 
+            icon={<EyeOutlined />} 
+            size="middle"
+            onClick={() => navigateToPostDetail(record.postId)}
+          >
+            View
+          </Button>
+          <Button 
+            danger
+            icon={<DeleteOutlined />}
+            size="middle"
+            onClick={() => handleInactivatePost(record.postId)}
+          >
+            Remove
+          </Button>
         </Space>
       )
     }
   ];
 
-  if (loading || postLoading) {
-    return (
-      <div className="loading-container">
-        <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />} />
-        <p>Loading...</p>
+  const renderLoadingState = () => (
+    <div className="loading-container">
+      <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
+      <Text strong style={{ marginTop: 16, fontSize: 16 }}>Loading your properties...</Text>
+    </div>
+  );
+
+  const renderRoomListHeader = () => (
+    <div className="tab-header">
+      <div className="left-section">
+        <Title level={4}>Your Properties</Title>
+        <Text type="secondary">Manage your property listings and room posts</Text>
       </div>
-    );
+      
+      <div className="right-section">
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />} 
+          size="large"
+          onClick={navigateToCreatePost}
+        >
+          Create Room Post
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderSearchAndFilters = () => (
+    <div className="search-container">
+      <div className="search-wrapper">
+        <Input
+          placeholder="Search by title, room number, or location..."
+          prefix={<SearchOutlined className="search-icon" />}
+          value={searchValue}
+          onChange={onSearchChange}
+          onPressEnter={() => handleSearch(searchValue)}
+          suffix={
+            searchValue ? 
+            <CloseOutlined onClick={clearSearch} className="clear-icon" /> : 
+            null
+          }
+        />
+        <Button 
+          type="primary" 
+          onClick={() => handleSearch(searchValue)}
+        >
+          Search
+        </Button>
+      </div>
+      
+      <div className="view-controls">
+        <Segmented
+          value={viewMode}
+          onChange={setViewMode}
+          options={[
+            {
+              value: 'grid',
+              icon: <AppstoreOutlined />,
+              label: 'Grid'
+            },
+            {
+              value: 'list',
+              icon: <UnorderedListOutlined />,
+              label: 'List'
+            }
+          ]}
+        />
+      </div>
+    </div>
+  );
+
+  const renderEmptyState = () => (
+    <Empty 
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description={
+        <Space direction="vertical" size="small">
+          <Text strong style={{ fontSize: 16 }}>
+            {searchQuery 
+              ? `No properties found matching "${searchQuery}"` 
+              : "No properties found"
+            }
+          </Text>
+          <Text type="secondary">
+            {searchQuery 
+              ? "Try using different keywords or clear your search" 
+              : "Add your first property to get started"
+            }
+          </Text>
+        </Space>
+      } 
+      className="empty-state"
+    >
+      <Button 
+        type="primary" 
+        icon={<PlusOutlined />} 
+        onClick={navigateToCreatePost}
+      >
+        Add Property
+      </Button>
+    </Empty>
+  );
+
+  const renderGridView = () => (
+    <Row gutter={[24, 24]} className="post-grid">
+      {posts.map((post) => (
+        <Col xs={24} md={12} xl={8} key={post.roomId}>
+          <Card 
+            className="post-card"
+            cover={
+              <div className="post-image-container">
+                <Image
+                  src={post.roomImages?.[0]?.imageUrl || 'https://via.placeholder.com/640x360'}
+                  alt={post.title}
+                  preview={false}
+                  className="post-image"
+                />
+                {post.roomImages?.length > 0 && (
+                  <div className="image-count-badge">
+                    <EyeOutlined /> {post.roomImages.length} photos
+                  </div>
+                )}
+                {getStatusTag(post.status)}
+              </div>
+            }
+            actions={[
+              <Button 
+                type="text" 
+                icon={<EyeOutlined />}
+                onClick={() => navigateToRoomDetail(post.roomId)}
+              >
+                View
+              </Button>,
+              <Button type="text" icon={<EditOutlined />}>
+                Edit
+              </Button>,
+              <Dropdown overlay={roomActionMenu(post.roomId)} trigger={['click']}>
+                <Button type="text" icon={<EllipsisOutlined />} />
+              </Dropdown>
+            ]}
+          >
+            <div className="post-content">
+              <Title level={4} className="post-title">{post.title}</Title>
+              
+              <div className="post-meta">
+                <Text className="location">
+                  <EnvironmentOutlined /> {post.location}
+                </Text>
+                <Statistic 
+                  value={post.price} 
+                  prefix={<DollarOutlined />}
+                  suffix="/month"
+                  valueStyle={{ 
+                    color: '#1677ff',
+                    fontSize: '18px',
+                    fontWeight: 600 
+                  }}
+                  className="price-display"
+                />
+              </div>
+
+              <div className="post-details">
+                <Row gutter={[16, 16]}>
+                  <Col span={8}>
+                    <div className="detail-item">
+                      <HomeOutlined />
+                      <div>
+                        <Text type="secondary">Room</Text>
+                        <Text strong>{post.roomNumber}</Text>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={8}>
+                    <div className="detail-item">
+                      <AreaChartOutlined />
+                      <div>
+                        <Text type="secondary">Area</Text>
+                        <Text strong>{post.area}m²</Text>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={8}>
+                    <div className="detail-item">
+                      <TeamOutlined />
+                      <div>
+                        <Text type="secondary">Max</Text>
+                        <Text strong>{post.maxOccupancy}</Text>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+
+              <div className="post-amenities">
+                <Text type="secondary">Amenities</Text>
+                <div className="amenities-list">
+                  {(post.roomAmentiesLists || []).slice(0, 4).map((amenity) => (
+                    <Tag key={amenity.amenityId} className="amenity-tag">{amenity.name}</Tag>
+                  ))}
+                  {(post.roomAmentiesLists || []).length > 4 && (
+                    <Tag className="more-tag">+{post.roomAmentiesLists.length - 4} more</Tag>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  );
+
+  const renderListView = () => (
+    <Table
+      dataSource={posts}
+      rowKey="roomId"
+      pagination={false}
+      className="room-list-table"
+      columns={[
+        {
+          title: 'Property',
+          key: 'property',
+          render: (_, post) => (
+            <Space size={16}>
+              <Image
+                src={post.roomImages?.[0]?.imageUrl || 'https://via.placeholder.com/120x80'}
+                alt={post.title}
+                preview={false}
+                width={120}
+                height={80}
+                style={{ borderRadius: '8px', objectFit: 'cover' }}
+              />
+              <Space direction="vertical" size={4}>
+                <Text strong style={{ fontSize: '16px' }}>{post.title}</Text>
+                <Text type="secondary">
+                  <EnvironmentOutlined /> {post.location}
+                </Text>
+                <Space size={12}>
+                  <Text type="secondary"><HomeOutlined /> Room {post.roomNumber}</Text>
+                  <Text type="secondary"><AreaChartOutlined /> {post.area}m²</Text>
+                </Space>
+              </Space>
+            </Space>
+          )
+        },
+        {
+          title: 'Price',
+          dataIndex: 'price',
+          key: 'price',
+          width: 150,
+          render: (price) => (
+            <Text strong style={{ color: '#1677ff', fontSize: '16px' }}>
+              {formatPrice(price)}
+            </Text>
+          )
+        },
+        {
+          title: 'Status',
+          dataIndex: 'status',
+          key: 'status',
+          width: 120,
+          render: (status) => getStatusTag(status)
+        },
+        {
+          title: 'Type',
+          dataIndex: 'roomTypeName',
+          key: 'roomTypeName',
+          width: 120
+        },
+        {
+          title: 'Actions',
+          key: 'actions',
+          width: 150,
+          render: (_, post) => (
+            <Space>
+              <Button 
+                type="primary" 
+                icon={<EyeOutlined />} 
+                size="middle"
+                onClick={() => navigateToRoomDetail(post.roomId)}
+              >
+                View
+              </Button>
+              <Dropdown overlay={roomActionMenu(post.roomId)} trigger={['click']}>
+                <Button icon={<EllipsisOutlined />} />
+              </Dropdown>
+            </Space>
+          )
+        }
+      ]}
+    />
+  );
+
+  const renderPagination = () => (
+    total > pageSize && (
+      <div className="pagination-container">
+        <Pagination
+          current={pageIndex}
+          pageSize={pageSize}
+          total={total}
+          onChange={handlePageChange}
+          showQuickJumper
+          showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} properties`}
+        />
+      </div>
+    )
+  );
+
+  if (loading && activeTab === '1') {
+    return renderLoadingState();
+  }
+
+  if (postLoading && activeTab === '2') {
+    return renderLoadingState();
   }
 
   return (
     <div className="post-list-section">
-      <Tabs defaultActiveKey="1" className="post-list-tabs">
-        <TabPane tab="Room List" key="1">
-      
-          <div className="search-container">
-            <Space>
-              <Search
-                placeholder="Search by room number or title"
-                allowClear
-                enterButton={<Button type="primary" icon={<SearchOutlined />}>Search</Button>}
-                size="large"
-                value={searchValue}
-                onChange={onSearchChange}
-                onSearch={handleSearch}
-                style={{ width: 400 }}
-              />
-              {searchQuery && (
-                <Button onClick={clearSearch} type="text" icon={<CloseOutlined />}>Clear</Button>
-              )}
-            </Space>
-          </div>
+      <Tabs defaultActiveKey="1" onChange={handleTabChange} className="post-list-tabs">
+        <TabPane tab={<span><AppstoreOutlined /> Properties</span>} key="1">
+          {renderRoomListHeader()}
+          {renderSearchAndFilters()}
 
           {posts.length === 0 ? (
-            <Empty 
-              description={
-                searchQuery 
-                  ? `No posts found matching "${searchQuery}"` 
-                  : "No posts found"
-              } 
-              style={{ 
-                margin: '40px 0',
-                padding: '40px',
-                background: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.05)'
-              }}
-            />
+            renderEmptyState()
           ) : (
             <>
-              <Row gutter={[24, 24]} className="post-grid">
-                {posts.map((post) => (
-                  <Col xs={24} sm={12} lg={8} key={post.roomId}>
-                    <Card 
-                      className="post-card"
-                      cover={
-                        <div className="post-image-container">
-                          <Image
-                            src={post.roomImages[0]?.imageUrl}
-                            alt={post.title}
-                            preview={false}
-                            className="post-image"
-                          />
-                          <Badge 
-                            count={post.roomImages.length} 
-                            className="image-count-badge"
-                            showZero
-                          >
-                            <EyeOutlined />
-                          </Badge>
-                        </div>
-                      }
-                      actions={[
-                        <Tooltip title="View Details">
-                          <Button 
-                            type="text" 
-                            icon={<EyeOutlined />}
-                            onClick={() => navigateToRoomDetail(post.roomId)}
-                          />
-                        </Tooltip>,
-                        <Tooltip title="Edit Post">
-                          <Button type="text" icon={<EditOutlined />} />
-                        </Tooltip>,
-                        <Tooltip title="Delete Post">
-                          <Button type="text" danger icon={<DeleteOutlined />} />
-                        </Tooltip>
-                      ]}
-                    >
-                      <div className="post-content">
-                        <div className="post-header">
-                          <Title level={4} className="post-title">{post.title}</Title>
-                          {getStatusTag(post.status)}
-                        </div>
-                        
-                        <div className="post-meta">
-                          <Space>
-                            <Text><HomeOutlined /> Room {post.roomNumber}</Text>
-                            <Text><DollarOutlined /> {formatPrice(post.price)}/month</Text>
-                          </Space>
-                        </div>
-
-                        <div className="post-details">
-                          <Row gutter={[16, 16]}>
-                            <Col span={12}>
-                              <Text strong>Location:</Text>
-                              <Text>{post.location}</Text>
-                            </Col>
-                            <Col span={12}>
-                              <Text strong>Room Type:</Text>
-                              <Text>{post.roomTypeName}</Text>
-                            </Col>
-                            <Col span={12}>
-                              <Text strong>Area:</Text>
-                              <Text>{post.area}m²</Text>
-                            </Col>
-                            <Col span={12}>
-                              <Text strong>Max Occupancy:</Text>
-                              <Text>{post.maxOccupancy} people</Text>
-                            </Col>
-                          </Row>
-                        </div>
-
-                        <div className="post-amenities">
-                          <Text strong>Amenities:</Text>
-                          <div className="amenities-list">
-                            {post.roomAmentiesLists.map((amenity) => (
-                              <Tag key={amenity.amenityId}>{amenity.name}</Tag>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="post-services">
-                          <Text strong>Services:</Text>
-                          <div className="services-list">
-                            {post.roomServices.map((service) => (
-                              <Tag key={service.serviceId}>
-                                {service.serviceName} ({formatPrice(service.cost)})
-                              </Tag>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-
-              {total > pageSize && (
-                <div className="pagination-container">
-                  <Pagination
-                    current={pageIndex}
-                    pageSize={pageSize}
-                    total={total}
-                    onChange={handlePageChange}
-                    showQuickJumper
-                    showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} posts`}
-                  />
-                </div>
-              )}
+              {viewMode === 'grid' ? renderGridView() : renderListView()}
+              {renderPagination()}
             </>
           )}
         </TabPane>
 
-        <TabPane tab="Post List" key="2">
+        <TabPane tab={<span><UserOutlined /> Customer Posts</span>} key="2">
+          <div className="tab-header">
+            <div className="left-section">
+              <Title level={4}>Customer Inquiries</Title>
+              <Text type="secondary">Manage customer post requests for your properties</Text>
+            </div>
+          </div>
+          
+          <div className="search-container">
+            <div className="search-wrapper">
+              <Input
+                placeholder="Search by customer name or room title..."
+                prefix={<SearchOutlined className="search-icon" />}
+                suffix={<FilterOutlined />}
+              />
+              <Button type="primary">Search</Button>
+            </div>
+          </div>
+
           <Table
             columns={postListColumns}
             dataSource={postList}
             rowKey="postId"
             pagination={{
               pageSize: 5,
-              showSizeChanger: false,
-              showQuickJumper: true
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total) => `Total ${total} inquiries`
             }}
             className="post-list-table"
           />

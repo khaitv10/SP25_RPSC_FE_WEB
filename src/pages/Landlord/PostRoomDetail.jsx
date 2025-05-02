@@ -163,10 +163,6 @@ const PostRoomDetail = () => {
                       {roomDetail.packageLabel}
                     </Tag>
                   )}
-                  <div className="action-buttons">
-                    <Button type="text" icon={<HeartOutlined />} />
-                    <Button type="text" icon={<ShareAltOutlined />} />
-                  </div>
                 </div>
               </div>
 

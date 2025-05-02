@@ -354,9 +354,8 @@ const handleSubmit = async (values) => {
                         min={0} 
                         placeholder="Enter deposit" Price 
                         style={{ width: "100%" }}
-                        formatter={value => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        formatter={value => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         parser={value => value.replace(/₫\s?|(,*)/g, '')}
-                        prefix={<DollarOutlined />}
                       />
                     </Form.Item>
 
@@ -564,7 +563,6 @@ const handleSubmit = async (values) => {
               style={{ width: "100%" }}
               formatter={value => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               parser={value => value.replace(/₫\s?|(,*)/g, '')}
-              prefix={<DollarOutlined />}
             />
           </Form.Item>
         </Col>

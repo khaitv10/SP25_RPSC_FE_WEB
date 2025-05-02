@@ -147,7 +147,54 @@
         throw error;
       }
     },
+    updateRoom: async (roomId, formData) => {
+      try {
+        console.log("Updating Room with FormData:");
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ': ' + (pair[1] instanceof File ? `File: ${pair[1].name}` : pair[1]));
+        }
+    
+        const response = await axiosClient.put(
+          `/api/room/Update-Room/${roomId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+    
+        if (response && response.data) {
+          return response.data;
+        } else {
+          throw new Error("Invalid API response");
+        }
+      } catch (error) {
+        console.error("Error updating room:", error);
+        throw error;
+      }
+    },
+    inactiveRoom: async (roomId) => {
+      try {
+        const response = await axiosClient.put(`/api/room/Inactive-Room/${roomId}`);
+    
+        if (response && response.data) {
+          return response.data;
+        } else {
+          throw new Error("Invalid API response");
+        }
+      } catch (error) {
+        console.error("Error inactivating room:", error);
+        return {
+          isSuccess: false,
+          message: error.response?.data?.message || error.message || "Failed to inactive room"
+        };
+      }
+    },
     
   };
 
   export default roomRentalService;
+
+
+  

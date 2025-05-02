@@ -21,7 +21,8 @@ import {
   ClockCircleOutlined,
   RightOutlined,
   SearchOutlined,
-  CloseOutlined
+  CloseOutlined,
+  DollarOutlined
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getRoomStaysByLandlord } from "../../Services/Landlord/roomStayApi";
@@ -101,6 +102,14 @@ const RentedRoomManagement = () => {
     return diffDays;
   };
 
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { 
+      style: 'currency', 
+      currency: 'VND',
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
   const handleImageClick = (url) => {
     setSelectedImage(url);
   };
@@ -140,7 +149,7 @@ const RentedRoomManagement = () => {
           <Row gutter={[16, 16]} align="middle">
             <Col xs={24} md={16} lg={16}>
               <Input.Search
-                placeholder="Search by title or location"
+                placeholder="Search by location"
                 allowClear
                 enterButton={<SearchOutlined />}
                 size="large"
@@ -177,7 +186,7 @@ const RentedRoomManagement = () => {
                     <div className="room-image">
                       <img 
                         src={room.imageUrls[0]} 
-                        alt={room.title} 
+                        alt="Room"
                         onClick={() => handleImageClick(room.imageUrls[0])}
                       />
                       {room.imageUrls.length > 1 && (
@@ -193,16 +202,34 @@ const RentedRoomManagement = () => {
 
                   <div className="room-card-content">
                     <div className="room-header">
-                      <Title level={4} ellipsis={{ rows: 1 }}>{room.title}</Title>
+                      <div className="room-price">
+                        <DollarOutlined />
+                        {room.roomPrices && room.roomPrices.length > 0 ? (
+                          <span>{formatPrice(room.roomPrices[0].price)}</span>
+                        ) : (
+                          <span>Price not available</span>
+                        )}
+                      </div>
                       <div className="room-status">
                         {getStatusBadge(room.status)}
                       </div>
                     </div>
 
                     <div className="room-info">
-                      <Paragraph ellipsis={{ rows: 2 }} className="room-description">
-                        {room.description}
-                      </Paragraph>
+                      <div className="amenities-container">
+                        <h4 className="amenities-title">Amenities</h4>
+                        <div className="amenities-list">
+                          {room.roomAmenties && room.roomAmenties.length > 0 ? (
+                            room.roomAmenties.map((amenity) => (
+                              <Tag key={amenity.amenityId} className="amenity-tag">
+                                {amenity.amenityName}
+                              </Tag>
+                            ))
+                          ) : (
+                            <Text type="secondary">No amenities available</Text>
+                          )}
+                        </div>
+                      </div>
                       
                       <div className="info-row">
                         <div className="info-item">

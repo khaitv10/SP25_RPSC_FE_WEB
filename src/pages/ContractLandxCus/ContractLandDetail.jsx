@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getContractDetail, confirmContractAndCreateRoomStay, getContractTerm } from "../../Services/Landlord/contractLandlord";
+import { getContractDetail, confirmContractAndCreateRoomStay, getContractTerm, updateContract } from "../../Services/Landlord/contractLandlord";
 import { ArrowLeft, FileText, User, Home, Calendar, Clock, Upload, Tag, MapPin, CreditCard, UserCheck, Phone, Mail, Users } from "lucide-react";
 import { toast } from "react-toastify";
 import "./ContractLandDetail.scss";
@@ -57,6 +57,51 @@ const ContractLandDetail = () => {
     
     return `${numericPrice.toLocaleString()} VNĐ`;
   };
+
+// Create a separate function for uploading a new contract
+const handleContractUpload = async (event) => {
+  const file = event.target.files[0];
+  
+  if (file && file.type !== 'application/pdf') {
+    toast.error('Please upload only PDF files');
+    return;
+  }
+
+  try {
+    setUploadLoading(true);
+    await confirmContractAndCreateRoomStay(contractId, file);
+    toast.success('Contract uploaded successfully');
+    const updatedContract = await getContractDetail(contractId);
+    setContract(updatedContract);
+  } catch (error) {
+    console.error("❌ Error uploading contract:", error);
+    toast.error(error.message || 'Failed to upload contract');
+  } finally {
+    setUploadLoading(false);
+  }
+};
+
+const handleContractUpdate = async (event) => {
+  const file = event.target.files[0];
+  
+  if (file && file.type !== 'application/pdf') {
+    toast.error('Please upload only PDF files');
+    return;
+  }
+
+  try {
+    setUploadLoading(true);
+    await updateContract(contractId, file);
+    toast.success('Contract updated successfully');
+    const updatedContract = await getContractDetail(contractId);
+    setContract(updatedContract);
+  } catch (error) {
+    console.error("❌ Error updating contract:", error);
+    toast.error(error.message || 'Failed to update contract');
+  } finally {
+    setUploadLoading(false);
+  }
+};
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -326,45 +371,79 @@ const ContractLandDetail = () => {
           </div>
         </div>
 
-        {/* Upload Section */}
-        {contract.status === "Proccessing" && (
-          <div className="upload-section">
-            <div className="upload-buttons">
-              <input 
-                type="file" 
-                accept=".pdf" 
-                onChange={handleFileUpload}
-                className="file-input" 
-                id="contract-upload"
-                disabled={uploadLoading}
-              />
-              <label 
-                htmlFor="contract-upload" 
-                className={`upload-button ${uploadLoading ? 'loading' : ''}`}
-              >
-                {uploadLoading ? (
-                  <div className="loading-text">
-                    <div className="upload-spinner"></div>
-                    <span>Uploading...</span>
-                  </div>
-                ) : (
-                  <>
-                    <Upload className="icon" />
-                    <span>Upload Contract PDF</span>
-                  </>
-                )}
-              </label>
-              <button
-                onClick={handleGenerateTemplate}
-                className={`generate-button ${uploadLoading ? 'loading' : ''}`}
-                disabled={uploadLoading}
-              >
-                <FileText className="icon" />
-                <span>Generate Template</span>
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Upload/Update Section */}
+{(contract.status === "Proccessing" || contract.status === "Active") && (
+  <div className="upload-section">
+    <div className="upload-buttons">
+      {contract.status === "Proccessing" && (
+        <>
+          <input 
+            type="file" 
+            accept=".pdf" 
+            onChange={handleContractUpload}
+            className="file-input" 
+            id="contract-upload"
+            disabled={uploadLoading}
+          />
+          <label 
+            htmlFor="contract-upload" 
+            className={`upload-button ${uploadLoading ? 'loading' : ''}`}
+          >
+            {uploadLoading ? (
+              <div className="loading-text">
+                <div className="upload-spinner"></div>
+                <span>Uploading...</span>
+              </div>
+            ) : (
+              <>
+                <Upload className="icon" />
+                <span>Upload Contract PDF</span>
+              </>
+            )}
+          </label>
+          
+          <button
+            onClick={handleGenerateTemplate}
+            className={`generate-button ${uploadLoading ? 'loading' : ''}`}
+            disabled={uploadLoading}
+          >
+            <FileText className="icon" />
+            <span>Generate Template</span>
+          </button>
+        </>
+      )}
+
+      {contract.status === "Active" && (
+        <>
+          <input 
+            type="file" 
+            accept=".pdf" 
+            onChange={handleContractUpdate}
+            className="file-input" 
+            id="contract-update"
+            disabled={uploadLoading}
+          />
+          <label 
+            htmlFor="contract-update" 
+            className={`upload-button ${uploadLoading ? 'loading' : ''}`}
+          >
+            {uploadLoading ? (
+              <div className="loading-text">
+                <div className="upload-spinner"></div>
+                <span>Updating...</span>
+              </div>
+            ) : (
+              <>
+                <Upload className="icon" />
+                <span>Update Contract PDF</span>
+              </>
+            )}
+          </label>
+        </>
+      )}
+    </div>
+  </div>
+)}
       </div>
     </div>
   );

@@ -41,6 +41,11 @@
     border: none !important;
   }
 
+  /* Make first header column left-aligned */
+  .ant-table-thead > tr > th:first-child {
+    text-align: left !important;
+  }
+
   /* Header Gradient Styling */
   .header-cell {
     font-weight: 600;
@@ -83,6 +88,11 @@
     line-height: 1.6;
     transition: all 0.2s ease;
     border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  /* Make first column cells left-aligned */
+  .ant-table-tbody > tr > td:first-child {
+    text-align: left !important;
   }
 
   .ant-table-tbody > tr:hover > td {
@@ -157,4 +167,70 @@
       font-size: 24px;
     }
   }
+  /* Enhanced Modal Styling */
+.service-package-modal {
+  /* Increase modal size */
+  width: 800px !important;
+  max-width: 90vw;
+}
+
+.service-package-modal .ant-modal-content {
+  padding: 24px;
+  border-radius: 16px;
+}
+
+.service-package-modal .ant-modal-header {
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 20px;
+}
+
+.service-package-modal .ant-modal-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #1a202c;
+  text-align: center;
+}
+
+.service-package-details {
+  padding: 10px 15px;
+}
+
+.service-package-details p {
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  color: #2d3748;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: #f8fafc;
+}
+
+.service-package-details p:nth-child(odd) {
+  background-color: #edf2f7;
+}
+
+.service-package-details b {
+  font-weight: 600;
+  color: #1a202c;
+  margin-right: 8px;
+}
+
+.service-package-modal .ant-modal-footer {
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+  margin-top: 20px;
+}
+
+.service-package-modal .ant-modal-footer button {
+  height: 44px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0 24px;
+}
+
+.service-package-modal .ant-modal-footer button:last-child {
+  background: linear-gradient(135deg, #4a5568, #2d3748);
+}
 }

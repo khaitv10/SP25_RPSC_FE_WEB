@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://opal.io.vn/api/post';
+const BASE_URL = 'http://localhost:5262/api/post';
 
 const postAPI = {
   getLandlordCustomerPosts: async () => {
@@ -37,7 +37,24 @@ const postAPI = {
       console.error('Error inactivating post:', error);
       throw error;
     }
+  },
+  getRoommatePostDetail: async (postId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/Get-Roommate-Post-Detail`, {
+        params: { postId },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'accept': '*/*'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching roommate post detail:', error);
+      throw error;
+    }
   }
+  
 };
 
 export default postAPI; 
