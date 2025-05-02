@@ -142,10 +142,6 @@ const RoomTypeManagement = () => {
           <Title level={2} className="title">
             <span className="title-icon">🏡</span> My Room Types
           </Title>
-          
-          <Button type="default" icon={<HomeOutlined />} size="large" onClick={() => navigate('/landlord/room/amentities')} className="amenities-button">
-            Amenities
-          </Button>
         </div>
 
         <div className="room-type-tabs">

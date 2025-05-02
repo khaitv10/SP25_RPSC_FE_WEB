@@ -111,7 +111,7 @@ const ContractLandDetail = () => {
     switch(status?.toLowerCase()) {
       case 'expired': return 'status-expired';
       case 'active': return 'status-active';
-      case 'pending': return 'status-pending';
+      case 'proccessing': return 'status-pending';
       default: return 'status-default';
     }
   };
@@ -327,7 +327,7 @@ const ContractLandDetail = () => {
         </div>
 
         {/* Upload Section */}
-        {contract.status === "Pending" && (
+        {contract.status === "Proccessing" && (
           <div className="upload-section">
             <div className="upload-buttons">
               <input 

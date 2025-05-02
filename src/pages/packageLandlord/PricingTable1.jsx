@@ -153,14 +153,14 @@ const PricingTable = () => {
 
       {/* Modal Xác Nhận Gói Dịch Vụ */}
       <Modal
-        title="🛒 Xác nhận Gói Dịch Vụ"
+        title="🛒 Confirm your Service Package"
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}  
         footer={[
-          <Button key="cancel" onClick={() => setIsModalOpen(false)}>Hủy</Button>,
+          <Button key="cancel" onClick={() => setIsModalOpen(false)}>Cancel</Button>,
           <Button key="pay" type="primary" onClick={handleConfirmPayment}>
-            Thanh toán
-          </Button>
+            Buy Now
+          </Button> 
         ]}
       >
         {selectedPackage && (

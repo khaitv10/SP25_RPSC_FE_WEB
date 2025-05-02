@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Card, Typography, Tabs, Badge, Button, Row, Col, Modal, List,
-  Avatar, Tag, Empty, Spin, Input, Pagination, Space, Drawer, Divider, notification
+  Avatar, Tag, Empty, Spin, Input, Pagination, Space, Drawer, Divider, notification, message
 } from 'antd';
 import {
   HomeOutlined, BellOutlined, CalendarOutlined, PhoneOutlined,
@@ -15,6 +15,46 @@ import roomRentalService from "../../Services/Landlord/roomAPI";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
+
+// Default toast configuration
+const showToast = {
+  success: (content) => {
+    message.success({
+      content: content || 'Operation completed successfully',
+      duration: 3,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  },
+  error: (content) => {
+    message.error({
+      content: content || 'An error occurred',
+      duration: 5,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  },
+  warning: (content) => {
+    message.warning({
+      content: content || 'Warning',
+      duration: 4,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  },
+  info: (content) => {
+    message.info({
+      content: content || 'Information',
+      duration: 3,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  }
+};
 
 const RoomRentalRequestList = () => {
   // Core states
@@ -46,7 +86,7 @@ const RoomRentalRequestList = () => {
       try {
         const { message: successMessage, time } = JSON.parse(successNotification);
         if (new Date().getTime() - time < 5000) {
-          showNotification('success', 'Success', successMessage);
+          showToast.success(successMessage);
         }
       } catch (error) {
         console.error("Error parsing success notification:", error);
@@ -54,15 +94,6 @@ const RoomRentalRequestList = () => {
       localStorage.removeItem('approval_success');
     }
   }, [pageIndex, pageSize, searchQuery]);
-
-  const showNotification = (type, title, message) => {
-    notification[type]({
-      message: title,
-      description: message,
-      placement: 'topRight',
-      duration: 4,
-    });
-  };
   
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -105,7 +136,7 @@ const RoomRentalRequestList = () => {
       }
     } catch (error) {
       console.error("Error loading room data:", error);
-      showNotification('error', 'Error', 'Unable to load room data. Please try again later.');
+      showToast.error('Unable to load room data. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -153,7 +184,7 @@ const RoomRentalRequestList = () => {
   
     try {
       if (!selectedRequest?.customerId || !selectedRequest?.roomRentRequestsId) {
-        showNotification('error', 'Error', 'Missing required fields');
+        showToast.error('Missing required fields');
         return;
       }
   
@@ -163,7 +194,7 @@ const RoomRentalRequestList = () => {
       );
   
       if (response?.isSuccess === true) {
-        showNotification('success', 'Success', 'Room rental request has been approved successfully.');
+        showToast.success('Room rental request has been approved successfully.');
         
         localStorage.setItem('approval_success', JSON.stringify({
           message: 'Room rental request has been approved successfully.',
@@ -178,20 +209,20 @@ const RoomRentalRequestList = () => {
         
         if (errorMessage.includes("already has an active room stay") || 
           (response?.data?.errorType === "ActiveRoomExistsError")) {
-          showNotification('error', 'Error', 'This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
+          showToast.error('This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
           setTimeout(() => window.location.reload(), 3000);
         } else {
-          showNotification('error', 'Error', errorMessage);
+          showToast.error(errorMessage);
         }
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message || "An error occurred";
       
       if (errorMessage.includes("already has an active room stay")) {
-        showNotification('error', 'Error', 'This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
+        showToast.error('This customer already has an active room stay and cannot be approved for a new room. Please reload this page');
         setTimeout(() => window.location.reload(), 3000);
       } else {
-        showNotification('error', 'Error', errorMessage);
+        showToast.error(errorMessage);
       }
     } finally {
       setIsLoading(false);
@@ -203,7 +234,7 @@ const RoomRentalRequestList = () => {
   const handleCancel = () => setIsModalVisible(false);
   const showDrawer = (request) => {
     if (!selectedRoom?.roomRentRequestsId) {
-      showNotification('error', 'Error', 'Missing room rent request ID');
+      showToast.error('Missing room rent request ID');
       return;
     }
     setSelectedRequest({ ...request, roomRentRequestsId: String(selectedRoom.roomRentRequestsId) });
@@ -215,7 +246,12 @@ const RoomRentalRequestList = () => {
   const handlePageChange = (page, size) => { setPageIndex(page); setPageSize(size); };
   const handleSearch = (value) => { setSearchQuery(value); setPageIndex(1); };
   const onSearchChange = (e) => setSearchValue(e.target.value);
-  const clearSearch = () => { setSearchValue(''); setSearchQuery(''); setPageIndex(1); };
+  const clearSearch = () => { 
+    setSearchValue(''); 
+    setSearchQuery(''); 
+    setPageIndex(1); 
+    showToast.info('Search cleared');
+  };
 
   const renderRoomCard = (room) => (
     <Col xs={24} sm={12} md={8} lg={6} key={room.id}>
@@ -387,43 +423,43 @@ const RoomRentalRequestList = () => {
 
       {/* Request Details Drawer */}
       <Drawer
-  title={
-    <div className="drawer-title">
-      <UserOutlined className="drawer-icon" />
-      Room Rental Request Details
-    </div>
-  }
-  placement="right"
-  width={600}
-  onClose={closeDrawer}
-  open={drawerVisible}
-  className="request-details-drawer"
-  styles={{
-    header: { 
-      fontSize: '24px', 
-      fontWeight: 'bold', 
-      background: 'linear-gradient(135deg, #f0f7ff 0%, #e6f7ff 100%)', 
-      padding: '20px',
-      borderBottom: '1px solid #e6f0fa'
-    },
-    body: { padding: '24px' }
-  }}
-  footer={
-    <div className="drawer-footer">
-      <Button
-        size="large"
-        type="primary"
-        onClick={showConfirmModal}
-        disabled={isLoading}
-        className="approve-button"
-        icon={isLoading ? <LoadingOutlined /> : <CheckOutlined />}
-        block
+        title={
+          <div className="drawer-title">
+            <UserOutlined className="drawer-icon" />
+            Room Rental Request Details
+          </div>
+        }
+        placement="right"
+        width={600}
+        onClose={closeDrawer}
+        open={drawerVisible}
+        className="request-details-drawer"
+        styles={{
+          header: { 
+            fontSize: '24px', 
+            fontWeight: 'bold', 
+            background: 'linear-gradient(135deg, #f0f7ff 0%, #e6f7ff 100%)', 
+            padding: '20px',
+            borderBottom: '1px solid #e6f0fa'
+          },
+          body: { padding: '24px' }
+        }}
+        footer={
+          <div className="drawer-footer">
+            <Button
+              size="large"
+              type="primary"
+              onClick={showConfirmModal}
+              disabled={isLoading}
+              className="approve-button"
+              icon={isLoading ? <LoadingOutlined /> : <CheckOutlined />}
+              block
+            >
+              Approve
+            </Button>
+          </div>
+        }
       >
-        Approve
-      </Button>
-    </div>
-  }
->
         {selectedRequest && (
           <div className="request-details">
             <div className="customer-avatar">
@@ -496,38 +532,38 @@ const RoomRentalRequestList = () => {
 
       {/* Confirm Modal */}
       <Modal
-  title={
-    <div className="confirm-modal-title">
-      <QuestionCircleOutlined className="confirm-icon" />
-      <span>Confirm Approval</span>
-    </div>
-  }
-  open={confirmModalVisible}
-  onCancel={hideConfirmModal}
-  footer={[
-    <Button key="cancel" onClick={hideConfirmModal} className="cancel-button">Cancel</Button>,
-    <Button
-      key="approve"
-      type="primary"
-      loading={isLoading}
-      onClick={handleApprove}
-      className="confirm-button"
-    >
-      Confirm
-    </Button>,
-  ]}
-  centered
-  maskClosable={false}
-  className="confirm-modal"
->
-  <p className="confirm-message">
-    Are you sure you want to approve this room rental request from{' '}
-    <Text strong>{selectedRequest?.customerName || selectedRequest?.fullName || 'this tenant'}</Text>?
-  </p>
-  <p className="confirm-note">
-    Once approved, the tenant will be notified and the room status will be updated.
-  </p>
-</Modal>
+        title={
+          <div className="confirm-modal-title">
+            <QuestionCircleOutlined className="confirm-icon" />
+            <span>Confirm Approval</span>
+          </div>
+        }
+        open={confirmModalVisible}
+        onCancel={hideConfirmModal}
+        footer={[
+          <Button key="cancel" onClick={hideConfirmModal} className="cancel-button">Cancel</Button>,
+          <Button
+            key="approve"
+            type="primary"
+            loading={isLoading}
+            onClick={handleApprove}
+            className="confirm-button"
+          >
+            Confirm
+          </Button>,
+        ]}
+        centered
+        maskClosable={false}
+        className="confirm-modal"
+      >
+        <p className="confirm-message">
+          Are you sure you want to approve this room rental request from{' '}
+          <Text strong>{selectedRequest?.customerName || selectedRequest?.fullName || 'this tenant'}</Text>?
+        </p>
+        <p className="confirm-note">
+          Once approved, the tenant will be notified and the room status will be updated.
+        </p>
+      </Modal>
     </div>
   );
 };

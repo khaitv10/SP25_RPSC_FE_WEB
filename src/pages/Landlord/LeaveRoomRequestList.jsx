@@ -13,6 +13,46 @@ import landlordAPI from '../../Services/Landlord/landlordAPI';
 const { Title, Text } = Typography;
 const { Search } = Input;
 
+// Default toast configuration
+const showToast = {
+  success: (content) => {
+    message.success({
+      content: content || 'Operation completed successfully',
+      duration: 3,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  },
+  error: (content) => {
+    message.error({
+      content: content || 'An error occurred',
+      duration: 5,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  },
+  warning: (content) => {
+    message.warning({
+      content: content || 'Warning',
+      duration: 4,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  },
+  info: (content) => {
+    message.info({
+      content: content || 'Information',
+      duration: 3,
+      style: {
+        marginTop: '20px',
+      },
+    });
+  }
+};
+
 const LeaveRoomRequestList = () => {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState([]);
@@ -42,7 +82,7 @@ const LeaveRoomRequestList = () => {
         setTotal(0);
       }
     } catch (error) {
-      message.error('Failed to fetch leave room requests');
+      showToast.error('Failed to fetch leave room requests');
       console.error('Error:', error);
       setRequests([]);
     } finally {
@@ -57,13 +97,13 @@ const LeaveRoomRequestList = () => {
       const response = await landlordAPI.acceptLeaveRoomRequest(requestId);
       
       if (response.success) {
-        message.success(response.message || 'Leave room request accepted successfully');
+        showToast.success(response.message || 'Leave room request accepted successfully');
         fetchLeaveRoomRequests(); // Refresh the list
       } else {
-        message.error(response.message || 'Failed to accept leave room request');
+        showToast.error(response.message || 'Failed to accept leave room request');
       }
     } catch (error) {
-      message.error('Failed to accept leave room request');
+      showToast.error('Failed to accept leave room request');
       console.error('Error:', error);
     } finally {
       setProcessing(prev => ({ ...prev, [requestId]: false }));
@@ -109,6 +149,7 @@ const LeaveRoomRequestList = () => {
     setSearchValue('');
     setSearchQuery('');
     setPageIndex(1);
+    showToast.info('Search cleared');
   };
 
   const handlePageChange = (page, size) => {

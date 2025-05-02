@@ -344,7 +344,7 @@ const PackageContract = () => {
 
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
             <Button variant="contained" color="error" onClick={clearSignature}>
-              Xóa và ký lại
+              Remove and ReSign
             </Button>
             <Button
               variant="contained"
@@ -355,8 +355,8 @@ const PackageContract = () => {
               {isLoading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
-                "Xác nhận chữ ký"
-              )}
+                "Purchase"
+              )}  
             </Button>
           </Box>
         </CardContent>

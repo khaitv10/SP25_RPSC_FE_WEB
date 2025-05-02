@@ -23,33 +23,44 @@ const CreateRoomType = () => {
   const [address, setAddress] = useState({
     houseNumber: "",
     street: "",
-    district: "",
-    city: "",
+    district: "Thu Duc", // Hard-coded district
+    city: "Ho Chi Minh", // Hard-coded city
   });
   const [coordinates, setCoordinates] = useState(null);
   const [error, setError] = useState("");
   const [mapUrl, setMapUrl] = useState("");
+
+  // Set initial form values for district and city
+  useEffect(() => {
+    form.setFieldsValue({
+      district: "Thu Duc",
+      city: "Ho Chi Minh"
+    });
+  }, [form]);
 
   // Watch address fields to update the map
   useEffect(() => {
     const debounce = setTimeout(() => {
       const houseNumber = form.getFieldValue('houseNumber') || "";
       const street = form.getFieldValue('street') || "";
-      const district = form.getFieldValue('district') || "";
-      const city = form.getFieldValue('city') || "";
+      const district = form.getFieldValue('district') || "Thu Duc"; // Use hard-coded value
+      const city = form.getFieldValue('city') || "Ho Chi Minh"; // Use hard-coded value
       
       // Only update map if we have enough address information
-      if (houseNumber && street && district && city) {
+      if (houseNumber && street) {
         handleMapUpdate();
       }
     }, 1000); // Debounce map updates by 1 second
     
     return () => clearTimeout(debounce);
-  }, [form.getFieldValue('houseNumber'), form.getFieldValue('street'), 
-      form.getFieldValue('district'), form.getFieldValue('city')]);
+  }, [form.getFieldValue('houseNumber'), form.getFieldValue('street')]);
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
+    
+    // For district and city, always use the hard-coded values
+    if (name === 'district' || name === 'city') return;
+    
     setAddress((prevAddress) => ({
       ...prevAddress,
       [name]: value,
@@ -87,6 +98,10 @@ const CreateRoomType = () => {
 
 
 const handleSubmit = async (values) => {
+  // Always use hard-coded values for district and city
+  values.district = "Thu Duc";
+  values.city = "Ho Chi Minh";
+  
   // Get coordinates from state if not in form values
   const lat = form.getFieldValue('lat') || (coordinates ? coordinates.lat : null);
   const long = form.getFieldValue('long') || (coordinates ? coordinates.lng : null);
@@ -101,8 +116,8 @@ const handleSubmit = async (values) => {
       lat,
       houseNumber: values.houseNumber,
       street: values.street,
-      district: values.district,
-      city: values.city,
+      district: "Thu Duc", // Always use hard-coded district
+      city: "Ho Chi Minh", // Always use hard-coded city
     },
     listRoomServices: roomServices.map((service) => ({
       roomServiceName: service.roomServiceName,
@@ -149,12 +164,12 @@ const handleSubmit = async (values) => {
     // Get current address values from the form
     const houseNumber = form.getFieldValue('houseNumber') || "";
     const street = form.getFieldValue('street') || "";
-    const district = form.getFieldValue('district') || "";
-    const city = form.getFieldValue('city') || "";
+    const district = "Thu Duc"; // Always use hard-coded district
+    const city = "Ho Chi Minh"; // Always use hard-coded city
     
     const fullAddress = `${houseNumber}, ${street}, ${district}, ${city}`;
 
-    if (fullAddress.split(',').filter(part => part.trim()).length >= 3) {
+    if (houseNumber && street) {
       try {
         setMapLoading(true);
         const response = await fetch(
@@ -341,7 +356,7 @@ const handleSubmit = async (values) => {
                         style={{ width: "100%" }}
                         formatter={value => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         parser={value => value.replace(/₫\s?|(,*)/g, '')}
-                        prefix={<DollarOutlined />} // Có thể thay thế bằng một icon khác nếu muốn
+                        prefix={<DollarOutlined />}
                       />
                     </Form.Item>
 
@@ -413,9 +428,9 @@ const handleSubmit = async (values) => {
                       rules={[{ required: true, message: "District is required" }]}
                     >
                       <Input 
-                        placeholder="Enter district" 
-                        onChange={handleAddressChange} 
-                        name="district"
+                        placeholder="Thu Duc" 
+                        value="Thu Duc"
+                        disabled
                         prefix={<EnvironmentOutlined />}
                       />
                     </Form.Item>
@@ -427,9 +442,9 @@ const handleSubmit = async (values) => {
                       rules={[{ required: true, message: "City is required" }]}
                     >
                       <Input 
-                        placeholder="Enter city" 
-                        onChange={handleAddressChange} 
-                        name="city"
+                        placeholder="Ho Chi Minh" 
+                        value="Ho Chi Minh"
+                        disabled
                         prefix={<EnvironmentOutlined />}
                       />
                     </Form.Item>
@@ -547,7 +562,7 @@ const handleSubmit = async (values) => {
               }}
               placeholder="Enter service price"
               style={{ width: "100%" }}
-              formatter={value => `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              formatter={value => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               parser={value => value.replace(/₫\s?|(,*)/g, '')}
               prefix={<DollarOutlined />}
             />

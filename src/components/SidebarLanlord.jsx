@@ -1,24 +1,25 @@
 import { useLocation } from "react-router-dom";
 import { 
-  HomeIcon,  
+  HomeModernIcon,  // updated name for HomeIcon
   UserGroupIcon, 
-  ChatIcon, 
+  ChatBubbleLeftIcon,  // updated name for ChatIcon
   DocumentTextIcon,
   ChartBarIcon,
-  ClipboardIcon,
+  ClipboardDocumentIcon,  // updated name for ClipboardIcon
   NewspaperIcon
-} from "@heroicons/react/solid";
+} from "@heroicons/react/24/solid";  // Make sure you're using the correct path for v2
 import { Link } from "react-router-dom";
 
 const SidebarLandlord = () => {
-  const location = useLocation();
+  const location = useLocation(); 
 
   const menuItems = [
     { name: "Dashboard", path: "/landlord/dashboard", icon: ChartBarIcon },
     { name: "Rent Room", path: "/landlord/manage", icon: UserGroupIcon },
-    { name: "Category", path: "/landlord/roomtype", icon: HomeIcon },
-    { name: "Feedback", path: "/landlord/feedback", icon: ChatIcon },
-    { name: "Service", path: "/landlord/history-contract", icon: ClipboardIcon },
+    { name: "Amenity", path: "/landlord/room/amentities", icon: HomeModernIcon },
+    { name: "Category", path: "/landlord/roomtype", icon: HomeModernIcon },
+    { name: "Feedback", path: "/landlord/feedback", icon: ChatBubbleLeftIcon },
+    { name: "Service", path: "/landlord/history-contract", icon: ClipboardDocumentIcon },
     { name: "Post", path: "/landlord/post", icon: NewspaperIcon },
     { name: "Request", path: "/landlord/request", icon: DocumentTextIcon },
     { name: "Contract", path: "/landlord/contract", icon: DocumentTextIcon },
@@ -33,18 +34,13 @@ const SidebarLandlord = () => {
               <Link
                 to={path}
                 className={`flex items-center p-3 rounded-md mb-2 transition duration-200 ease-in-out 
-                  ${
-                    location.pathname === path
-                      ? "bg-green-500 text-white font-semibold shadow-md scale-105"  
-                      : "text-gray-700 hover:bg-green-100 hover:scale-105"
+                  ${location.pathname === path
+                    ? "bg-green-500 text-white font-semibold shadow-md scale-105"  
+                    : "text-gray-700 hover:bg-green-100 hover:scale-105"
                   }`}
               >
                 <Icon 
-                  className={`w-5 h-5 mr-3 ${
-                    location.pathname === path 
-                      ? "text-white" 
-                      : "text-gray-600"
-                  }`} 
+                  className={`w-5 h-5 mr-3 ${location.pathname === path ? "text-white" : "text-gray-600"}`} 
                 />
                 {name}
               </Link>

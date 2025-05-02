@@ -9,7 +9,7 @@ const { Title } = Typography;
 
 const ContractLand = () => {
   const [contracts, setContracts] = useState([]);
-  const [activeTab, setActiveTab] = useState("Pending");
+  const [activeTab, setActiveTab] = useState("Proccessing");
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
@@ -185,7 +185,7 @@ const ContractLand = () => {
       key: "status",
       render: (status) => {
         const colorMap = {
-          "Pending": "orange",
+          "Proccessing": "orange",
           "Active": "green",
           "Inactive": "red"
         };
@@ -223,7 +223,7 @@ const ContractLand = () => {
         </Title>
 
         <div className="contract-tabs">
-          {["Pending", "Active", "Inactive", "All"].map((status) => (
+          {["Proccessing", "Active", "Inactive", "All"].map((status) => (
             <button
               key={status}
               className={`tab ${activeTab === status ? "active" : ""}`}
@@ -261,7 +261,7 @@ const ContractLand = () => {
             className="contracts-table"
             rowClassName={(record) => 
               record.status === "Inactive" ? "inactive-row" : 
-              record.status === "Pending" ? "pending-row" : ""
+              record.status === "Proccessing" ? "proccessing-row" : ""
             }
           />
         </div>
