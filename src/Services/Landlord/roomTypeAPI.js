@@ -52,3 +52,29 @@ export const getRoomTypeDetailByRoomTypeId = async (roomTypeId) => {
     throw error.response?.data || new Error("An error occurred");
   }
 };
+
+export const updateRoomTypeAPI = async (data) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error("Authorization token is missing");
+
+    const response = await axiosClient.put('/api/roomtype/update-roomtype', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating room type:", error);
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to update room type");
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+      throw new Error("No response from server");
+    } else {
+      console.error("Error setting up request:", error.message);
+      throw new Error("Error setting up request");
+    }
+  }
+};

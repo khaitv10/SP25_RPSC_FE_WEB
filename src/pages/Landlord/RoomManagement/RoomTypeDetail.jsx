@@ -1,38 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Button, Descriptions, Tag, Card, Divider, Skeleton, Badge, Typography, Space, Alert, Empty } from "antd";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Button, Descriptions, Tag, Card, Divider, Skeleton, Badge, Typography, Space, Alert, Empty, Modal } from "antd";
 import { 
   HomeOutlined, 
   DollarCircleOutlined, 
   AreaChartOutlined, 
   TeamOutlined, 
   EnvironmentOutlined,
-  ArrowLeftOutlined
+  ArrowLeftOutlined,
+  EditOutlined
 } from "@ant-design/icons";
 import { getRoomTypeDetailByRoomTypeId } from "../../../Services/Landlord/roomTypeAPI"; 
+import UpdateRoomType from "./UpdateRoomType";
 import "./RoomTypeDetail.scss"; 
 
 const { Title, Text, Paragraph } = Typography;
 
 const RoomTypeDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [roomType, setRoomType] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+
+  const fetchRoomTypeDetail = async () => {
+    try {
+      console.log("Fetching data for roomTypeId:", id);
+      const data = await getRoomTypeDetailByRoomTypeId(id);
+      console.log("Fetched room type data:", data);
+      setRoomType(data);
+    } catch (error) {
+      console.error("Error fetching room type details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRoomTypeDetail = async () => {
-      try {
-        console.log("Fetching data for roomTypeId:", id);
-        const data = await getRoomTypeDetailByRoomTypeId(id);
-        console.log("Fetched room type data:", data);
-        setRoomType(data);
-      } catch (error) {
-        console.error("Error fetching room type details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRoomTypeDetail();
   }, [id]);
 
@@ -75,6 +79,14 @@ const RoomTypeDetail = () => {
   const statusColor = getNestedValue(roomType, 'status') === "Available" ? "success" : "error";
   const status = getNestedValue(roomType, 'status');
 
+  const handleUpdateClick = () => {
+    setIsUpdateModalVisible(true);
+  };
+
+  const handleUpdateSuccess = () => {
+    fetchRoomTypeDetail();
+  };
+
   return (
     <div className="room-type-detail">
       <div className="detail-container">
@@ -97,11 +109,20 @@ const RoomTypeDetail = () => {
               </Tag>
             </div>
             <div className="header-actions">
-              <Link to={`/landlord/roomtype/room?roomType=${id}`}>
-                <Button type="primary" size="large" icon={<HomeOutlined />}>
-                  View Rooms
+              <Space>
+                <Button 
+                  type="primary" 
+                  icon={<EditOutlined />}
+                  onClick={handleUpdateClick}
+                >
+                  Update Room Type
                 </Button>
-              </Link>
+                <Link to={`/landlord/roomtype/room?roomType=${id}`}>
+                  <Button type="primary" size="large" icon={<HomeOutlined />}>
+                    View Rooms
+                  </Button>
+                </Link>
+              </Space>
             </div>
           </div>
           <Paragraph className="room-description">
@@ -219,6 +240,13 @@ const RoomTypeDetail = () => {
             )}
           </Card>
         </div>
+
+        <UpdateRoomType
+          visible={isUpdateModalVisible}
+          onCancel={() => setIsUpdateModalVisible(false)}
+          roomType={roomType}
+          onSuccess={handleUpdateSuccess}
+        />
       </div>
     </div>
   );
