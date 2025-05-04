@@ -319,8 +319,8 @@ const RoomCreate = () => {
                 >
                   {amenities.map((amenity) => (
                     <Option key={amenity.roomAmentyId} value={amenity.roomAmentyId}>
-                      {amenity.name}
-                    </Option>
+                  {amenity.name} {amenity.compensation > 0 && `(${amenity.compensation.toLocaleString()} VNĐ)`}
+                </Option>
                   ))}
                 </Select>
               </Form.Item>
