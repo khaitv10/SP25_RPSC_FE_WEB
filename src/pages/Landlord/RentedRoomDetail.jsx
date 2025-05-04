@@ -37,6 +37,15 @@ const RentedRoomDetail = () => {
     }
   }, [roomStayId]);
 
+  const getDisplayStatus = (status) => {
+    const displayValues = {
+      active: 'Renting',
+      pending: 'Pending',
+      terminated: 'Terminated'
+    };
+    return displayValues[status?.toLowerCase()] || status;
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       active: '#52c41a',
@@ -70,11 +79,11 @@ const RentedRoomDetail = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <Card 
+      <Card
         className="rounded-xl shadow-lg overflow-hidden bg-gradient-to-r from-white to-gray-50"
       >
-        <Button 
-          type="primary" 
+        <Button
+          type="primary"
           onClick={() => navigate("/landlord/manage")}
           className="flex items-center gap-2 mb-6 px-4 py-2 h-auto rounded-md"
           icon={<LeftOutlined />}
@@ -85,17 +94,17 @@ const RentedRoomDetail = () => {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <Title level={2} className="m-0 flex items-center">
-              <HomeOutlined className="text-blue-500 mr-2" /> 
+              <HomeOutlined className="text-blue-500 mr-2" />
               {room?.roomStay?.room?.title || "Room Details"}
             </Title>
-            <Badge 
-              count={room?.roomStay?.status} 
-              style={{ backgroundColor: statusColor }}
+            <Badge
+              count={getDisplayStatus(room?.roomStay?.status)}
+              style={{ backgroundColor: getStatusColor(room?.roomStay?.status) }}
             />
           </div>
-          <Tag 
-            icon={<KeyOutlined />} 
-            color="blue" 
+          <Tag
+            icon={<KeyOutlined />}
+            color="blue"
             className="text-base px-3 py-1 rounded-md"
           >
             Room #{room?.roomStay?.room?.roomNumber}
@@ -107,42 +116,42 @@ const RentedRoomDetail = () => {
           <div className="flex-1 min-w-[300px]">
             <Card className="rounded-lg shadow-md mb-6">
               <div className="flex flex-wrap gap-3 mb-6">
-                <Statistic 
-                  title="Monthly Rent" 
-                  value={room?.roomStay?.room?.price} 
-                  prefix={<DollarOutlined />} 
-                  suffix="VNĐ" 
+                <Statistic
+                  title="Monthly Rent"
+                  value={room?.roomStay?.room?.price}
+                  prefix={<DollarOutlined />}
+                  suffix="VNĐ"
                   className="flex-1 min-w-[180px]"
                   valueStyle={{ color: '#1890ff', fontWeight: 'bold' }}
                 />
-                <Statistic 
-                  title="Deposit" 
-                  value={room?.roomStay?.room?.deposite} 
-                  prefix={<DollarOutlined />} 
-                  suffix="VNĐ" 
+                <Statistic
+                  title="Deposit"
+                  value={room?.roomStay?.room?.deposite}
+                  prefix={<DollarOutlined />}
+                  suffix="VNĐ"
                   className="flex-1 min-w-[180px]"
                   valueStyle={{ color: '#52c41a', fontWeight: 'bold' }}
                 />
-                <Statistic 
-                  title="Area" 
-                  value={room?.roomStay?.room?.square || 0} 
-                  suffix="m²" 
+                <Statistic
+                  title="Area"
+                  value={room?.roomStay?.room?.square || 0}
+                  suffix="m²"
                   prefix={<AreaChartOutlined />}
                   className="flex-1 min-w-[180px]"
                 />
-                <Statistic 
-                  title="Max Occupancy" 
-                  value={room?.roomStay?.room?.maxOccupancy || 0} 
-                  suffix="persons" 
+                <Statistic
+                  title="Max Occupancy"
+                  value={room?.roomStay?.room?.maxOccupancy || 0}
+                  suffix="persons"
                   prefix={<TeamOutlined />}
                   className="flex-1 min-w-[180px]"
                 />
               </div>
-              
-              <Descriptions 
-                bordered 
-                column={1} 
-                labelStyle={{ fontWeight: 'bold', backgroundColor: '#fafafa' }} 
+
+              <Descriptions
+                bordered
+                column={1}
+                labelStyle={{ fontWeight: 'bold', backgroundColor: '#fafafa' }}
                 className="rounded-lg overflow-hidden"
                 size="middle"
               >
@@ -201,13 +210,13 @@ const RentedRoomDetail = () => {
         <Row gutter={[24, 24]}>
           {/* Tenants Card */}
           <Col xs={24} md={8}>
-            <Card 
+            <Card
               title={
                 <span className="flex items-center gap-2">
-                  <TeamOutlined className="text-blue-500" /> 
+                  <TeamOutlined className="text-blue-500" />
                   <span>Tenants</span>
                 </span>
-              } 
+              }
               extra={<Tag color="blue">{room?.roomStayCustomers?.length || 0} occupants</Tag>}
               className="h-full rounded-lg shadow-md"
               headStyle={{ backgroundColor: '#f0f5ff', borderBottom: '1px solid #d6e4ff', borderRadius: '8px 8px 0 0' }}
@@ -215,13 +224,13 @@ const RentedRoomDetail = () => {
               <List
                 itemLayout="horizontal"
                 dataSource={room?.roomStayCustomers || []}
-                locale={{ 
+                locale={{
                   emptyText: (
                     <div className="text-center py-6">
                       <TeamOutlined className="text-2xl text-gray-400 mb-2" />
                       <p>No tenants registered</p>
                     </div>
-                  ) 
+                  )
                 }}
                 renderItem={(tenant) => (
                   <List.Item
@@ -233,8 +242,8 @@ const RentedRoomDetail = () => {
                   >
                     <List.Item.Meta
                       avatar={
-                        <Avatar 
-                          size={48} 
+                        <Avatar
+                          size={48}
                           className="bg-blue-500 flex justify-center items-center text-lg font-bold"
                         >
                           {tenant.customerName?.charAt(0)}
@@ -256,13 +265,13 @@ const RentedRoomDetail = () => {
               />
             </Card>
           </Col>
-          
+
           {/* Amenities Card */}
           <Col xs={24} md={8}>
-            <Card 
+            <Card
               title={
                 <span className="flex items-center gap-2">
-                  <InfoCircleOutlined className="text-blue-500" /> 
+                  <InfoCircleOutlined className="text-blue-500" />
                   <span>Amenities</span>
                 </span>
               }
@@ -279,24 +288,24 @@ const RentedRoomDetail = () => {
                     </Text>
                   </List.Item>
                 )}
-                locale={{ 
+                locale={{
                   emptyText: (
                     <div className="text-center py-6">
                       <InfoCircleOutlined className="text-2xl text-gray-400 mb-2" />
                       <p>No amenities listed</p>
                     </div>
-                  ) 
+                  )
                 }}
               />
             </Card>
           </Col>
-          
+
           {/* Services Card */}
           <Col xs={24} md={8}>
-            <Card 
+            <Card
               title={
                 <span className="flex items-center gap-2">
-                  <DollarOutlined className="text-blue-500" /> 
+                  <DollarOutlined className="text-blue-500" />
                   <span>Services</span>
                 </span>
               }
@@ -306,7 +315,7 @@ const RentedRoomDetail = () => {
               <List
                 dataSource={room?.roomStay?.room?.roomServices || []}
                 renderItem={(item) => (
-                  <List.Item 
+                  <List.Item
                     className="py-3 px-4 flex justify-between bg-gray-50 rounded-md my-2"
                   >
                     <span className="font-medium">{item.serviceName}</span>
@@ -315,24 +324,24 @@ const RentedRoomDetail = () => {
                     </Tag>
                   </List.Item>
                 )}
-                locale={{ 
+                locale={{
                   emptyText: (
                     <div className="text-center py-6">
                       <DollarOutlined className="text-2xl text-gray-400 mb-2" />
                       <p>No services available</p>
                     </div>
-                  ) 
+                  )
                 }}
               />
             </Card>
           </Col>
         </Row>
       </Card>
-      
-      <CustomerModal 
-        isOpen={isModalOpen} 
-        customer={selectedTenant} 
-        onClose={() => setIsModalOpen(false)} 
+
+      <CustomerModal
+        isOpen={isModalOpen}
+        customer={selectedTenant}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );
