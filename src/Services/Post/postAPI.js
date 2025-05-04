@@ -23,7 +23,7 @@ const postAPI = {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${BASE_URL}/posts/landlord/inactivate/${postId}`,
+        `${BASE_URL}/inactivate-roommate-post-by-landlord/${postId}`,
         {},
         {
           headers: {

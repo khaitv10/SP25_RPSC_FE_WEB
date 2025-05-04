@@ -3,7 +3,7 @@ import {
   Card, Typography, Tag, Row, Col, Spin, 
   Empty, Pagination, Space, Input, Badge,
   Image, Button, Tooltip, Tabs, Table, Avatar,
-  Dropdown, Menu, Statistic, Segmented
+  Dropdown, Menu, Statistic, Segmented, Modal
 } from 'antd';
 import { 
   HomeOutlined, DollarOutlined, UserOutlined, 
@@ -44,6 +44,9 @@ const PostList = () => {
   
   // State for active tab
   const [activeTab, setActiveTab] = useState('1');
+
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
 
   useEffect(() => {
     fetchPosts();
@@ -150,15 +153,25 @@ const formatDate = (dateString) => {
   });
 };
 
-  const handleInactivatePost = async (postId) => {
+  const handleDeleteClick = (post) => {
+    setPostToDelete(post);
+    setIsDeleteModalVisible(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!postToDelete) return;
+    
     try {
-      const result = await postAPI.inactivatePost(postId);
+      const result = await postAPI.inactivatePost(postToDelete.postId);
       toast.success(result.message || 'Post inactivated successfully');
       // Refresh the post list
       fetchPostList();
     } catch (error) {
       toast.error('Failed to inactivate post');
       console.error('Error:', error);
+    } finally {
+      setIsDeleteModalVisible(false);
+      setPostToDelete(null);
     }
   };
 
@@ -282,7 +295,7 @@ const formatDate = (dateString) => {
             danger
             icon={<DeleteOutlined />}
             size="middle"
-            onClick={() => handleInactivatePost(record.postId)}
+            onClick={() => handleDeleteClick(record)}
           >
             Remove
           </Button>
@@ -655,6 +668,27 @@ const formatDate = (dateString) => {
           />
         </TabPane>
       </Tabs>
+
+      <Modal
+        title="Confirm Delete"
+        open={isDeleteModalVisible}
+        onOk={handleConfirmDelete}
+        onCancel={() => {
+          setIsDeleteModalVisible(false);
+          setPostToDelete(null);
+        }}
+        okText="Delete"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
+      >
+        <p>Are you sure you want to remove this post?</p>
+        {postToDelete && (
+          <div style={{ marginTop: '16px' }}>
+            <p><strong>Title:</strong> {postToDelete.title}</p>
+            <p><strong>Customer:</strong> {postToDelete.customerName}</p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
