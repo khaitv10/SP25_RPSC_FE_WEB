@@ -75,7 +75,7 @@ const RentedRoomManagement = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Active":
-        return <Tag color="success" className="status-tag">Active</Tag>;
+        return <Tag color="success" className="status-tag">Renting</Tag>;
       case "Pending":
         return <Tag color="warning" className="status-tag">Pending</Tag>;
       case "Expired":
@@ -138,9 +138,6 @@ const RentedRoomManagement = () => {
           <Title level={2} className="title">
             <HomeOutlined /> Rented Room Management
           </Title>
-          <Text className="subtitle">
-            Manage all your rented rooms in one place
-          </Text>
         </div>
       </div>
 
