@@ -162,7 +162,6 @@ const AccountManagement = () => {
             <Option value="Active">Active</Option>
             <Option value="Inactive">Inactive</Option>
             <Option value="Blocked">Blocked</Option>
-            <Option value="Deactive">Rejected</Option>
           </Select>
         </div>
 
