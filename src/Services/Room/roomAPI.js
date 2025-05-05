@@ -1,20 +1,10 @@
-import axios from 'axios';
-
-const BASE_URL = 'http://localhost:5262/api/room';
+import axiosClient from "../axios/config";
 
 const roomAPI = {
   getLandlordRooms: async (pageNumber, pageSize) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/landlord/rooms`, {
-        params: {
-          pageNumber,
-          pageSize
-        },
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'accept': '*/*'
-        }
+      const response = await axiosClient.get('/api/room/landlord/rooms', {
+        params: { pageNumber, pageSize }
       });
       return response.data;
     } catch (error) {
@@ -25,68 +15,37 @@ const roomAPI = {
 
   getRoomDetail: async (roomId) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/rooms/${roomId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'accept': '*/*'
-        }
-      });
-      return response.data; // This is already the room data
+      const response = await axiosClient.get(`/api/room/rooms/${roomId}`);
+      return response.data;
     } catch (error) {
       console.error('Error fetching room detail:', error);
       throw error;
     }
   },
+
   getRoomsForPost: async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/Get-Room-for-post`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'accept': '*/*'
-        }
-      });
+      const response = await axiosClient.get('/api/room/Get-Room-for-post');
       return response.data;
     } catch (error) {
       console.error('Error fetching rooms for post:', error);
       throw error;
     }
   },
+
   createPostRoom: async (postData) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${BASE_URL}/Create-PostRoom`,
-        postData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'accept': '*/*'
-          }
-        }
-      );
+      const response = await axiosClient.post('/api/room/Create-PostRoom', postData);
       return response.data;
     } catch (error) {
       console.error('Error creating post room:', error);
       throw error;
     }
   },
+
   updatePostRoom: async (postRoomId, updateData) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(
-        `${BASE_URL}/Update-PostRoom/${postRoomId}`,
-        updateData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'accept': '*/*'
-          }
-        }
-      );
+      const response = await axiosClient.put(`/api/room/Update-PostRoom/${postRoomId}`, updateData);
       return response.data;
     } catch (error) {
       console.error('Error updating post room:', error);
@@ -96,24 +55,13 @@ const roomAPI = {
 
   inactivePostRoom: async (postRoomId) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(
-        `${BASE_URL}/Inactive-PostRoom/${postRoomId}`,
-        null,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'accept': '*/*'
-          }
-        }
-      );
+      const response = await axiosClient.put(`/api/room/Inactive-PostRoom/${postRoomId}`);
       return response.data;
     } catch (error) {
       console.error('Error deactivating post room:', error);
       throw error;
     }
   }
-
 };
 
 export default roomAPI;

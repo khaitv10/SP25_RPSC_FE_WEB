@@ -439,13 +439,7 @@ const handleConfirmRoomDelete = async () => {
       } 
       className="empty-state"
     >
-      <Button 
-        type="primary" 
-        icon={<PlusOutlined />} 
-        onClick={navigateToCreatePost}
-      >
-        Add Property
-      </Button>
+      
     </Empty>
   );
 

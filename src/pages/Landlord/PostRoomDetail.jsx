@@ -199,7 +199,7 @@ const PostRoomDetail = () => {
               icon={<EditOutlined />}
               onClick={showUpdateModal}
             >
-              Update Room
+              Update Post Room
             </Button>
             <Button 
               type="primary"
