@@ -539,9 +539,9 @@ const AmenityManagement = () => {
         className="amenity-modal"
       >
         <Form form={editForm} layout="vertical" className="amenity-form">
-          <Form.Item name="roomAmentyId" label="Amenity ID">
+          {/* <Form.Item name="roomAmentyId" label="Amenity ID">
             <Input disabled value={editingAmenity?.roomAmentyId} />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             name="name"
