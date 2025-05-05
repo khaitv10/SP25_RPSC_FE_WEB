@@ -214,7 +214,7 @@ const PostDetailCus = () => {
                   <Descriptions.Item label="Area">
                     {roomInfo.area}m²
                   </Descriptions.Item>
-                  <Descriptions.Item label="Max Occupancy">
+                  <Descriptions.Item label="Total People in Room">
                     {roomInfo.totalRoomer} people
                   </Descriptions.Item>
                 </Descriptions>
