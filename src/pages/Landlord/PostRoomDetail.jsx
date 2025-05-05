@@ -3,20 +3,24 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Spin, Typography, Card, Row, Col, Divider, Tag, Space,
   Descriptions, Image, Button, Carousel, Statistic, Badge, 
-  List, Avatar, Breadcrumb, Alert, Modal, Rate
+  List, Avatar, Breadcrumb, Alert, Modal, Rate, Form, Input,
+  DatePicker, message, Select
 } from 'antd';
 import {
   HomeOutlined, DollarOutlined, CalendarOutlined, 
   UserOutlined, EnvironmentOutlined, InfoCircleOutlined, 
   ArrowLeftOutlined, LoadingOutlined, CheckCircleOutlined,
   PhoneOutlined, MailOutlined, BankOutlined, AppstoreOutlined,
-  HeartOutlined, ShareAltOutlined, StarFilled
+  HeartOutlined, ShareAltOutlined, StarFilled, EditOutlined
 } from '@ant-design/icons';
 import { toast } from 'react-toastify';
 import roomAPI from '../../Services/Room/roomAPI';
+import moment from 'moment';
 import './PostDetail.scss';
 
 const { Title, Text, Paragraph } = Typography;
+const { TextArea } = Input;
+const { Option } = Select;
 
 const PostRoomDetail = () => {
   const params = useParams();
@@ -37,6 +41,9 @@ const PostRoomDetail = () => {
   const [roomDetail, setRoomDetail] = useState(null);
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState('');
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [updateForm] = Form.useForm();
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     if (roomId) {
@@ -91,6 +98,57 @@ const PostRoomDetail = () => {
     navigate('/landlord/post');
   };
 
+  const showUpdateModal = () => {
+    // Populate the form with current values
+    updateForm.setFieldsValue({
+      title: roomDetail.title,
+      description: roomDetail.description,
+      dateExist: roomDetail.dateExist || 30, // Default to 30 if not available
+      availableDateToRent: roomDetail.availableDateToRent ? moment(roomDetail.availableDateToRent) : null
+    });
+    setUpdateModalVisible(true);
+  };
+
+  const handleUpdate = async (values) => {
+    try {
+      setUpdating(true);
+      
+      const updateData = {
+        title: values.title,
+        description: values.description,
+        dateExist: values.dateExist,
+        availableDateToRent: values.availableDateToRent ? values.availableDateToRent.format('YYYY-MM-DD') : null
+      };
+      
+      console.log('Updating room with ID:', roomId, 'Data:', updateData);
+      
+      const response = await roomAPI.updatePostRoom(roomId, updateData);
+      
+      if (response && response.isSuccess) {
+        message.success('Room updated successfully');
+        setUpdateModalVisible(false);
+        // Refresh room details
+        fetchRoomDetail();
+      } else {
+        message.error('Failed to update room: ' + (response?.message || 'Unknown error'));
+      }
+    } catch (error) {
+      message.error('Failed to update room: ' + (error.message || 'Unknown error'));
+      console.error('Error updating room:', error);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const disabledDate = (current) => {
+    // Disable dates before today
+    return current && current < moment().startOf('day');
+  };
+
+  const handleCancelUpdate = () => {
+    setUpdateModalVisible(false);
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -133,15 +191,24 @@ const PostRoomDetail = () => {
         </Breadcrumb>
         
         <div className="header-actions">
-          <Button 
-            type="primary"
-            ghost
-            icon={<ArrowLeftOutlined />} 
-            onClick={handleBackToList}
-            className="back-button"
-          >
-            Back to List
-          </Button>
+          <Space>
+            <Button 
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={showUpdateModal}
+            >
+              Update Room
+            </Button>
+            <Button 
+              type="primary"
+              ghost
+              icon={<ArrowLeftOutlined />} 
+              onClick={handleBackToList}
+              className="back-button"
+            >
+              Back to List
+            </Button>
+          </Space>
         </div>
       </div>
 
@@ -255,6 +322,9 @@ const PostRoomDetail = () => {
                 <Descriptions.Item label="Available From">
                   {formatDate(roomDetail.availableDateToRent)}
                 </Descriptions.Item>
+                <Descriptions.Item label="Listing Duration">
+                  {roomDetail.dateExist || 30} days
+                </Descriptions.Item>
                 <Descriptions.Item label="Last Updated">
                   {formatDate(roomDetail.updatedAt)}
                 </Descriptions.Item>
@@ -344,12 +414,11 @@ const PostRoomDetail = () => {
                 )}
               />
             </Card>
-
-            
           </Col>
         </Row>
       </Card>
 
+      {/* Image Preview Modal */}
       <Modal
         open={imagePreviewVisible}
         footer={null}
@@ -362,6 +431,121 @@ const PostRoomDetail = () => {
           src={currentImage} 
           style={{ width: '100%' }} 
         />
+      </Modal>
+
+      {/* Update Room Modal - Reformatted to match CreateRoomPost */}
+      <Modal
+        title="Update Room Details"
+        open={updateModalVisible}
+        onCancel={() => setUpdateModalVisible(false)}
+        footer={null}
+        width={700}
+        className="update-room-modal"
+      >
+        <Card className="update-post-card">
+          <Space direction="horizontal" className="modal-header">
+            <Title level={4}>Update Room Post</Title>
+          </Space>
+          
+          <Form
+            form={updateForm}
+            layout="vertical"
+            onFinish={handleUpdate}
+          >
+            <Form.Item
+              name="title"
+              label="Post Title"
+              rules={[
+                { required: true, message: 'Please enter a title' },
+                { max: 100, message: 'Title cannot exceed 100 characters' }
+              ]}
+            >
+              <Input 
+                placeholder="Enter an attractive title for your post" 
+                size="large"
+                showCount
+                maxLength={100}
+              />
+            </Form.Item>
+            
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[
+                { required: true, message: 'Please enter a description' },
+                { min: 50, message: 'Description should be at least 50 characters' }
+              ]}
+            >
+              <TextArea 
+                placeholder="Describe your room in detail (features, neighborhood, transportation, etc.)" 
+                rows={6}
+                showCount
+                maxLength={2000}
+              />
+            </Form.Item>
+            
+            <Row gutter={[24, 16]}>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  name="dateExist"
+                  label="Post Duration (days)"
+                  rules={[
+                    { required: true, message: 'Please specify post duration' },
+                    { type: 'number', min: 1, max: 365, message: 'Duration must be between 1 and 365 days' }
+                  ]}
+                >
+                  <Select size="large">
+                    <Option value={7}>7 days</Option>
+                    <Option value={15}>15 days</Option>
+                    <Option value={30}>30 days</Option>
+                    <Option value={60}>60 days</Option>
+                    <Option value={90}>90 days</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              
+              <Col xs={24} md={12}>
+                <Form.Item
+                  name="availableDateToRent"
+                  label="Available Date to Rent"
+                  rules={[
+                    { required: false, message: 'Please select available date (optional)' }
+                  ]}
+                >
+                  <DatePicker 
+                    style={{ width: '100%' }} 
+                    size="large"
+                    format="YYYY-MM-DD"
+                    disabledDate={disabledDate}
+                    placeholder="When is the room available for rent?"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            
+            <Divider />
+            
+            <Form.Item className="form-actions">
+              <Space size="middle">
+                <Button 
+                  type="default" 
+                  size="large" 
+                  onClick={handleCancelUpdate}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="primary" 
+                  size="large" 
+                  htmlType="submit"
+                  loading={updating}
+                >
+                  Update Post
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        </Card>
       </Modal>
     </div>
   );

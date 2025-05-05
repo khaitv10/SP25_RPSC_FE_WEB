@@ -15,7 +15,8 @@ import {
   EllipsisOutlined, StarOutlined, BellOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import roomAPI from '../../Services/Room/roomAPI';
 import postAPI from '../../Services/Post/postAPI';
 import './PostList.scss';
@@ -47,6 +48,10 @@ const PostList = () => {
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  
+  // State for room deletion modal
+  const [isRoomDeleteModalVisible, setIsRoomDeleteModalVisible] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
   useEffect(() => {
     fetchPosts();
@@ -142,20 +147,25 @@ const PostList = () => {
     }).format(price);
   };
 
-  // Updated formatDate function - located around line 172 in the original code
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   const handleDeleteClick = (post) => {
     setPostToDelete(post);
     setIsDeleteModalVisible(true);
+  };
+  
+  // Function to handle room delete button click
+  const handleRoomDeleteClick = (room) => {
+    setRoomToDelete(room);
+    setIsRoomDeleteModalVisible(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -174,6 +184,36 @@ const formatDate = (dateString) => {
       setPostToDelete(null);
     }
   };
+  
+// Function to handle room deletion confirmation
+// Function to handle room deletion confirmation
+const handleConfirmRoomDelete = async () => {
+  if (!roomToDelete) return;
+  
+  try {
+    // Find the active postRoom from the postRooms array
+    const activePostRoom = roomToDelete.postRooms?.find(post => post.status === "Active");
+    
+    if (!activePostRoom) {
+      toast.error('No active post found for this room');
+      return;
+    }
+    
+    const postRoomId = activePostRoom.postRoomId;
+    console.log('postRoomId to deactivate:', postRoomId);
+
+    const result = await roomAPI.inactivePostRoom(postRoomId);
+    toast.success('Room post deactivated successfully');
+    // Refresh the room list
+    fetchPosts();
+  } catch (error) {
+    toast.error('Failed to deactivate room post');
+    console.error('Error:', error);
+  } finally {
+    setIsRoomDeleteModalVisible(false);
+    setRoomToDelete(null);
+  }
+};
 
   // Navigation functions
   const navigateToCreatePost = () => {
@@ -194,17 +234,21 @@ const formatDate = (dateString) => {
   };
 
   // Room action menu
-  const roomActionMenu = (roomId) => (
+  const roomActionMenu = (room) => (
     <Menu>
-      <Menu.Item key="view" icon={<EyeOutlined />} onClick={() => navigateToRoomDetail(roomId)}>
+      <Menu.Item key="view" icon={<EyeOutlined />} onClick={() => navigateToRoomDetail(room.roomId)}>
         View Details
       </Menu.Item>
-      <Menu.Item key="edit" icon={<EditOutlined />}>
-        Edit Room
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="delete" danger icon={<DeleteOutlined />}>
-        Delete Room
+      <Menu.Item 
+        key="delete" 
+        danger 
+        icon={<DeleteOutlined />} 
+        onClick={(e) => {
+          e.domEvent.stopPropagation();
+          handleRoomDeleteClick(room);
+        }}
+      >
+        Delete Post
       </Menu.Item>
     </Menu>
   );
@@ -253,7 +297,6 @@ const formatDate = (dateString) => {
               <Text type="secondary">
                 <MailOutlined /> {record.customerEmail}
               </Text>
-
             </Space>
           </Space>
         </Space>
@@ -439,9 +482,14 @@ const formatDate = (dateString) => {
               <Button type="text" icon={<EditOutlined />}>
                 Edit
               </Button>,
-              <Dropdown overlay={roomActionMenu(post.roomId)} trigger={['click']}>
-                <Button type="text" icon={<EllipsisOutlined />} />
-              </Dropdown>
+              <Button 
+                type="text" 
+                danger 
+                icon={<DeleteOutlined />}
+                onClick={() => handleRoomDeleteClick(post)}
+              >
+                Delete
+              </Button>
             ]}
           >
             <div className="post-content">
@@ -574,7 +622,7 @@ const formatDate = (dateString) => {
         {
           title: 'Actions',
           key: 'actions',
-          width: 150,
+          width: 180,
           render: (_, post) => (
             <Space>
               <Button 
@@ -585,9 +633,14 @@ const formatDate = (dateString) => {
               >
                 View
               </Button>
-              <Dropdown overlay={roomActionMenu(post.roomId)} trigger={['click']}>
-                <Button icon={<EllipsisOutlined />} />
-              </Dropdown>
+              <Button 
+                danger
+                icon={<DeleteOutlined />}
+                size="middle"
+                onClick={() => handleRoomDeleteClick(post)}
+              >
+                Delete
+              </Button>
             </Space>
           )
         }
@@ -620,6 +673,7 @@ const formatDate = (dateString) => {
 
   return (
     <div className="post-list-section">
+      <ToastContainer position="top-right" autoClose={3000} />
       <Tabs defaultActiveKey="1" onChange={handleTabChange} className="post-list-tabs">
         <TabPane tab={<span><AppstoreOutlined /> Properties</span>} key="1">
           {renderRoomListHeader()}
@@ -669,6 +723,7 @@ const formatDate = (dateString) => {
         </TabPane>
       </Tabs>
 
+      {/* Modal for Customer Post deletion */}
       <Modal
         title="Confirm Delete"
         open={isDeleteModalVisible}
@@ -686,6 +741,29 @@ const formatDate = (dateString) => {
           <div style={{ marginTop: '16px' }}>
             <p><strong>Title:</strong> {postToDelete.title}</p>
             <p><strong>Customer:</strong> {postToDelete.customerName}</p>
+          </div>
+        )}
+      </Modal>
+
+      {/* Modal for Room Post deletion */}
+      <Modal
+        title="Confirm Delete"
+        open={isRoomDeleteModalVisible}
+        onOk={handleConfirmRoomDelete}
+        onCancel={() => {
+          setIsRoomDeleteModalVisible(false);
+          setRoomToDelete(null);
+        }}
+        okText="Delete"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
+      >
+        <p>Are you sure you want to deactivate this room post?</p>
+        {roomToDelete && (
+          <div style={{ marginTop: '16px' }}>
+            <p><strong>Title:</strong> {roomToDelete.title}</p>
+            <p><strong>Room Number:</strong> {roomToDelete.roomNumber}</p>
+            <p><strong>Location:</strong> {roomToDelete.location}</p>
           </div>
         )}
       </Modal>

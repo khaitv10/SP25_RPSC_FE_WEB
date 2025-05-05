@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://opal.io.vn/api/room';
+const BASE_URL = 'http://localhost:5262/api/room';
 
 const roomAPI = {
   getLandlordRooms: async (pageNumber, pageSize) => {
@@ -72,8 +72,47 @@ const roomAPI = {
       console.error('Error creating post room:', error);
       throw error;
     }
+  },
+  updatePostRoom: async (postRoomId, updateData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        `${BASE_URL}/Update-PostRoom/${postRoomId}`,
+        updateData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'accept': '*/*'
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating post room:', error);
+      throw error;
+    }
+  },
+
+  inactivePostRoom: async (postRoomId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        `${BASE_URL}/Inactive-PostRoom/${postRoomId}`,
+        null,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'accept': '*/*'
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error deactivating post room:', error);
+      throw error;
+    }
   }
-  
 
 };
 

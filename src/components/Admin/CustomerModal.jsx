@@ -78,17 +78,17 @@ const CustomerModal = ({ isOpen, customer, onClose }) => {
 
           <div className="mt-5 text-center">
             <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">
-              {customer.fullName} {customer.customerName} 
+              {customer.fullName}
             </h3>
             
             <div className="flex flex-wrap justify-center gap-3 mt-3">
               <div className="flex items-center text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                 <FaEnvelope className="mr-2 text-blue-600" />
-                <span className="text-sm">{customer.email} {customer.customerEmail}  </span>
+                <span className="text-sm">{customer.email}</span>
               </div>
               <div className="flex items-center text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                 <FaPhone className="mr-2 text-green-600" />
-                <span className="text-sm">{customer.phoneNumber} {customer.customerPhoneNumber}</span>
+                <span className="text-sm">{customer.phoneNumber}</span>
               </div>
               {customer.gender && (
                 <div className="flex items-center text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
