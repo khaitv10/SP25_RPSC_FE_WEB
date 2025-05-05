@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Card, 
-  Button, 
-  Spin, 
-  Empty, 
-  Tag, 
+import {
+  Card,
+  Button,
+  Spin,
+  Empty,
+  Tag,
   Skeleton,
   Typography,
   Modal,
@@ -13,19 +13,25 @@ import {
   InputNumber,
   Pagination,
   Space,
-  Tooltip
+  Tooltip,
 } from "antd";
-import { 
-  PlusOutlined, 
-  AppstoreOutlined, 
-  DollarOutlined, 
+import {
+  PlusOutlined,
+  AppstoreOutlined,
+  DollarOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   UnorderedListOutlined,
   SearchOutlined,
-  ReloadOutlined
+  ReloadOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { getAllAmenities, createAmenity } from "../../../Services/Landlord/amenityAPI";
+import {
+  getAllAmenities,
+  createAmenity,
+  UpdateAmenity,
+  DeleteAmenity,
+} from "../../../Services/Landlord/amenityAPI";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./AmenityManagement.scss";
@@ -34,12 +40,17 @@ const { Title, Text } = Typography;
 
 const AmenityManagement = () => {
   const [isAmenityModalOpen, setIsAmenityModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingAmenity, setEditingAmenity] = useState(null);
+  const [deletingAmenity, setDeletingAmenity] = useState(null);
   const [amenities, setAmenities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "list"
   const [form] = Form.useForm();
-  
+  const [editForm] = Form.useForm();
+
   // Pagination and search states
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,7 +72,7 @@ const AmenityManagement = () => {
         setAmenities(response.amenties);
         setTotalItems(response.totalAmenties || 0);
       } else {
-       // toast.error("Invalid data format: Expected 'amenties' array");
+        // toast.error("Invalid data format: Expected 'amenties' array");
       }
     } catch (error) {
       //toast.error("Error fetching amenities");
@@ -76,33 +87,34 @@ const AmenityManagement = () => {
       // Validate form fields
       const values = await form.validateFields();
       setSubmitting(true);
-      
+
       // Prepare data according to the API request model
       const amenityData = {
         name: values.name,
-        compensation: values.compensation
+        compensation: values.compensation,
       };
-      
+
       // Call the create API
       const response = await createAmenity(amenityData);
-      
+
       // Show success message
       toast.success("Amenity created successfully!");
-      
+
       // Close modal and reset form
       setIsAmenityModalOpen(false);
       form.resetFields();
-      
+
       // Refresh the amenities list
       fetchAmenities(searchQuery, currentPage, pageSize);
-      
     } catch (error) {
       if (error.errorInfo) {
         // This is a form validation error
         console.log("Form validation failed:", error);
       } else {
         // This is an API error
-        toast.error("Failed to create amenity: " + (error.message || "Unknown error"));
+        toast.error(
+          "Failed to create amenity: " + (error.message || "Unknown error"),
+        );
         console.error("API Error:", error);
       }
     } finally {
@@ -133,33 +145,116 @@ const AmenityManagement = () => {
 
   const getStatusTag = (status) => {
     if (status.toLowerCase() === "active") {
-      return <Tag color="success" icon={<CheckCircleOutlined />}>{status}</Tag>;
+      return (
+        <Tag color="success" icon={<CheckCircleOutlined />}>
+          {status}
+        </Tag>
+      );
     } else {
-      return <Tag color="error" icon={<CloseCircleOutlined />}>{status}</Tag>;
+      return (
+        <Tag color="error" icon={<CloseCircleOutlined />}>
+          {status}
+        </Tag>
+      );
     }
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', { 
-      style: 'currency', 
-      currency: 'VND',
-      maximumFractionDigits: 0
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
   // Loading skeletons
   const renderSkeletons = () => {
-    return Array(pageSize).fill(null).map((_, index) => (
-      <Card key={`skeleton-${index}`} className="amenity-card">
-        <Skeleton active avatar paragraph={{ rows: 2 }} />
-      </Card>
-    ));
+    return Array(pageSize)
+      .fill(null)
+      .map((_, index) => (
+        <Card key={`skeleton-${index}`} className="amenity-card">
+          <Skeleton active avatar paragraph={{ rows: 2 }} />
+        </Card>
+      ));
+  };
+
+  const handleEdit = (amenity) => {
+    setEditingAmenity(amenity);
+    editForm.setFieldsValue({
+      name: amenity.name,
+      compensation: amenity.compensation,
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateAmenity = async () => {
+    try {
+      const values = await editForm.validateFields();
+      setSubmitting(true);
+
+      const amenityData = {
+        name: values.name,
+        compensation: values.compensation,
+      };
+
+      await UpdateAmenity(amenityData, editingAmenity.roomAmentyId);
+      toast.success("Amenity updated successfully!");
+      setIsEditModalOpen(false);
+      editForm.resetFields();
+      fetchAmenities(searchQuery, currentPage, pageSize);
+    } catch (error) {
+      if (error.errorInfo) {
+        console.log("Form validation failed:", error);
+      } else {
+        toast.error(
+          "Failed to update amenity: " + (error.message || "Unknown error"),
+        );
+        console.error("API Error:", error);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditModalOpen(false);
+    editForm.resetFields();
+    setEditingAmenity(null);
+  };
+
+  const handleDelete = (amenity) => {
+    setDeletingAmenity(amenity);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setSubmitting(true);
+      await DeleteAmenity(deletingAmenity.roomAmentyId);
+
+      toast.success("Amenity deleted successfully!");
+      setIsDeleteModalOpen(false);
+      setDeletingAmenity(null);
+      fetchAmenities(searchQuery, currentPage, pageSize);
+    } catch (error) {
+      toast.error(
+        "Failed to delete amenity: " + (error.message || "Unknown error"),
+      );
+      console.error("API Error:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setDeletingAmenity(null);
   };
 
   return (
     <div className="amenity-management">
       <ToastContainer position="top-right" autoClose={3000} />
-      
+
       {/* Dashboard Header */}
       <div className="dashboard-header">
         <div className="dashboard-title">
@@ -170,18 +265,24 @@ const AmenityManagement = () => {
             Manage your property amenities in one place
           </Text>
         </div>
-        
+
         <div className="action-buttons">
-          <Button 
+          <Button
             className="view-toggle-btn"
             onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            icon={viewMode === "grid" ? <UnorderedListOutlined /> : <AppstoreOutlined />}
+            icon={
+              viewMode === "grid" ? (
+                <UnorderedListOutlined />
+              ) : (
+                <AppstoreOutlined />
+              )
+            }
           >
             {viewMode === "grid" ? "List View" : "Grid View"}
           </Button>
-          
-          <Button 
-            type="primary" 
+
+          <Button
+            type="primary"
             size="large"
             icon={<PlusOutlined />}
             onClick={() => setIsAmenityModalOpen(true)}
@@ -210,7 +311,11 @@ const AmenityManagement = () => {
           <div className="stat-content">
             <Text type="secondary">Active</Text>
             <Title level={3}>
-              {amenities.filter(item => item.status?.toLowerCase() === "active").length}
+              {
+                amenities.filter(
+                  (item) => item.status?.toLowerCase() === "active",
+                ).length
+              }
             </Title>
           </div>
         </Card>
@@ -221,7 +326,11 @@ const AmenityManagement = () => {
           <div className="stat-content">
             <Text type="secondary">Inactive</Text>
             <Title level={3}>
-              {amenities.filter(item => item.status?.toLowerCase() !== "active").length}
+              {
+                amenities.filter(
+                  (item) => item.status?.toLowerCase() !== "active",
+                ).length
+              }
             </Title>
           </div>
         </Card>
@@ -238,7 +347,11 @@ const AmenityManagement = () => {
           suffix={
             <Space>
               {searchValue && (
-                <Button type="text" size="small" onClick={() => setSearchValue("")}>
+                <Button
+                  type="text"
+                  size="small"
+                  onClick={() => setSearchValue("")}
+                >
                   Clear
                 </Button>
               )}
@@ -259,8 +372,12 @@ const AmenityManagement = () => {
         {loading ? (
           renderSkeletons()
         ) : amenities.length === 0 ? (
-          <Empty 
-            description={searchQuery ? "No amenities match your search" : "No amenities found"} 
+          <Empty
+            description={
+              searchQuery
+                ? "No amenities match your search"
+                : "No amenities found"
+            }
             className="empty-state"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
@@ -271,8 +388,21 @@ const AmenityManagement = () => {
               className="amenity-card"
               hoverable
               actions={[
-                <Button type="text" key="edit">Edit</Button>,
-                <Button type="text" danger key="delete">Delete</Button>
+                <Button
+                  type="text"
+                  key="edit"
+                  onClick={() => handleEdit(amenity)}
+                >
+                  Edit
+                </Button>,
+                <Button
+                  type="text"
+                  danger
+                  key="delete"
+                  onClick={() => handleDelete(amenity)}
+                >
+                  Delete
+                </Button>,
               ]}
             >
               <div className="amenity-header">
@@ -284,7 +414,7 @@ const AmenityManagement = () => {
                   {getStatusTag(amenity.status || "Inactive")}
                 </div>
               </div>
-              
+
               <div className="amenity-details">
                 <div className="detail-item">
                   <DollarOutlined className="detail-icon" />
@@ -310,8 +440,10 @@ const AmenityManagement = () => {
             total={totalItems}
             onChange={handlePageChange}
             showSizeChanger
-            pageSizeOptions={['6', '12', '24', '48']}
-            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+            pageSizeOptions={["6", "12", "24", "48"]}
+            showTotal={(total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`
+            }
           />
         </div>
       )}
@@ -330,28 +462,24 @@ const AmenityManagement = () => {
           <Button key="cancel" onClick={handleCancel}>
             Cancel
           </Button>,
-          <Button 
-            key="submit" 
-            type="primary" 
-            loading={submitting} 
+          <Button
+            key="submit"
+            type="primary"
+            loading={submitting}
             onClick={handleCreateAmenity}
           >
             Create
-          </Button>
+          </Button>,
         ]}
         className="amenity-modal"
       >
-        <Form
-          form={form}
-          layout="vertical"
-          className="amenity-form"
-        >
+        <Form form={form} layout="vertical" className="amenity-form">
           <Form.Item
             name="name"
             label="Amenity Name"
             rules={[
-              { required: true, message: 'Please enter the amenity name' },
-              { max: 100, message: 'Name cannot exceed 100 characters' }
+              { required: true, message: "Please enter the amenity name" },
+              { max: 100, message: "Name cannot exceed 100 characters" },
             ]}
           >
             <Input placeholder="Enter amenity name" />
@@ -361,19 +489,143 @@ const AmenityManagement = () => {
             name="compensation"
             label="Compensation (VNĐ)"
             rules={[
-              { required: true, message: 'Please enter the compensation amount' },
-              { type: 'number', min: 0, message: 'Compensation must be a positive value' }
+              {
+                required: true,
+                message: "Please enter the compensation amount",
+              },
+              {
+                type: "number",
+                min: 0,
+                message: "Compensation must be a positive value",
+              },
             ]}
           >
-            <InputNumber 
-              placeholder="Enter compensation amount" 
-              style={{ width: '100%' }}
-              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={value => value.replace(/\$\s?|(,*)/g, '')}
+            <InputNumber
+              placeholder="Enter compensation amount"
+              style={{ width: "100%" }}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
               min={0}
             />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Edit Amenity Modal */}
+      <Modal
+        title={
+          <div className="modal-title">
+            <PlusOutlined className="modal-icon" />
+            <span>Edit Amenity</span>
+          </div>
+        }
+        open={isEditModalOpen}
+        onCancel={handleCancelEdit}
+        footer={[
+          <Button key="cancel" onClick={handleCancelEdit}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={submitting}
+            onClick={handleUpdateAmenity}
+          >
+            Update
+          </Button>,
+        ]}
+        className="amenity-modal"
+      >
+        <Form form={editForm} layout="vertical" className="amenity-form">
+          {/* <Form.Item name="roomAmentyId" label="Amenity ID">
+            <Input disabled value={editingAmenity?.roomAmentyId} />
+          </Form.Item> */}
+
+          <Form.Item
+            name="name"
+            label="Amenity Name"
+            rules={[
+              { required: true, message: "Please enter the amenity name" },
+              { max: 100, message: "Name cannot exceed 100 characters" },
+            ]}
+          >
+            <Input placeholder="Enter amenity name" />
+          </Form.Item>
+
+          <Form.Item
+            name="compensation"
+            label="Compensation (VNĐ)"
+            rules={[
+              {
+                required: true,
+                message: "Please enter the compensation amount",
+              },
+              {
+                type: "number",
+                min: 0,
+                message: "Compensation must be a positive value",
+              },
+            ]}
+          >
+            <InputNumber
+              placeholder="Enter compensation amount"
+              style={{ width: "100%" }}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+              min={0}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        title={
+          <div className="modal-title">
+            <ExclamationCircleOutlined
+              className="modal-icon"
+              style={{ color: "#ff4d4f" }}
+            />
+            <span>Delete Amenity</span>
+          </div>
+        }
+        open={isDeleteModalOpen}
+        onCancel={handleCancelDelete}
+        footer={[
+          <Button key="cancel" onClick={handleCancelDelete}>
+            Cancel
+          </Button>,
+          <Button
+            key="delete"
+            type="primary"
+            danger
+            loading={submitting}
+            onClick={handleConfirmDelete}
+          >
+            Delete
+          </Button>,
+        ]}
+        className="amenity-modal"
+      >
+        <div className="delete-confirmation">
+          <p>Are you sure you want to delete this amenity?</p>
+          {deletingAmenity && (
+            <div className="amenity-details mt-3">
+              <p>
+                <strong>Name:</strong> {deletingAmenity.name}
+              </p>
+              <p>
+                <strong>Compensation:</strong>{" "}
+                {formatCurrency(deletingAmenity.compensation)}
+              </p>
+            </div>
+          )}
+          <p className="warning-text">This action cannot be undone.</p>
+        </div>
       </Modal>
     </div>
   );
