@@ -120,9 +120,11 @@ const PostRoomDetail = () => {
         availableDateToRent: values.availableDateToRent ? values.availableDateToRent.format('YYYY-MM-DD') : null
       };
       
-      console.log('Updating room with ID:', roomId, 'Data:', updateData);
+      // Use postRoomId from the roomDetail instead of roomId from URL params
+      const postRoomId = roomDetail.postRoomId;
+      console.log('Updating room with postRoomId:', postRoomId, 'Data:', updateData);
       
-      const response = await roomAPI.updatePostRoom(roomId, updateData);
+      const response = await roomAPI.updatePostRoom(postRoomId, updateData);
       
       if (response && response.isSuccess) {
         message.success('Room updated successfully');
@@ -217,12 +219,8 @@ const PostRoomDetail = () => {
           <Col xs={24} lg={16}>
             <div className="room-header">
               <div className="room-title-section">
-                <Badge.Ribbon 
-                  text={roomDetail.status} 
-                  color={roomDetail.status === 'Available' ? 'green' : 'orange'}
-                >
+
                   <Title level={2}>{roomDetail.title}</Title>
-                </Badge.Ribbon>
                 
                 <div className="title-actions">
                   {roomDetail.packageLabel && (
