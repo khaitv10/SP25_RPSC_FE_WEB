@@ -1,34 +1,34 @@
-import axios from 'axios';
+import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: 'https://opal.io.vn/',
-  // baseURL: 'http://localhost:5262/',
+  // baseURL: 'https://opal.io.vn/',
+  baseURL: "http://localhost:5262/",
 });
 
 axiosClient.interceptors.request.use(
   function (config) {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      config.headers.Accept = 'application/json';
+      config.headers.Accept = "application/json";
     } else {
-      console.warn('No token found in localStorage.');
+      console.warn("No token found in localStorage.");
     }
 
     // 🛠 Không đặt 'Content-Type' mặc định
     if (config.data instanceof FormData) {
       console.log("🚀 Sending FormData");
       // Để browser tự động set Content-Type
-      delete config.headers['Content-Type'];
+      delete config.headers["Content-Type"];
     } else {
-      config.headers['Content-Type'] = 'application/json';
+      config.headers["Content-Type"] = "application/json";
     }
 
     return config;
   },
   function (error) {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosClient.interceptors.response.use(
@@ -36,9 +36,9 @@ axiosClient.interceptors.response.use(
     return response;
   },
   function (error) {
-    console.error('Request failed with status code', error.response?.status);
+    console.error("Request failed with status code", error.response?.status);
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosClient;
