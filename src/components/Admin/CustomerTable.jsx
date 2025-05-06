@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { Table, Button, Input, Select, Tag, Spin } from "antd";
 import PropTypes from "prop-types";
-import CustomerModal from "./CustomerModal";
+import CustomerAdminModal from "./CustomerAdminModal";
 
 const { Option } = Select;
 
@@ -15,7 +15,8 @@ const CustomerTable = ({
   selectedStatus,
   setSelectedStatus,
   searchTerm,
-  setSearchTerm
+  setSearchTerm,
+  onStatusChange
 }) => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +29,13 @@ const CustomerTable = ({
   const handleViewDetails = (customer) => {
     setSelectedCustomer(customer);
     setIsModalOpen(true);
+  };
+
+  const handleCustomerStatusChange = (updatedCustomer) => {
+    // Propagate the status change to the parent component
+    if (onStatusChange) {
+      onStatusChange(updatedCustomer);
+    }
   };
 
   const getStatusColor = (status) => {
@@ -126,8 +134,6 @@ const CustomerTable = ({
 
   return (
     <div className="customers-container">
-
-
       {loading ? (
         <div className="loading-container" style={{
           display: "flex",
@@ -153,10 +159,11 @@ const CustomerTable = ({
         />
       )}
 
-      <CustomerModal
+      <CustomerAdminModal
         isOpen={isModalOpen}
         customer={selectedCustomer}
         onClose={() => setIsModalOpen(false)}
+        onStatusChange={handleCustomerStatusChange}
       />
     </div>
   );
@@ -173,6 +180,7 @@ CustomerTable.propTypes = {
   setSelectedStatus: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
   setSearchTerm: PropTypes.func.isRequired,
+  onStatusChange: PropTypes.func
 };
 
 export default CustomerTable;

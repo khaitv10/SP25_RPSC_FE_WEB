@@ -3,7 +3,7 @@ import { Card, Typography, Spin, Input, Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import CustomerTable from "../../../components/Admin/CustomerTable.jsx";
 import LandlordTable from "../../../components/Admin/LandlordTable.jsx";
-import getAllCustomer from "../../../Services/Admin/customerAPI";
+import customerApi from "../../../Services/Admin/customerAPI";
 import getAllLandlords from "../../../Services/Admin/landlordAPI";
 import "./AccountManagement.scss";
 
@@ -47,7 +47,7 @@ const AccountManagement = () => {
     setLoading(true);
     try {
       const statusFilter = selectedStatus === "Status" ? "" : selectedStatus;
-      const response = await getAllCustomer.getCustomers(
+      const response = await customerApi.getCustomers(
         currentPage,
         customersPerPage,
         searchTerm,
@@ -120,6 +120,29 @@ const AccountManagement = () => {
     setSearchTerm(""); // Reset search
   };
 
+  // Handle customer status change
+  const handleCustomerStatusChange = (updatedCustomer) => {
+    // Update the customers state with the modified customer
+    const updatedCustomers = customers.map(customer => 
+      customer.userId === updatedCustomer.userId ? updatedCustomer : customer
+    );
+    setCustomers(updatedCustomers);
+    
+    // Refresh data to ensure we have the latest state from the server
+    fetchCustomers();
+  };
+
+  // Handle landlord status change (similar to customer status change)
+  const handleLandlordStatusChange = (updatedLandlord) => {
+    const updatedLandlords = landlords.map(landlord => 
+      landlord.userId === updatedLandlord.userId ? updatedLandlord : landlord
+    );
+    setLandlords(updatedLandlords);
+    
+    // Refresh data to ensure we have the latest state from the server
+    fetchLandlords();
+  };
+
   return (
     <div className="account-management">
       <Card className="management-card">
@@ -161,7 +184,7 @@ const AccountManagement = () => {
             <Option value="Status">All Status</Option>
             <Option value="Active">Active</Option>
             <Option value="Inactive">Inactive</Option>
-            <Option value="Blocked">Blocked</Option>
+            {/* <Option value="Blocked">Blocked</Option> */}
           </Select>
         </div>
 
@@ -182,6 +205,7 @@ const AccountManagement = () => {
                 setSelectedStatus={setSelectedStatus}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                onStatusChange={handleCustomerStatusChange}
               />
             ) : (
               <LandlordTable
@@ -194,6 +218,7 @@ const AccountManagement = () => {
                 setSelectedStatus={setSelectedStatus}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                onStatusChange={handleLandlordStatusChange}
               />
             )}
           </>
