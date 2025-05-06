@@ -88,8 +88,29 @@ const PostDetailCus = () => {
   };
 
   const handleContactOwner = () => {
-    // Implement contact functionality
-    toast.info('Contact feature will be implemented soon');
+    // Check if user is logged in
+    const myId = localStorage.getItem("userId");
+    if (!myId) {
+      toast.error("Please log in to contact the owner");
+      // Optionally redirect to login page
+      // navigate('/login');
+      return;
+    }
+
+    // Check if postOwnerInfo exists and has a userId
+    if (!postDetail?.postOwnerInfo?.userId) {
+      toast.error("Post owner information is missing");
+      return;
+    }
+
+    // Store post owner information in sessionStorage for use in ChatPage
+    sessionStorage.setItem("contactTargetUserId", postDetail.postOwnerInfo.userId);
+    sessionStorage.setItem("contactTargetUsername", postDetail.postOwnerInfo.fullName);
+    sessionStorage.setItem("contactTargetAvatar", postDetail.postOwnerInfo.avatar || "");
+    
+    // Navigate to chat page
+    navigate('/landlord/chat');
+    toast.success(`Opening chat with ${postDetail.postOwnerInfo.fullName}`);
   };
 
   if (loading) {
@@ -281,6 +302,7 @@ const PostDetailCus = () => {
               size="large"
               onClick={handleContactOwner}
               className="contact-button"
+              icon={<MailOutlined />}
             >
               Contact {postOwnerInfo.fullName}
             </Button>

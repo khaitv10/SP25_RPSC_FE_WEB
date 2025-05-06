@@ -27,12 +27,49 @@ const ChatPage = () => {
 
     const userId = localStorage.getItem("userId") || "";
 
+    // Check if we have a target user from post detail page
+    useEffect(() => {
+        const targetUserId = sessionStorage.getItem("contactTargetUserId");
+        const targetUsername = sessionStorage.getItem("contactTargetUsername");
+        const targetAvatar = sessionStorage.getItem("contactTargetAvatar");
+        
+        // If we have target user data, create or open chat with that user
+        if (targetUserId && targetUsername) {
+            // Create a chat partner object
+            const chatPartner = {
+                id: targetUserId,
+                username: targetUsername,
+                avatar: targetAvatar || "",
+                isOnline: false // Default to offline since we don't know
+            };
+            
+            // Set as active chat and fetch history
+            setActiveChat(chatPartner);
+            
+            // Clear the session storage to prevent reopening on page refresh
+            sessionStorage.removeItem("contactTargetUserId");
+            sessionStorage.removeItem("contactTargetUsername");
+            sessionStorage.removeItem("contactTargetAvatar");
+            
+            // After setting up, fetch chat history for this user
+            getChatHistory(targetUserId)
+                .then(data => {
+                    setMessages(data);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    console.error("Failed to load chat history:", error);
+                    setLoading(false);
+                    setMessages([]); // Set empty messages if this is a new conversation
+                });
+        }
+    }, []);
+
     // Get the hub URL from axiosClient baseURL
     const getHubUrl = () => {
         const baseURL = axiosClient.defaults.baseURL;
-        // Extract the domain and protocol
-        const url = new URL(baseURL);
-        return `${url.protocol}//${url.hostname}:5262/chatHub`;
+        // Use the same baseURL from axiosClient configuration
+        return `${baseURL}chatHub`;
     };
 
     // Memoized function to setup SignalR connection
@@ -172,6 +209,8 @@ const ChatPage = () => {
             setMessages(data);
         } catch (error) {
             console.error("Failed to load chat history:", error);
+            // If this is a new conversation, set empty messages
+            setMessages([]);
         } finally {
             setLoading(false);
         }
@@ -212,6 +251,9 @@ const ChatPage = () => {
             if (hubConnection) {
                 await hubConnection.invoke("SendMessageToUser", userId, activeChat.id, trimmedMessage, currentTime);
             }
+
+            // Update our chat list to reflect the new message
+            fetchChatList();
     
         } catch (error) {
             console.error("Failed to send message:", error);
@@ -339,6 +381,10 @@ const ChatPage = () => {
                             {loading ? (
                                 <div className="loading-container">
                                     <Spin size="large" />
+                                </div>
+                            ) : messages.length === 0 ? (
+                                <div className="no-messages">
+                                    <p>No messages yet. Start a conversation!</p>
                                 </div>
                             ) : (
                                 <>
