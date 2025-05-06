@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { FaTimes, FaUser, FaEnvelope, FaPhone, FaVenusMars, 
+import { FaTimes, FaEnvelope, FaPhone, FaVenusMars, 
          FaMapMarkerAlt, FaHeart, FaWalking, FaMoneyBillWave, 
          FaLocationArrow, FaClipboardList } from "react-icons/fa";
+
+import dfava from "../../assets/default_avatar.jpg";
 
 const CustomerModal = ({ isOpen, customer, onClose }) => {
   const [animateIn, setAnimateIn] = useState(false);
@@ -20,7 +22,7 @@ const CustomerModal = ({ isOpen, customer, onClose }) => {
   if (!isOpen || !customer) return null;
 
   // Use a default avatar in case the customer.avatar is null or undefined
-  const defaultAvatar = "https://res.cloudinary.com/dzoxs1sd7/image/upload/v1744566485/ztszkoqjhamvi56rqnwj.jpg";
+  const defaultAvatar = dfava;
 
    // Format budget with dots and VND
    const formatBudget = (budget) => {

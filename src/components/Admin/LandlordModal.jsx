@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { FaTimes, FaUser, FaEnvelope, FaPhone, FaVenusMars, 
+import { FaTimes, FaEnvelope, FaPhone, FaVenusMars, 
          FaMapMarkerAlt, FaBuilding, FaIdCard, 
          FaCheckCircle, FaCalendarAlt } from "react-icons/fa";
+
+import dfava from "../../assets/default_avatar.jpg";
 
 const LandlordModal = ({ isOpen, landlord, onClose }) => {
   const [animateIn, setAnimateIn] = useState(false);
@@ -20,7 +22,7 @@ const LandlordModal = ({ isOpen, landlord, onClose }) => {
   if (!isOpen || !landlord) return null;
 
   // Default avatar in case landlord.avatar is null or undefined
-  const defaultAvatar = "https://res.cloudinary.com/dzoxs1sd7/image/upload/v1744566485/ztszkoqjhamvi56rqnwj.jpg";
+  const defaultAvatar = dfava;
 
   // Function to determine whether to show a field
   const shouldShowField = (field) => field && field !== 'Not provided' && field !== 'Not specified';
