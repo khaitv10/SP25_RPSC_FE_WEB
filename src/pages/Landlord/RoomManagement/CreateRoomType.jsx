@@ -129,32 +129,8 @@ const handleSubmit = async (values) => {
   setLoading(true);
   try {
     const response = await createRoomTypeAPI(data);
-    
-    // Show success toast
-    toast.success("Room Type Created Successfully!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-
-    // Navigate to the room type list page
     navigate("/landlord/roomtype");
   } catch (error) {
-    // Show error toast
-    toast.error("Error creating Room Type", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-    console.error("Error:", error);
   } finally {
     setLoading(false);
   }
