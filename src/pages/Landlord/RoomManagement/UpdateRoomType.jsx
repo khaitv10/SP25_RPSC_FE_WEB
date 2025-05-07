@@ -40,12 +40,12 @@ const UpdateRoomType = ({ visible, onCancel, roomType, onSuccess }) => {
         square: roomType.square,
         deposite: roomType.deposite,
         maxOccupancy: roomType.maxOccupancy,
-        houseNumber: roomType.location?.houseNumber,
-        street: roomType.location?.street,
-        district: roomType.location?.district || "Thu Duc",
-        city: roomType.location?.city || "Ho Chi Minh",
-        lat: roomType.location?.lat,
-        long: roomType.location?.long,
+        houseNumber: roomType.address?.houseNumber || "",
+        street: roomType.address?.street || "",
+        district: roomType.address?.district || "Thu Duc",
+        city: roomType.address?.city || "Ho Chi Minh",
+        lat: roomType.address?.lat,
+        long: roomType.address?.long,
       });
 
       // Set room services with proper structure
@@ -54,7 +54,7 @@ const UpdateRoomType = ({ visible, onCancel, roomType, onSuccess }) => {
           roomServiceId: service.roomServiceId,
           roomServiceName: service.roomServiceName,
           description: service.description,
-          price: service.price?.price || 0,
+          price: service.price || 0,
           status: service.status
         }));
         console.log("Setting room services:", formattedServices);
@@ -62,22 +62,22 @@ const UpdateRoomType = ({ visible, onCancel, roomType, onSuccess }) => {
       }
 
       // Set coordinates and map
-      if (roomType.location?.lat && roomType.location?.long) {
+      if (roomType.address?.lat && roomType.address?.long) {
         const coords = {
-          lat: roomType.location.lat,
-          lng: roomType.location.long
+          lat: roomType.address.lat,
+          lng: roomType.address.long
         };
         console.log("Setting coordinates:", coords);
         setCoordinates(coords);
-        updateMapUrl(roomType.location.lat, roomType.location.long);
+        updateMapUrl(roomType.address.lat, roomType.address.long);
       }
 
       // Set address state
       setAddress({
-        houseNumber: roomType.location?.houseNumber || "",
-        street: roomType.location?.street || "",
-        district: roomType.location?.district || "Thu Duc",
-        city: roomType.location?.city || "Ho Chi Minh"
+        houseNumber: roomType.address?.houseNumber || "",
+        street: roomType.address?.street || "",
+        district: roomType.address?.district || "Thu Duc",
+        city: roomType.address?.city || "Ho Chi Minh"
       });
     }
   }, [visible, roomType, form]);
@@ -131,6 +131,7 @@ const UpdateRoomType = ({ visible, onCancel, roomType, onSuccess }) => {
 
     const data = {
       roomTypeId: roomType.roomTypeId,
+      model: "RoomType", // Adding required model field
       ...values,
       lat,
       long,
@@ -146,7 +147,7 @@ const UpdateRoomType = ({ visible, onCancel, roomType, onSuccess }) => {
         roomServiceId: service.roomServiceId,
         roomServiceName: service.roomServiceName,
         description: service.description,
-        price: { price: parseFloat(service.price) || 0 },
+        price: { price: parseFloat(service.price) || 0 }, // Nested price object structure
       })),
     };
 
@@ -559,4 +560,4 @@ const UpdateRoomType = ({ visible, onCancel, roomType, onSuccess }) => {
   );
 };
 
-export default UpdateRoomType; 
+export default UpdateRoomType;
