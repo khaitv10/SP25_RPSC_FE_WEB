@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, Typography, Avatar, Tag, Divider, Row, Col, Spin, Button,
-  Empty, Pagination, Space, Input, Alert, Badge, message
+  Empty, Pagination, Space, Input, Alert, Badge, message, Modal
 } from 'antd';
 import { 
   UserOutlined, PhoneOutlined, MailOutlined, CalendarOutlined, 
   HomeOutlined, CheckOutlined, SearchOutlined, LoadingOutlined,
-  QuestionCircleOutlined, LogoutOutlined, InfoCircleOutlined
+  QuestionCircleOutlined, LogoutOutlined, InfoCircleOutlined, EyeOutlined
 } from '@ant-design/icons';
 import landlordAPI from '../../Services/Landlord/landlordAPI';
 
@@ -62,6 +62,9 @@ const LeaveRoomRequestList = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailData, setDetailData] = useState(null);
 
   useEffect(() => {
     fetchLeaveRoomRequests();
@@ -157,6 +160,19 @@ const LeaveRoomRequestList = () => {
     setPageSize(size);
   };
 
+  const handleViewDetail = async (cmoid) => {
+    setDetailModalVisible(true);
+    setDetailLoading(true);
+    try {
+      const res = await landlordAPI.getLeaveRoomRequestDetail(cmoid);
+      setDetailData(res.detailTenantMoveOutRes);
+    } catch (err) {
+      setDetailData(null);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -203,119 +219,96 @@ const LeaveRoomRequestList = () => {
           />
           
           {requests.map((request) => (
-            <Card key={request.cmoid} className="leave-request-card">
-              <div className="card-header">
-                <div className="tenant-info">
-                  <Avatar 
-                    src={request.tenantInfo.avatar} 
-                    icon={<UserOutlined />} 
-                    size={64}
-                    className="tenant-avatar"
-                  />
-                  <div className="tenant-details">
-                    <Title level={4}>{request.tenantInfo.fullName}</Title>
-                    <Badge status="processing" text={`Request ID: ${request.cmoid}`} />
+            <Card
+              key={request.cmoid}
+              style={{
+                marginBottom: 24,
+                borderRadius: 16,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                padding: 0,
+                background: '#fff',
+                border: 'none',
+              }}
+              bodyStyle={{ padding: 0 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', padding: 24, borderBottom: '1px solid #f0f0f0' }}>
+                <Avatar src={request.tenantInfo.avatar} size={64} style={{ marginRight: 20 }} />
+                <div style={{ flex: 1 }}>
+                  <Title level={4} style={{ margin: 0 }}>{request.tenantInfo.fullName}</Title>
+                  <div style={{ color: '#888', marginTop: 4 }}>
+                    <MailOutlined style={{ marginRight: 6 }} />
+                    {request.tenantInfo.email}
+                    <span style={{ margin: '0 12px' }}>|</span>
+                    <HomeOutlined style={{ marginRight: 6 }} />
+                    Room {request.tenantInfo.roomNumber}
                   </div>
                 </div>
-                <div className="request-meta">
+                <div style={{ textAlign: 'right' }}>
                   {getStatusTag(request.status)}
-                  <div className="request-date">
-                    <CalendarOutlined style={{ marginRight: '8px' }} />
+                  <div style={{ color: '#888', marginTop: 4 }}>
+                    <CalendarOutlined style={{ marginRight: 6 }} />
                     {formatDate(request.dateRequest)}
                   </div>
-                  {request.status === 0 && (
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
+                    {request.status === 0 && (
+                      <Button
+                        type="primary"
+                        icon={<CheckOutlined />}
+                        onClick={() => handleAcceptRequest(request.cmoid)}
+                        loading={processing[request.cmoid]}
+                      >
+                        Accept
+                      </Button>
+                    )}
                     <Button
-                      type="primary"
-                      icon={<CheckOutlined />}
-                      onClick={() => handleAcceptRequest(request.cmoid)}
-                      loading={processing[request.cmoid]}
-                      className="accept-button"
-                    >
-                      Accept Request
-                    </Button>
-                  )}
+                      type="link"
+                      icon={<EyeOutlined style={{ color: '#1890ff', fontSize: 18 }} />}
+                      style={{ padding: 0 }}
+                      onClick={() => handleViewDetail(request.cmoid)}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <Divider style={{ margin: '0' }} />
-
-              <Row gutter={[16, 16]} className="info-cards">
-                <Col xs={24} md={12}>
-                  <Card title="Tenant Information" size="small" className="info-card">
-                    <div className="info-item">
-                      <HomeOutlined className="info-icon" />
-                      <Text strong className="info-label">Room:</Text>
-                      <Text>{request.tenantInfo.roomNumber}</Text>
+              <div style={{ padding: 24 }}>
+                <Row gutter={24}>
+                  <Col xs={24} md={request.designatedInfo && Object.keys(request.designatedInfo).length > 0 ? 12 : 24}>
+                    <div style={{ marginBottom: 16 }}>
+                      <Text strong style={{ fontSize: 16 }}>
+                        <UserOutlined style={{ color: '#1890ff', marginRight: 8 }} />
+                        Tenant Information
+                      </Text>
                     </div>
-                    <div className="info-item">
-                      <MailOutlined className="info-icon" />
-                      <Text strong className="info-label">Email:</Text>
-                      <Text>{request.tenantInfo.email}</Text>
+                    <div style={{ background: '#f7f9fa', borderRadius: 8, padding: 16 }}>
+                      <div style={{ marginBottom: 8 }}><HomeOutlined style={{ color: '#1890ff', marginRight: 8 }} />Room: {request.tenantInfo.roomNumber}</div>
+                      <div style={{ marginBottom: 8 }}><MailOutlined style={{ color: '#1890ff', marginRight: 8 }} />Email: {request.tenantInfo.email}</div>
+                      <div><CalendarOutlined style={{ color: '#1890ff', marginRight: 8 }} />Date of Birth: {request.tenantInfo.dob}</div>
                     </div>
-                    <div className="info-item">
-                      <PhoneOutlined className="info-icon" />
-                      <Text strong className="info-label">Phone:</Text>
-                      <Text>{request.tenantInfo.phoneNumber}</Text>
-                    </div>
-                    <div className="info-item">
-                      <CalendarOutlined className="info-icon" />
-                      <Text strong className="info-label">DOB:</Text>
-                      <Text>{request.tenantInfo.dob}</Text>
-                    </div>
-                    <div className="info-item">
-                      <UserOutlined className="info-icon" />
-                      <Text strong className="info-label">Gender:</Text>
-                      <Text>{request.tenantInfo.gender}</Text>
-                    </div>
-                    <div className="info-item">
-                      <HomeOutlined className="info-icon" />
-                      <Text strong className="info-label">Location:</Text>
-                      <Text>{request.tenantInfo.location}</Text>
-                    </div>
-                  </Card>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Card title="Designated Person Information" size="small" className="info-card">
-                    <div className="designated-header">
-                      <Avatar 
-                        src={request.designatedInfo.avatar} 
-                        icon={<UserOutlined />} 
-                        size={64}
-                        className="designated-avatar"
-                      />
-                      <div>
-                        <Title level={5} style={{ margin: '0 0 4px' }}>{request.designatedInfo.fullName}</Title>
-                        <Text type="secondary">ID: {request.designatedInfo.designatedId}</Text>
+                  </Col>
+                  {request.designatedInfo && Object.keys(request.designatedInfo).length > 0 && (
+                    <Col xs={24} md={12}>
+                      <div style={{ marginBottom: 16 }}>
+                        <Text strong style={{ fontSize: 16 }}>
+                          <UserOutlined style={{ color: '#1890ff', marginRight: 8 }} />
+                          Designated Person Information
+                        </Text>
                       </div>
-                    </div>
-                    <div className="info-item">
-                      <MailOutlined className="info-icon" />
-                      <Text strong className="info-label">Email:</Text>
-                      <Text>{request.designatedInfo.email}</Text>
-                    </div>
-                    <div className="info-item">
-                      <PhoneOutlined className="info-icon" />
-                      <Text strong className="info-label">Phone:</Text>
-                      <Text>{request.designatedInfo.phoneNumber}</Text>
-                    </div>
-                    <div className="info-item">
-                      <CalendarOutlined className="info-icon" />
-                      <Text strong className="info-label">DOB:</Text>
-                      <Text>{request.designatedInfo.dob}</Text>
-                    </div>
-                    <div className="info-item">
-                      <UserOutlined className="info-icon" />
-                      <Text strong className="info-label">Gender:</Text>
-                      <Text>{request.designatedInfo.gender}</Text>
-                    </div>
-                  </Card>
-                </Col>
-              </Row>
-
-              <div className="room-description">
-                <Text strong className="description-title">Room Description:</Text>
-                <Text className="description-text">{request.tenantInfo.description || 'No description provided'}</Text>
+                      <div style={{ background: '#f7f9fa', borderRadius: 8, padding: 16, display: 'flex', alignItems: 'center' }}>
+                        <Avatar src={request.designatedInfo.avatar} size={48} style={{ marginRight: 16 }} />
+                        <div>
+                          <div style={{ fontWeight: 500 }}>{request.designatedInfo.fullName}</div>
+                          <div style={{ color: '#888', fontSize: 13 }}>ID: {request.designatedInfo.designatedId}</div>
+                          <div><MailOutlined style={{ color: '#1890ff', marginRight: 8 }} />{request.designatedInfo.email}</div>
+                        </div>
+                      </div>
+                    </Col>
+                  )}
+                </Row>
+                <Divider style={{ margin: '24px 0' }} />
+                <div style={{ color: '#888', fontSize: 14, display: 'flex', alignItems: 'center' }}>
+                  <CalendarOutlined style={{ color: '#1890ff', marginRight: 8 }} />
+                  Request Date: {formatDate(request.dateRequest)}
+                </div>
               </div>
             </Card>
           ))}
@@ -336,6 +329,40 @@ const LeaveRoomRequestList = () => {
           )}
         </>
       )}
+
+      {/* Modal hiển thị chi tiết leave room request */}
+      <Modal
+        open={detailModalVisible}
+        onCancel={() => setDetailModalVisible(false)}
+        footer={null}
+        title="Leave Room Request Detail"
+        width={600}
+      >
+        {detailLoading ? (
+          <div style={{ textAlign: 'center', padding: 32 }}>
+            <Spin size="large" />
+          </div>
+        ) : detailData ? (
+          <div>
+            <div style={{ marginBottom: 16 }}>
+              <b>Tenant:</b> {detailData.detailTenantInfo.fullName} <br />
+              <b>Email:</b> {detailData.detailTenantInfo.email} <br />
+              <b>Room:</b> {detailData.detailTenantInfo.roomNumber}
+            </div>
+            {detailData.detailDesignatedInfo && (
+              <div style={{ marginBottom: 16 }}>
+                <b>Designated Person:</b> {detailData.detailDesignatedInfo.fullName} <br />
+                <b>Email:</b> {detailData.detailDesignatedInfo.email}
+              </div>
+            )}
+            <div>
+              <b>Request Date:</b> {formatDate(detailData.dateRequest)}
+            </div>
+          </div>
+        ) : (
+          <div style={{ color: 'red', textAlign: 'center' }}>No detail found.</div>
+        )}
+      </Modal>
     </div>
   );
 };
