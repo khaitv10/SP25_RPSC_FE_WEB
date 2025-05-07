@@ -86,11 +86,11 @@ const CustomerModal = ({ isOpen, customer, onClose }) => {
             <div className="flex flex-wrap justify-center gap-3 mt-3">
               <div className="flex items-center text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                 <FaEnvelope className="mr-2 text-blue-600" />
-                <span className="text-sm">{customer.email}</span>
+                <span className="text-sm">{customer.email} {customer.customerEmail}</span>
               </div>
               <div className="flex items-center text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                 <FaPhone className="mr-2 text-green-600" />
-                <span className="text-sm">{customer.phoneNumber}</span>
+                <span className="text-sm">{customer.phoneNumber}{customer.customerPhoneNumber}</span>
               </div>
               {customer.gender && (
                 <div className="flex items-center text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
@@ -193,6 +193,8 @@ CustomerModal.propTypes = {
     budgetRange: PropTypes.string,
     preferredLocation: PropTypes.string,
     requirement: PropTypes.string,
+    customerEmail: PropTypes.string,
+    customerPhoneNumber: PropTypes.string,
   }),
   onClose: PropTypes.func.isRequired,
 };

@@ -33,6 +33,22 @@ const landlordAPI = {
             console.error('Error accepting leave room request:', error);
             throw error;
         }
+    },
+    getLeaveRoomRequestDetail: async (id) => {
+        try {
+            const response = await axios.get(
+                `${BASE_URL}/detail-tenant-leave-room-request/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+            console.error('Error fetching leave room request detail:', error);
+            throw error;
+        }
     }
 };
 
